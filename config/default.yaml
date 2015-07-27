@@ -1,0 +1,4 @@
+swagger:
+  mapErrorsToJson: true
+  docEndpoints:
+    raw: /swagger

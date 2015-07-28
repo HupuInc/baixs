@@ -2,11 +2,15 @@
   "name": "baixs",
   "version": "0.0.1",
   "private": true,
-  "description": "New Swagger API Project",
+  "description": "URL Monitoring - API and tools",
   "keywords": [],
   "author": "",
-  "license": "",
+  "license": "Apache-2.0",
   "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HupuInc/baixs.git"
+  },
   "scripts": {
     "test": "NODE_ENV=test mocha -b --reporter dot 'test/**/*.test.js'"
   },

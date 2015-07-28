@@ -1,8 +1,9 @@
 require('should');
 var _ = require('lodash');
-var openDb = require('../');
-var models;
-var leveldb;
+var bootstrap = require('../');
+
+var models = bootstrap.models;
+var leveldb = bootstrap.leveldb;
 
 var fixtrues = {
   link: {
@@ -12,12 +13,6 @@ var fixtrues = {
     status: 200,
   }
 };
-
-before(function(done) {
-  var db = openDb(done);
-  models = db.models;
-  leveldb = db.instance;
-});
 
 describe('Model - Link', function() {
   before(function(done) {

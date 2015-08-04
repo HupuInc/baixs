@@ -1,19 +1,27 @@
 var SwaggerExpress = require('swagger-express-mw');
 var app = require('express')();
 module.exports = app; // for testing
+var Cron = require('./cron')
 
-var config = {
-  appRoot: __dirname // required config
-};
+var openDb = require('./db');
+var db = openDb(function() {
+  var cron = new Cron(db.models);
+  cron.start();
 
-SwaggerExpress.create(config, function(err, swaggerExpress) {
-  if (err) { throw err; }
+  var config = {
+    appRoot: __dirname // required config
+  };
 
-  // install middleware
-  swaggerExpress.register(app);
+  SwaggerExpress.create(config, function(err, swaggerExpress) {
+    if (err) { throw err; }
 
-  var port = process.env.PORT || 10010;
-  app.listen(port);
+    // install middleware
+    swaggerExpress.register(app);
 
-  console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
+    var port = process.env.PORT || 10010;
+    app.listen(port);
+
+    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
+  });
+
 });

@@ -8,12 +8,9 @@ module.exports = function open(done) {
     {
       db: require(dbConfig.backend),
       valueEncoding: 'json'
-    }
+    },
+    done
   );
-
-  leveldb.on('ready', function() {
-    done();
-  });
 
   return {
     models: initModels(leveldb),

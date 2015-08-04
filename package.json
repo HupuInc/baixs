@@ -12,6 +12,7 @@
     "url": "https://github.com/HupuInc/baixs.git"
   },
   "scripts": {
+    "start": "node app.js",
     "test": "NODE_ENV=test mocha -b --reporter dot 'test/**/*.test.js'"
   },
   "dependencies": {

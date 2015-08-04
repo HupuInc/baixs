@@ -5,12 +5,15 @@ var Cron = require('./cron')
 
 var openDb = require('./db');
 var db = openDb(function() {
+
   var cron = new Cron(db.models);
   cron.start();
 
   var config = {
     appRoot: __dirname // required config
   };
+
+  app.set('models', db.models);
 
   SwaggerExpress.create(config, function(err, swaggerExpress) {
     if (err) { throw err; }

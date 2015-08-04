@@ -25,6 +25,21 @@ paths:
           description: Success
           schema:
             $ref: "#/definitions/Link"
+    post:
+      description: Create a new Link to be monitored
+      operationId: create
+      parameters:
+        - name: link
+          in: body
+          schema:
+            $ref: "#/definitions/Link"
+      responses:
+        201:
+          description: Success
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
   /hello:
     x-swagger-router-controller: hello_world
     get:
@@ -37,7 +52,7 @@ paths:
           required: false
           type: string
       responses:
-        "200":
+        200:
           description: Success
           schema:
             # a pointer to a definition

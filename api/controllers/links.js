@@ -10,12 +10,12 @@ exports.getLinks = function getLinks(req, res) {
 
 exports.create = function create(req, res) {
   var models = req.app.get('models');
-  models.Link.create(req.body, function(err, doc) {
+  models.Link.create(req.body, function(err) {
     if (err) {
       res.status(400).json({
         message: err.toString()
       });
     }
-    res.status(201)
+    res.status(201).send(void 0);
   });
 };

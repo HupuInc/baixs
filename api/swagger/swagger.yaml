@@ -4,7 +4,7 @@ info:
   title: BaiXiaoSheng - A mointor for DevOps
 # during dev, should point to your local machine
 host: localhost:10010
-# basePath prefixes all resource paths 
+# basePath prefixes all resource paths
 basePath: /api
 schemes:
   # tip: remove http to make production-grade
@@ -14,6 +14,7 @@ consumes:
   - application/json
 produces:
   - application/json
+  - text/plain
 paths:
   /links:
     x-swagger-router-controller: links

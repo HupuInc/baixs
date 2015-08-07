@@ -6,7 +6,7 @@ var Cron = require('./cron')
 var openDb = require('./db');
 var db = openDb(function() {
 
-  var cron = new Cron(db.models);
+  var cron = new Cron(db);
   cron.start();
 
   var config = {

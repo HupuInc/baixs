@@ -4,10 +4,10 @@ var util = require('util');
 var _ = require('lodash');
 
 var Link = {
-  ns: 'link\0%s'
+  ns: 'link:%s'
 };
 
-Link.uuid = function(doc, done) {
+Link.uuid = function uuid(doc) {
   var keyObj = {
     url: doc.url,
     proxy: doc.proxy || null
@@ -25,7 +25,7 @@ function Task(link) {
 // The key of Task contains:
 // - uuid value of link
 // - creation timestamp (in milisecond) as the key
-Task.ns = 'task\0%s\0%s';
+Task.ns = 'task:%s:%s';
 
 // default to run task every 1 minute
 Task.interval = 60 * 1000;
@@ -45,26 +45,32 @@ Task.prototype.sched = function(done) {
 
 Task.prototype.run = function(done) {
   var self = this;
-  request({
+  request.get({
     url: this.link.url,
     proxy: this.link.proxy,
     followRedirect: false,
     timeout: Task.timeout
-  }, function(err, resp) {
+  }, function(err, resp, body) {
     if (err) {
-      done(err);
+      return done(err);
     }
     else {
       self.endAt = (new Date).valueOf();
       self.link.status = resp.statusCode
       self.link.lastTime = self.endAt;
-
       self.save(done);
     }
   });
 };
 
 module.exports = function(leveldb) {
+
+  Link.fetchAll = function() {
+    return leveldb.createReadStream({
+      gte: 'link:0',
+      lte: 'link:z'
+    });
+  };
 
   Link.update = function(doc, done) {
     var id = this.uuid(doc);

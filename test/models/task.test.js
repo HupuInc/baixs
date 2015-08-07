@@ -22,7 +22,7 @@ describe('Model - Task', function() {
     });
 
     it('should contain the uuid of link', function(done) {
-      task.uuid.should.startWith('task\0' + models.Link.uuid(link));
+      task.uuid.should.startWith('task:' + models.Link.uuid(link));
       leveldb.get(task.uuid, function(err, doc) {
         should.exist(doc);
         done(err)

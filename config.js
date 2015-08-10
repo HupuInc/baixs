@@ -23,7 +23,7 @@ var config = {
     });
   },
 
-  proudction: function() {
+  production: function() {
     return _.merge(defaultConfig, {
       // production environment config
       database: {

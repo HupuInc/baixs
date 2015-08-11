@@ -1,11 +1,19 @@
-exports.getLinks = function getLinks(req, res) {
-  var fakeLink = {
-    url: 'api.hupu.com',
-    status: 200,
-    description: 'A url being used by iBilling'
-  };
+var _ = require('lodash');
 
-  res.json(fakeLink);
+exports.getLinks = function getLinks(req, res) {
+  var results = ['url\tlastResTime\tavgResTime\tcount'];
+  var tmpl = _.template('<%=url%>\t<%=lastResTime%>\t<%=avgResTime%>\t<%=count%>');
+
+  req.app.get('models').Link.fetchAll()
+    .on('data', function(aLink) {
+      results.push(tmpl(aLink.value));
+    })
+    .on('end', function() {
+      res.type('.txt').send(results.join('\n') + '\n');
+    })
+    .on('err', function(err) {
+      console.error(err);
+    });
 };
 
 exports.create = function create(req, res) {

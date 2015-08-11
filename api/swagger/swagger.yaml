@@ -22,10 +22,11 @@ paths:
       description: Return all the links under monitor
       operationId: getLinks
       responses:
-        200:
-          description: Success
+        default:
+          description: Return all the links
           schema:
-            $ref: "#/definitions/Link"
+            format: string
+            type: string
     post:
       description: Create a new Link to be monitored
       operationId: create
@@ -72,6 +73,10 @@ definitions:
       url:
         type: string
       satus:
+        type: integer
+      lastResTime:
+        type: integer
+      avgResTime:
         type: integer
       description:
         type: string

@@ -58,7 +58,24 @@ Task.prototype.run = function(done) {
       self.endAt = (new Date).valueOf();
       self.link.status = resp.statusCode
       self.link.lastTime = self.endAt;
-      self.save(done);
+      // last response time
+      var lastResTime = self.endAt - self.createdAt;
+      self.link.lastResTime = lastResTime;
+      var count = self.link.count || 0;
+      // average response time
+      if (count > 0) {
+        var avgResTime = self.link.avgResTime;
+        self.link.avgResTime = Math.round(
+          ((avgResTime * count) + lastResTime) / (count + 1)
+        )
+      }
+      else {
+        self.link.avgResTime =  lastResTime;
+      }
+      self.link.count = count + 1;
+      Link.update(self.link,function() {
+        self.save(done);
+      });
     }
   });
 };

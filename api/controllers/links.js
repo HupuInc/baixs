@@ -1,12 +1,18 @@
 var _ = require('lodash');
 
 exports.getLinks = function getLinks(req, res) {
-  var results = ['url\tlastResTime\tavgResTime\tcount'];
-  var tmpl = _.template('<%=url%>\t<%=lastResTime%>\t<%=avgResTime%>\t<%=count%>');
+  var results = ['url\t\tproxy\t\tlastResTime\tavgResTime\tcount'];
+  var tmpl = _.template('<%=url%>\t<%=proxy%>\t<%=lastResTime%>\t<%=avgResTime%>\t<%=count%>');
 
   req.app.get('models').Link.fetchAll()
     .on('data', function(aLink) {
-      results.push(tmpl(aLink.value));
+      results.push(
+        tmpl(
+          _.defaults(
+            aLink.value, { proxy: ''}
+          )
+        )
+      );
     })
     .on('end', function() {
       res.type('.txt').send(results.join('\n') + '\n');

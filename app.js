@@ -1,7 +1,11 @@
+var express = require('express');
 var SwaggerExpress = require('swagger-express-mw');
 var WebSocketServer = require('websocket').server;
 
-var app = require('express')();
+var app = express();
+app.use('/', express.static('./public'));
+app.use('/assets/bootstrap.min.css', express.static('node_modules/bootstrap/dist/css/bootstrap.css'));
+
 var Cron = require('./cron');
 
 function originIsAllowed(origin) {

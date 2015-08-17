@@ -6,7 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>百晓生 - hupu.com</title>
 <link rel="stylesheet" type="text/css" href="/assets/bootstrap.min.css">
-<script type="text/javascript" src="/assets/websocket.js"></script>
+<script type="text/javascript" src="/assets/JSXTransformer.js"></script>
+<script type="text/javascript" src="/assets/react.min.js"></script>
+<script type="text/jsx" src="/assets/websocket.js"></script>
 </head>
 <body>
 <div class="page-header">
@@ -21,49 +23,8 @@
     </div>
 </div>
 
-<div class="table-responsive">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>URL</th>
-                <th>Proxy</th>
-                <th>状态码</th>
-                <th>最近一次请求耗时（毫秒）</th>
-                <th>平均请求耗时</th>
-                <th>总请求次数</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="warning">
-                <td>1</td>
-                <td>http://www.baidu.com</td>
-                <td>http://192.168.10.3:8080</td>
-                <td>200</td>
-                <td>155</td>
-                <td>726</td>
-                <td>4046</td>
-            </tr>
-            <tr class="info">
-                <td>2</td>
-                <td>http://www.163.com</td>
-                <td></td>
-                <td>200</td>
-                <td>90</td>
-                <td>153</td>
-                <td>5716</td>
-            </tr>
-            <tr class="info">
-                <td>3</td>
-                <td>http://www.baidu.com</td>
-                <td></td>
-                <td>200</td>
-                <td>90</td>
-                <td>153</td>
-                <td>5716</td>
-            </tr>
-        </tbody>
-    </table>
+<div id="bxs-monitor" class="table-responsive">
+
 </div>
 </body>
 </html>

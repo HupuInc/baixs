@@ -22,7 +22,8 @@ var BxsMonitor = React.createClass({
 
 var BxsLinkList = React.createClass({
   render: function() {
-    var attrNodes = this.props.data.map(function(link, idx) {
+    var attrNodes = this.props.data.map(function(hashedLink, idx) {
+      var link = hashedLink.value;
       var statusClass = '';
       if (link.status >= 300) {
         statusClass = 'warning'
@@ -50,11 +51,17 @@ var BxsLinkList = React.createClass({
 
 function handleWebsocketMessage(evt) {
   var data = JSON.parse(evt.data);
-  console.log('data arrived:', data.id);
-  if (data.id == 'link-list') {
-    // To start the render process
+  console.log('data arrived:', data);
+  if (data.id === 'link-list') {
+    // The 1st time to render the table
     React.render(
       <BxsMonitor data={data.list}/>,
+      document.getElementById('bxs-monitor')
+    );
+  }
+  else if (data.id === 'link-update') {
+    React.render(
+      <BxsMonitor data={data.update}/>,
       document.getElementById('bxs-monitor')
     );
   }

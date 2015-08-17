@@ -35,9 +35,14 @@ Cron.prototype.start = function() {
         console.trace(err);
       }
       else {
-        self.channel.broadcast({
-          messageId: 'refresh',
-          link: task.link
+        // TODO only broadcast updated link, i.e. task.link
+        models.Link.fetchAll(function(err, links) {
+          self.channel.broadcast(
+            JSON.stringify({
+              id: 'link-update',
+              update: links
+            })
+          );
         });
       }
     });

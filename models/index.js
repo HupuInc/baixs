@@ -82,11 +82,26 @@ Task.prototype.run = function(done) {
 
 module.exports = function(leveldb) {
 
-  Link.fetchAll = function() {
-    return leveldb.createReadStream({
+  Link.fetchAll = function(done) {
+
+    var stream = leveldb.createReadStream({
       gte: 'link:0',
       lte: 'link:z'
     });
+
+    if ('function' === typeof done) {
+      var links = [];
+      stream.on('data', function(aLink) {
+        links.push(aLink)
+      })
+      .on('err', done)
+      .on('close', function() {
+        done(null, links);
+      });
+    }
+    else {
+      return stream;
+    }
   };
 
   Link.update = function(doc, done) {

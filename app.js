@@ -2,22 +2,16 @@ var express = require('express');
 var SwaggerExpress = require('swagger-express-mw');
 var WebSocketServer = require('websocket').server;
 
+var Cron = require('./cron');
+var openDb = require('./db');
+
 var app = express();
 app.use('/', express.static('./public'));
 app.use('/assets/bootstrap.min.css', express.static('node_modules/bootstrap/dist/css/bootstrap.css'));
 app.use('/assets/JSXTransformer.js', express.static('node_modules/react/dist/JSXTransformer.js'));
 app.use('/assets/react.min.js', express.static('node_modules/react/dist/react.js'));
 
-var data = [
-  { url: 'http://www.baidu.com', proxy: 'http://192.168.10.3:8080',
-    status: 302, lastResTime: 155, avgResTime: 726, count: 4046 },
-  { url: 'http://www.163.com', proxy: null,
-    status: 200, lastResTime: 109, avgResTime: 451, count: 5716 },
-  { url: 'http://www.baidu.com', proxy: null,
-    status: 200, lastResTime: 90, avgResTime: 153, count: 5716 },
-];
-
-var Cron = require('./cron');
+var db = openDb(initApp);
 
 function originIsAllowed(origin) {
   // put logic here to detect whether the specified origin is allowed.
@@ -35,34 +29,36 @@ function startWebsocket(httpServer) {
       autoAcceptConnections: false
   });
 
-  wsServer.on('request', function(request) {
-    if (!originIsAllowed(request.origin)) {
-      // Make sure we only accept requests from an allowed origin
-      request.reject();
-      console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
-      return;
-    }
-
-    var connection = request.accept('baixs-protocol', request.origin);
-    console.log((new Date()) + ' Connection accepted.');
-    connection.on('close', function(reasonCode, description) {
-      console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    });
-
-    connection.send(
-      JSON.stringify({
-        id: 'link-list',
-        list: data
-      })
-    );
-  });
+  wsServer.on('request', onWebSocketConnected);
 
   return wsServer;
 }
 
-var openDb = require('./db');
-var db = openDb(function() {
+function onWebSocketConnected(request) {
+  if (!originIsAllowed(request.origin)) {
+    // Make sure we only accept requests from an allowed origin
+    request.reject();
+    console.log((new Date()) + ' Connection from origin ' + request.origin + ' rejected.');
+    return;
+  }
 
+  var connection = request.accept('baixs-protocol', request.origin);
+  console.log((new Date()) + ' Connection accepted.');
+  connection.on('close', function(reasonCode, description) {
+    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+  });
+
+  db.models.Link.fetchAll(function(err, links) {
+    connection.send(
+      JSON.stringify({
+        id: 'link-list',
+        list: links
+      })
+    );
+  })
+}
+
+function initApp() {
   var config = {
     appRoot: __dirname // required config
   };
@@ -86,7 +82,6 @@ var db = openDb(function() {
 
     console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');
   });
-
-});
+}
 
 module.exports = app; // for testing

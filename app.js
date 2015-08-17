@@ -76,6 +76,7 @@ var db = openDb(function() {
     swaggerExpress.register(app);
 
     var port = process.env.PORT || 10010;
+    var hostname = process.env.HOST || '127.0.0.1';
     var httpServer = app.listen(port);
 
     var wsSocket = startWebsocket(httpServer);
@@ -83,7 +84,7 @@ var db = openDb(function() {
     var cron = new Cron(db, wsSocket);
     cron.start();
 
-    console.log('try this:\ncurl http://127.0.0.1:' + port + '/hello?name=Scott');
+    console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');
   });
 
 });

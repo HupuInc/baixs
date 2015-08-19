@@ -23,28 +23,36 @@ var BxsMonitor = React.createClass({
 var BxsLinkList = React.createClass({
   render: function() {
     var attrNodes = this.props.data.map(function(hashedLink, idx) {
-      var link = hashedLink.value;
-      var statusClass = '';
-      if (link.status >= 300) {
-        statusClass = 'warning'
-      }
-
       return (
-        <tr className={statusClass}>
-          <td>{idx + 1}</td>
-          <td>{link.url}</td>
-          <td>{link.proxy}</td>
-          <td>{link.status}</td>
-          <td>{link.lastResTime}</td>
-          <td>{link.avgResTime}</td>
-          <td>{link.count}</td>
-        </tr>
-        );
+        <BxsLink data={hashedLink.value} index={idx + 1}/>
+      );
     });
     return (
       <tbody>
       {attrNodes}
       </tbody>
+    );
+  }
+});
+
+var BxsLink = React.createClass({
+  render: function() {
+    var link = this.props.data;
+    var idx = this.props.index;
+    var statusClass = '';
+    if (link.status >= 300) {
+      statusClass = 'warning';
+    }
+    return (
+      <tr className={statusClass}>
+        <td>{idx}</td>
+        <td>{link.url}</td>
+        <td>{link.proxy}</td>
+        <td>{link.status}</td>
+        <td>{link.lastResTime}</td>
+        <td>{link.avgResTime}</td>
+        <td>{link.count}</td>
+      </tr>
     );
   }
 });

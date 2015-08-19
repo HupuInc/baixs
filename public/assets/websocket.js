@@ -57,6 +57,18 @@ var BxsLink = React.createClass({
   }
 });
 
+var BxsLinkForm = React.createClass({
+  render: function() {
+    return (
+      <form method="POST" action="/api/links">
+        URL <input type="text" />
+        Proxy <input type="text" />
+        <input type="submit" />
+      </form>
+    );
+  }
+});
+
 function handleWebsocketMessage(evt) {
   var data = JSON.parse(evt.data);
   console.log('data arrived:', data);
@@ -88,3 +100,8 @@ function connect() {
 
 // To start the data pipeline
 connect();
+
+React.render(
+  <BxsLinkForm />,
+  document.getElementById('link-form')
+);

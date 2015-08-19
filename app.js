@@ -7,7 +7,9 @@ var openDb = require('./db');
 
 var app = express();
 app.use('/', express.static('./public'));
-app.use('/assets/bootstrap.min.css', express.static('node_modules/bootstrap/dist/css/bootstrap.css'));
+app.use('/assets/fonts', express.static('node_modules/bootstrap/dist/fonts'));
+app.use('/assets/css/bootstrap.min.css', express.static('node_modules/bootstrap/dist/css/bootstrap.css'));
+app.use('/assets/jquery.min.js', express.static('node_modules/jquery/dist/jquery.js'));
 app.use('/assets/JSXTransformer.js', express.static('node_modules/react/dist/JSXTransformer.js'));
 app.use('/assets/react.min.js', express.static('node_modules/react/dist/react.js'));
 

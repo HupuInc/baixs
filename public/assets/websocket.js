@@ -1,7 +1,7 @@
 
 var BxsMonitor = React.createClass({
   render: function() {
-   return (
+    return (
       <table className="table table-striped">
       <thead>
           <tr>
@@ -58,11 +58,32 @@ var BxsLink = React.createClass({
 });
 
 var BxsLinkForm = React.createClass({
+  handleSubmit: function(evt) {
+    evt.preventDefault();
+    var $form = $(evt.target);
+    var input = $form.serializeArray();
+    var link = input.reduce(function(prev, current) {
+      prev[current.name] = current.value;
+      return prev;
+    }, {});
+    console.log('Submit a new link:', {link: link});
+    $form.find('input[type=text]').val('');
+    $.ajax({
+      type: 'POST',
+      url: $form.attr('action'),
+      contentType: 'application/json',
+      data: JSON.stringify(link),
+      dataType: 'json',
+      success: function() {
+        console.log('A new link has been created');
+      }
+    });
+  },
   render: function() {
     return (
-      <form method="POST" action="/api/links">
-        URL <input type="text" />
-        Proxy <input type="text" />
+      <form method="POST" action="/api/links" onSubmit={this.handleSubmit}>
+        URL <input type="text" name="url" />
+        Proxy <input type="text" name="proxy" />
         <input type="submit" />
       </form>
     );

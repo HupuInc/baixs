@@ -5,12 +5,18 @@ var defaultConfig = {
     backend: 'leveldown',
     file: __dirname + '/data/baixs.db'
   },
+  etcd: {
+    host: 'racktables.hupu.com',
+    port: '4001',
+  },
 };
 
 var config = {
   development: function() {
     return _.merge(defaultConfig, {
       database: {
+      },
+      etcd: {
       },
     });
   },
@@ -19,7 +25,9 @@ var config = {
     return _.merge(defaultConfig,{
       database:{
         backend: 'memdown'
-      }
+      },
+      etcd: {
+      },
     });
   },
 
@@ -27,6 +35,8 @@ var config = {
     return _.merge(defaultConfig, {
       // production environment config
       database: {
+      },
+      etcd: {
       },
     });
   }

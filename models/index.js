@@ -80,7 +80,20 @@ Task.prototype.run = function(done) {
   });
 };
 
-module.exports = function(leveldb) {
+var Hostvars = {
+  perfix: '/hostvars/',
+  reg: /^\/hostvars\/(192.168.20.(\d+))/,
+};
+
+Hostvars._argParser = function(options, callback) {
+    if (typeof options === 'function') {
+      return [{}, options];
+    } else {
+      return [options, callback];
+    }
+  };
+
+module.exports = function(leveldb, etcd) {
 
   Link.fetchAll = function(done) {
 
@@ -113,7 +126,7 @@ module.exports = function(leveldb) {
 
   Task.update = function(doc, done) {
     var uuid = doc.uuid;
-    delete doc.uuid;
+     delete doc.uuid;
     leveldb.put(uuid, doc, { valueEncoding: 'json' }, done);
   };
 
@@ -122,8 +135,30 @@ module.exports = function(leveldb) {
     Task.update(doc, done);
   };
 
+  Hostvars.get = function(key, options, callback) {
+    var opt, ref;
+    ref = this._argParser(options, callback), options = ref[0], callback = ref[1];
+    etcd.get(key, options, callback);
+  };
+
+  Hostvars.fetchVmmHost = function(done) {
+    var vmmHosts = [];
+    function findVmmHost(error, body, resp) {
+      var nodes = body.node.nodes;
+      _.forEach(nodes, function(host) {
+        var result = host.key.match(Hostvars.reg);
+        if (result && result[2] <= 30)
+          vmmHosts.push(host.key);
+      });
+      done(vmmHosts);
+    }
+
+    Hostvars.get(Hostvars.perfix, findVmmHost);
+  };
+
   return {
     Link: Link,
     Task: Task,
+    Hostvars: Hostvars,
   };
 };

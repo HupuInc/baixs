@@ -15,6 +15,7 @@ consumes:
 produces:
   - application/json
   - text/plain
+  - text/html
 paths:
   /links:
     x-swagger-router-controller: links
@@ -64,6 +65,16 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+  /vmhosts:
+    x-swagger-router-controller: vmhosts
+    get:
+      description: Return all the vmm hosts and vm hosts
+      operationId: getVmHosts
+      responses:
+        200:
+          description: Return all the vmm hosts and vm hosts
+          schema:
+            $ref: "#/definitions/VmHosts"
 # complex objects have schema definitions
 definitions:
   Link:
@@ -91,4 +102,33 @@ definitions:
       - message
     properties:
       message:
+        type: string
+  VmHosts:
+    required:
+      - ip
+      - hostname
+      - domain
+      - has_problems
+    properties:
+      ip:
+        type: string
+      hostname:
+        type: string
+      has_problems:
+        type: string
+      domain:
+        type: array
+        items:
+          $ref: "#/definitions/Guest"
+  Guest:
+    properties:
+      uuid:
+        type: string
+      hostname:
+        type: string
+      mac:
+        type: string
+      ip:
+        type: string
+      domain:
         type: string

@@ -83,15 +83,16 @@ Task.prototype.run = function(done) {
 var Hostvars = {
   perfix: '/hostvars/',
   reg: /^\/hostvars\/(192.168.20.(\d+))/,
+  regDomain: /^\/hostvars\/(192.168.20.\d+)\/(.+)/,
 };
 
 Hostvars._argParser = function(options, callback) {
-    if (typeof options === 'function') {
-      return [{}, options];
-    } else {
-      return [options, callback];
-    }
-  };
+  if (typeof options === 'function') {
+    return [{}, options];
+  } else {
+    return [options, callback];
+  }
+};
 
 module.exports = function(leveldb, etcd) {
 
@@ -142,18 +143,82 @@ module.exports = function(leveldb, etcd) {
   };
 
   Hostvars.fetchVmmHost = function(done) {
-    var vmmHosts = [];
+    var vmmHosts = [],
+      vmHosts = [],
+      count = 0,
+      that = this;
+
+    function fetchGuestHostname() {
+      var count = 0;
+
+      vmHosts.forEach(function(host) {
+        count += host.domain.length;
+        host.domain.forEach(function(guest) {
+          var key = util.format(that.perfix + '%s/hostname', guest.ip);
+          that.get(key, function(error, body, resp) {
+            if (!error) {
+              guest.hostname = body.node.value;
+            }
+            count--;
+            if (count <= 0) {
+              done(vmHosts);
+            }
+          });
+        });
+      });
+    }
+
+    function guests(host) {
+      var guest = {};
+
+      host.nodes.forEach(function(vm) {
+        key = _.last(vm.key.split('/'));
+        guest[key] = vm.value;
+      });
+      guest.domain = _.last(host.key.split('/'));
+      return guest;
+    }
+
+    function domains(error, body, resp) {
+      var vmmHost = {},
+        result = null;
+      var nodes = body.node.nodes;
+      _.forEach(nodes, function(value) {
+        result = value.key.match(that.regDomain);
+        vmmHost.ip = result[1];
+        if (result[2] === 'domain') {
+          vmmHost.domain = [];
+          if (value.nodes) {
+            value.nodes.forEach(function(host) {
+              vmmHost.domain.push(guests(host));
+            });
+          }
+        }
+        else {
+          vmmHost[result[2]] = value.value;
+        }
+      });
+      count--;
+      vmHosts.push(vmmHost);
+      if (count <= 0) {
+        fetchGuestHostname();
+      }
+    }
+
     function findVmmHost(error, body, resp) {
       var nodes = body.node.nodes;
       _.forEach(nodes, function(host) {
-        var result = host.key.match(Hostvars.reg);
+        var result = host.key.match(that.reg);
         if (result && result[2] <= 30)
           vmmHosts.push(host.key);
       });
-      done(vmmHosts);
+      count = vmmHosts.length;
+      vmmHosts.forEach(function(host) {
+        that.get(host, { recursive: true }, domains);
+      });
     }
 
-    Hostvars.get(Hostvars.perfix, findVmmHost);
+    that.get(that.perfix, findVmmHost);
   };
 
   return {

@@ -75,6 +75,22 @@ paths:
           description: Return all the vmm hosts and vm hosts
           schema:
             $ref: "#/definitions/VmHosts"
+  /vm_search:
+    x-swagger-router-controller: vmhosts
+    get:
+      description: Return all the vmm hosts and vm hosts that matched by the word
+      operationId: search
+      parameters:
+        - name: q
+          in: query
+          description: The word that would like to search
+          required: true
+          type: string
+      responses:
+        default:
+          description: Return all the vmm hosts and vm hosts that matched by the word
+          schema:
+            $ref: "#/definitions/VmHosts"
 # complex objects have schema definitions
 definitions:
   Link:

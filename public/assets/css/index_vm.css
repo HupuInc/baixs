@@ -285,3 +285,16 @@ a, a:link {
     cursor: default;
     color: #29BEAE;
 }
+
+.search-selected {
+    background-color: #ffff00;
+}
+
+hr {
+    border-top: 1px solid #cecdcd;
+    width: 100%;
+}
+
+.div-vm-badge {
+    margin-left: 10px;
+}

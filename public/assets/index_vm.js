@@ -33,9 +33,9 @@ $(document).ready(function() {
       var hostItem = templHostItem.replace('<vmmHostname>', host.hostname).replace('<vmmHostIp>', host.ip).replace('<tableContent>', tableContent).replace('<vmmBadge>', host.domain.length);
       $('.div-main-content').append(hostItem);
     });
-    $('.span-collapse-expand').click(function(e) {
+    $('.div-vm-host-d').click(function(e) {
       var that = $(this);
-      $(that).parent().parent().find(".div-guests-content").slideToggle(300, function() {
+      $(that).parent().find(".div-guests-content").slideToggle(300, function() {
         var i = $(that).find('i');
         if($(i).hasClass('fa-caret-down'))
           $(i).removeClass('fa-caret-down').addClass('fa-caret-up');
@@ -48,16 +48,6 @@ $(document).ready(function() {
   function initEmptyContent() {
     $('.div-main-content').append(templEmpty);
   }
-
-  $.ajax({
-    url: '/api/vmhosts',
-    dataType: 'json',
-    method: 'get',
-    success: initMainContent,
-    error: function(error, status) {
-      initEmptyContent();
-    },
-  });
 
   $('.form-remote').submit(function(ev){
     ev.preventDefault();
@@ -75,5 +65,35 @@ $(document).ready(function() {
         initEmptyContent();
       },
     });
+  });
+
+  $('ul').click(function(ev) {
+    $(this).children('li').removeClass('slice-selected');
+    var parent = $(ev.target).parent();
+    $(parent).addClass('slice-selected');
+    switch($(parent).attr('id')) {
+      case 'vmTab':
+        $.ajax({
+          url: '/api/vmhosts',
+          dataType: 'json',
+          method: 'get',
+          success: initMainContent,
+          error: function(error, status) {
+            initEmptyContent();
+          },
+        });
+        break;
+      case 'urlTab':
+        React.render(
+          <UrlTab />,
+          //$('.div-main-content').context
+          document.getElementById('divMainContent')
+        );
+        React.render(
+          <BxsLinkForm />,
+          document.getElementById('link-form')
+        );
+        break;
+     }
   });
 });

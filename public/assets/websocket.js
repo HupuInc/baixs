@@ -122,7 +122,30 @@ function connect() {
 // To start the data pipeline
 connect();
 
-React.render(
-  <BxsLinkForm />,
-  document.getElementById('link-form')
-);
+var UrlTab = React.createClass({
+  render: function() {
+    return (
+      <div>
+      <div className="container-fluid">
+        <div className="row center-block">
+            <div className="col-md-10 col-xs-10">
+                <button className="btn btn-primary" type="button" data-toggle="collapse" data-target="#link-form">
+                    添加 <span className="glyphicon glyphicon-plus"></span>
+                </button>
+            </div>
+        </div>
+
+        <div className="row center-block">
+            <div className="col-md-10 col-xs-10">
+            <p>
+            <div id="link-form" className="collapse"></div>
+            </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="bxs-monitor" className="table-responsive"></div>
+    </div>
+    );
+  }
+});

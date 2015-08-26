@@ -1,51 +1,54 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>百晓生 - hupu.com</title>
-		<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
-		<link rel="stylesheet" media="screen" type="text/css" href="/assets/css/font-awesome.css" />
-		<link rel="stylesheet" media="screen" type="text/css" href="/assets/css/index_vm.css" />
-		<script type="text/javascript" src="/assets/jquery.min.js"></script>
-		<script type="text/javascript" src="/assets/JSXTransformer.js"></script>
-		<script type="text/javascript" src="/assets/react.min.js"></script>
-		<script type="text/javascript" src="/assets/index_vm.js"></script>
-	</head>
-	<body>
-	<div class="div-main">
-			<div class="div-container">
-				<div class="div-header">
-					<div class="div-header-content">
-						<span class="span-header-title">VM</span>
-						<div class="div-layout-spacer"></div>
-						<div id="divSearchForm" class="div-search-form form-group">
-							<form action="/api/vm_search" method="get" accept-charset="utf-8" class="search-form form-remote">
-			                    <div id="divSearchIcon" class="search-icon fa fa-search"> </div>
-			                    <input class="search-form-input-t search-form-input" type="text" name="q" value="" placeholder="Search">
-			                </form>
-		                </div>
-					</div>
-				</div>
-				<div class="div-left-nav">
-					<div class="div-nav-header">
-						<span class="fa fa-hand-spock-o"></span>
-					</div>
-					<ul>
-						<li class="slice-selected">
-							<span class="fa fa-clone"></span>
-						</li>
-						<li>
-							<span class="fa fa-rocket"></span>
-						</li>				
-					</ul>
-				</div>
-				<div class="div-right-content">
-					<div class="div-main-content">
-					</div>
-				</div>
-			</div>
-		</div>
-	</body>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>百晓生 - hupu.com</title>
+        <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
+        <link rel="stylesheet" media="screen" type="text/css" href="/assets/css/font-awesome.css" />
+        <link rel="stylesheet" media="screen" type="text/css" href="/assets/css/index_vm.css" />
+        <script type="text/javascript" src="/assets/jquery.min.js"></script>
+        <script type="text/javascript" src="/assets/bootstrap.min.js"></script>
+        <script type="text/javascript" src="/assets/JSXTransformer.js"></script>
+        <script type="text/javascript" src="/assets/react.min.js"></script>
+        <script type="text/jsx" src="/assets/index_vm.js"></script>
+        <script type="text/jsx" src="/assets/websocket.js"></script>
+    </head>
+    <body>
+    <div class="div-main">
+            <div class="div-container">
+                <div class="div-header">
+                    <div class="div-header-content">
+                        <span class="span-header-title">VM</span>
+                        <div class="div-layout-spacer"></div>
+                        <div id="divSearchForm" class="div-search-form form-group">
+                            <form action="/api/vm_search" method="get" accept-charset="utf-8" class="search-form form-remote">
+                                <div id="divSearchIcon" class="search-icon fa fa-search"> </div>
+                                <input class="search-form-input-t search-form-input" type="text" name="q" value="" placeholder="Search">
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="div-left-nav">
+                    <div class="div-nav-header">
+                        <span class="fa fa-hand-spock-o"></span>
+                    </div>
+                    <ul>
+                        <li id="vmTab" class="slice-selected">
+                            <span class="fa fa-clone"></span>
+                        </li>
+                        <li id="urlTab">
+                            <span class="fa fa-rocket"></span>
+                        </li>               
+                    </ul>
+                </div>
+                <div class="div-right-content">
+                    <div id="divMainContent" class="div-main-content">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

@@ -254,6 +254,7 @@ a, a:link {
     line-height: 65px;
     padding: 0 20px;
     height: 65px;
+    cursor: pointer;
 }
 
 .span-collapse-expand i {

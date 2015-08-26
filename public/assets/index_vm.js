@@ -68,7 +68,7 @@ $(document).ready(function() {
   });
 
   $('ul').click(function(ev) {
-    $(this).children('li').removeClass('slice-selected');
+    $('ul').children('li').removeClass('slice-selected');
     var parent = $(ev.target).parent();
     $(parent).addClass('slice-selected');
     switch($(parent).attr('id')) {
@@ -86,14 +86,17 @@ $(document).ready(function() {
       case 'urlTab':
         React.render(
           <UrlTab />,
-          //$('.div-main-content').context
-          document.getElementById('divMainContent')
+          $('.div-main-content')[0]
+          //document.getElementById('divMainContent')
         );
         React.render(
           <BxsLinkForm />,
-          document.getElementById('link-form')
+          // document.getElementById('link-form')
+          $('#link-form')[0]
         );
         break;
      }
   });
+
+  $('#vmTab > span').trigger('click');
 });

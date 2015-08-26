@@ -28,14 +28,9 @@ exports.search = function search(req, res) {
     keys.forEach(function(key) {
       var value = _.get(obj, key);
 
-      function formatValue(match, offset, string) {
-        return string.substr(0, offset) + "<span class='search-selected'>" + match + '</span>' + string.substr(offset + match.length, string.length);
-      }
-
       if (value && 'string' === typeof value) {
         value.replace(re, function(match, offset, string) {
           result = true;
-          _.set(obj, key, formatValue(match, offset, value));
         });
       }
     });

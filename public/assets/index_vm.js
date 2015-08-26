@@ -1,4 +1,22 @@
 var HostList = React.createClass({
+
+  handleSearch: function(searchForm) {
+    $.ajax({
+      url: $(searchForm).attr('action'),
+      data: $(searchForm).serialize(),
+      method: $(searchForm).attr('method') || 'get',
+      success: function(data, status) {
+        this.setState({data: data});
+        var templSearchTip = '<h3>Search Result for \'<title>\'</h3><hr>';
+        $('.div-main-content').prepend(templSearchTip.replace('<title>', $(".search-form-input-t").val()));
+        $('.span-collapse-expand').trigger('click');
+        $('#divSearchIcon').trigger('click');
+      }.bind(this),
+      error: function(error, status) {
+        console.log('Please handle ajax error');
+      }.bind(this)
+    });
+  },
   getInitialState: function() {
     return {
       data: []
@@ -101,6 +119,28 @@ var VmList = React.createClass({
 });
 
 $(document).ready(function() {
+  var mainContent;
+
+  $('.form-remote').submit(function(ev){
+    ev.preventDefault();
+    if (mainContent instanceof HostList){
+      mainContent.handleSearch(ev.target);
+    }
+  });
+
+  $('#divSearchIcon').click(function(e) {
+    $(".search-form-input-t").val('');
+    if($(".search-form-input-t").css('display') == 'none') {
+      $(".search-form-input-t").show();
+      $(".search-form-input-t").animate({"width": "+=176px"}, 200);
+      $(".search-form-input-t").focus();
+    }
+    else {
+      $(".search-form-input-t").animate({"width": "-=176px"}, 200, function() {
+        $('.search-form-input-t').hide();
+      });
+    }
+  });
 
   $('ul').click(function(ev) {
     $('ul').children('li').removeClass('slice-selected');
@@ -108,10 +148,10 @@ $(document).ready(function() {
     $(parent).addClass('slice-selected');
     switch($(parent).attr('id')) {
       case 'vmTab':
-        React.render(<HostList />, $('.div-main-content')[0]);
+        mainContent = React.render(<HostList />, $('.div-main-content')[0]);
         break;
       case 'urlTab':
-        React.render(
+        mainContent = React.render(
           <UrlTab />,
           $('.div-main-content')[0]
         );

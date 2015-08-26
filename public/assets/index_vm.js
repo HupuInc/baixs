@@ -1,30 +1,33 @@
-var SampleItem = {
-  "ip": "192.168.20.3",
-  "hostname": "vmm-20-3-prd.jh.hupu.com",
-  "domain": [
-    {
-      "mac": "00:16:3e:49:00:94",
-      "ip": "192.168.20.83",
-      "uuid": "3fd195bf-7bd2-43b8-bfbc-e162f5edbb8c",
-      "domain": "4qrhlcwn",
-      "hostname": "pub-baixs-20-83-prd.vm.jh.hupu.com"
-    },
-    {
-      "mac": "00:16:3e:13:a4:4f",
-      "ip": "192.168.20.84",
-      "uuid": "be6f6e29-b7c4-4ab4-bc46-db250c1942b4",
-      "domain": "xjpe39tz",
-      "hostname": "kq-caipiao-20-84-prd.vm.jh.hupu.com"
-    }
-  ],
-  "has_problems": "yes"
-};
-
 var HostList = React.createClass({
+  getInitialState: function() {
+    return {
+      data: []
+    };
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: '/api/vmhosts',
+      dataType: 'json',
+      method: 'get',
+      success: function(data) {
+        this.setState({
+          data: data
+        });
+      }.bind(this),
+      error: function(error, status) {
+        console.log('Please handle ajax error');
+      }.bind(this),
+    });
+  },
   render: function() {
+    var hostList = this.state.data.map(function(item){
+      return (
+        <HostItem data={item} />
+      )
+    });
     return (
       <div id="HostList">
-        <HostItem data={SampleItem} />
+        {hostList}
       </div>
     );
   }

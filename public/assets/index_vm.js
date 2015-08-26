@@ -7,9 +7,8 @@ var HostList = React.createClass({
       method: $(searchForm).attr('method') || 'get',
       success: function(data, status) {
         this.setState({data: data});
-        var templSearchTip = '<h3>Search Result for \'<title>\'</h3><hr>';
-        $('.div-main-content').prepend(templSearchTip.replace('<title>', $(".search-form-input-t").val()));
-        $('.span-collapse-expand').trigger('click');
+        $('.div-guests-content').hide();
+        $('.div-vm-host-d').trigger('click');
         $('#divSearchIcon').trigger('click');
       }.bind(this),
       error: function(error, status) {

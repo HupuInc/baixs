@@ -1,48 +1,51 @@
 <!doctype html>
 <html>
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>百晓生 - hupu.com</title>
-<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
-<script type="text/javascript" src="/assets/jquery.min.js"></script>
-<script type="text/javascript" src="/assets/bootstrap.min.js"></script>
-<script type="text/javascript" src="/assets/JSXTransformer.js"></script>
-<script type="text/javascript" src="/assets/react.min.js"></script>
-<script type="text/jsx" src="/assets/websocket.js"></script>
-</head>
-<body>
-<div class="page-header">
-    <div class="container-fluid">
-        <div class="row center-block">
-            <div class="col-md-10 col-xs-11">
-                <h1>Keep Your Eyes Here</h1>
-                <div class="well">人活着，就要有理想，有目的，就要不顾一切去奋斗，至于奋斗的结果是不是成功？是不是快乐？他们并没有放在心上。</div>
-            </div>
-            <div class="col-md-2 col-xs-1 pull-right"></div>
-        </div>
-    </div>
-</div>
-
-<div class="container-fluid">
-    <div class="row center-block">
-        <div class="col-md-10 col-xs-10">
-            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#link-form">
-                添加 <span class="glyphicon glyphicon-plus"></span>
-            </button>
-        </div>
-    </div>
-
-    <div class="row center-block">
-        <div class="col-md-10 col-xs-10">
-        <p>
-        <div id="link-form" class="collapse"></div>
-        </p>
-        </div>
-    </div>
-</div>
-
-<div id="bxs-monitor" class="table-responsive"></div>
-</body>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>百晓生 - hupu.com</title>
+		<link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
+		<link rel="stylesheet" media="screen" type="text/css" href="/assets/css/font-awesome.css" />
+		<link rel="stylesheet" media="screen" type="text/css" href="/assets/css/index_vm.css" />
+		<script type="text/javascript" src="/assets/jquery.min.js"></script>
+		<script type="text/javascript" src="/assets/JSXTransformer.js"></script>
+		<script type="text/javascript" src="/assets/react.min.js"></script>
+		<script type="text/javascript" src="/assets/index_vm.js"></script>
+	</head>
+	<body>
+	<div class="div-main">
+			<div class="div-container">
+				<div class="div-header">
+					<div class="div-header-content">
+						<span class="span-header-title">VM</span>
+						<div class="div-layout-spacer"></div>
+						<div id="divSearchForm" class="div-search-form form-group">
+							<form action="/api/vm_search" method="get" accept-charset="utf-8" class="search-form form-remote">
+			                    <div id="divSearchIcon" class="search-icon fa fa-search"> </div>
+			                    <input class="search-form-input-t search-form-input" type="text" name="q" value="" placeholder="Search">
+			                </form>
+		                </div>
+					</div>
+				</div>
+				<div class="div-left-nav">
+					<div class="div-nav-header">
+						<span class="fa fa-hand-spock-o"></span>
+					</div>
+					<ul>
+						<li class="slice-selected">
+							<span class="fa fa-clone"></span>
+						</li>
+						<li>
+							<span class="fa fa-rocket"></span>
+						</li>				
+					</ul>
+				</div>
+				<div class="div-right-content">
+					<div class="div-main-content">
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

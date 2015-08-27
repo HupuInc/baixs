@@ -28,10 +28,8 @@ exports.search = function search(req, res) {
     keys.forEach(function(key) {
       var value = _.get(obj, key);
 
-      if (value && 'string' === typeof value) {
-        value.replace(re, function(match, offset, string) {
-          result = true;
-        });
+      if (value && 'string' === typeof value && value.match(re)) {
+        result = true;
       }
     });
     return result;

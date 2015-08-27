@@ -82,8 +82,8 @@ Task.prototype.run = function(done) {
 
 var Hostvars = {
   perfix: '/hostvars/',
-  reg: /^\/hostvars\/(192.168.20.(\d+))/,
-  regDomain: /^\/hostvars\/(192.168.20.\d+)\/(.+)/,
+  reg: /^\/hostvars\/(192.168.[2-9]\d.(\d+))/,
+  regDomain: /^\/hostvars\/(192.168.[2-9]\d.\d+)\/(.+)/,
 };
 
 Hostvars._argParser = function(options, callback) {

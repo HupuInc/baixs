@@ -1,6 +1,34 @@
-var HostList = React.createClass({
+var SearchForm = React.createClass({
+  handleShowSearch: function(ev) {
+    $(".search-form-input-t").val('');
+    if($(".search-form-input-t").css('display') == 'none') {
+      $(".search-form-input-t").show();
+      $(".search-form-input-t").animate({"width": "+=176px"}, 200);
+      $(".search-form-input-t").focus();
+    }
+    else {
+      $(".search-form-input-t").animate({"width": "-=176px"}, 200, function() {
+        $('.search-form-input-t').hide();
+      });
+    }
+  },
+  handleSubmit: function(ev) {
+    ev.preventDefault();
+    var searchForm = $(this.getDOMNode());
+    this.props.onSearchSubmit(searchForm);
+  },
+  render: function() {
+    return (
+      <form action="/api/vm_search" method="get" acceptCharset="utf-8" className="search-form form-remote" onSubmit={this.handleSubmit}>
+        <div id="divSearchIcon" className="search-icon fa fa-search" onClick={this.handleShowSearch}> </div>
+          <input className="search-form-input-t search-form-input" type="text" name="q" placeholder="Search" />
+      </form>
+    );
+  }
+});
 
-  handleSearch: function(searchForm) {
+var HostList = React.createClass({
+  handleSearchSubmit: function(searchForm) {
     $.ajax({
       url: $(searchForm).attr('action'),
       data: $(searchForm).serialize(),
@@ -117,29 +145,10 @@ var VmList = React.createClass({
   }
 });
 
+
+
 $(document).ready(function() {
   var mainContent;
-
-  $('.form-remote').submit(function(ev){
-    ev.preventDefault();
-    if (mainContent instanceof HostList){
-      mainContent.handleSearch(ev.target);
-    }
-  });
-
-  $('#divSearchIcon').click(function(e) {
-    $(".search-form-input-t").val('');
-    if($(".search-form-input-t").css('display') == 'none') {
-      $(".search-form-input-t").show();
-      $(".search-form-input-t").animate({"width": "+=176px"}, 200);
-      $(".search-form-input-t").focus();
-    }
-    else {
-      $(".search-form-input-t").animate({"width": "-=176px"}, 200, function() {
-        $('.search-form-input-t').hide();
-      });
-    }
-  });
 
   $('ul').click(function(ev) {
     $('ul').children('li').removeClass('slice-selected');
@@ -148,6 +157,10 @@ $(document).ready(function() {
     switch($(parent).attr('id')) {
       case 'vmTab':
         mainContent = React.render(<HostList />, $('.div-main-content')[0]);
+        React.render(
+          <SearchForm onSearchSubmit={mainContent.handleSearchSubmit} />,
+          $('#divSearchForm')[0]
+        );
         break;
       case 'urlTab':
         mainContent = React.render(

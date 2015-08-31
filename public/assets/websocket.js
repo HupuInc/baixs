@@ -1,4 +1,3 @@
-
 var BxsMonitor = React.createClass({
   render: function() {
     return (
@@ -40,7 +39,7 @@ var BxsLink = React.createClass({
     var link = this.props.data;
     var idx = this.props.index;
     var statusClass = '';
-    if (link.status >= 300) {
+    if (link.status >= 400) {
       statusClass = 'warning';
     }
     return (
@@ -90,61 +89,52 @@ var BxsLinkForm = React.createClass({
   }
 });
 
-function handleWebsocketMessage(evt) {
-  var data = JSON.parse(evt.data);
-  console.log('data arrived:', data);
-  if (data.id === 'link-list') {
-    // The 1st time to render the table
-    React.render(
-      <BxsMonitor data={data.list}/>,
-      document.getElementById('bxs-monitor')
-    );
-  }
-  else if (data.id === 'link-update') {
-    React.render(
-      <BxsMonitor data={data.update}/>,
-      document.getElementById('bxs-monitor')
-    );
-  }
-}
-
-function handleWebsocketClose() {
-  console.log('Websocket is closed');
-}
-
-function connect() {
-  var url = 'ws://' + document.URL.substr(7).split('/')[0];
-  var socket = new WebSocket(url, 'baixs-protocol');
-  socket.onmessage = handleWebsocketMessage.bind(this);
-  socket.onclose = handleWebsocketClose.bind(this);
-}
-
-// To start the data pipeline
-connect();
-
 var UrlTab = React.createClass({
+  getInitialState: function() {
+    return {data: []}
+  },
+  connect: function() {
+    var url = 'ws://' + document.URL.substr(7).split('/')[0];
+    var socket = new WebSocket(url, 'baixs-protocol');
+    socket.onmessage = this.onSocketMessage;
+  },
+  componentDidMount: function() {
+    this.connect();
+  },
+  onSocketMessage: function(evt) {
+    var data = JSON.parse(evt.data);
+    if (data.id === 'link-list') {
+      // The 1st time to render the table
+      this.setState({data: data.list});
+    }
+    else if (data.id === 'link-update') {
+      this.setState({data: data.update});
+    }
+  },
   render: function() {
     return (
-      <div>
-      <div className="container-fluid">
-        <div className="row center-block">
-            <div className="col-md-10 col-xs-10">
-                <button className="btn btn-primary" type="button" data-toggle="collapse" data-target="#link-form">
-                    添加 <span className="glyphicon glyphicon-plus"></span>
-                </button>
-            </div>
-        </div>
+    <div>
+      <div id="bxs-monitor" className="container-fluid">
+          <div className="row center-block">
+              <div className="col-md-10 col-xs-10">
+                  <button className="btn btn-primary" type="button" data-toggle="collapse" data-target="#link-form">
+                      添加 <span className="glyphicon glyphicon-plus"></span>
+                  </button>
+              </div>
+          </div>
 
-        <div className="row center-block">
-            <div className="col-md-10 col-xs-10">
-            <p>
-            <div id="link-form" className="collapse"></div>
-            </p>
-            </div>
-        </div>
-    </div>
+          <div className="row center-block">
+              <div className="col-md-10 col-xs-10">
+              <p>
+              <div id="link-form" className="collapse"><BxsLinkForm /></div>
+              </p>
+              </div>
+          </div>
 
-    <div id="bxs-monitor" className="table-responsive"></div>
+          <div id="bxs-monitor-table" className="table-responsive">
+            <BxsMonitor data={this.state.data}/>
+          </div>
+      </div>
     </div>
     );
   }

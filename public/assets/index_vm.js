@@ -167,10 +167,6 @@ $(document).ready(function() {
           <UrlTab />,
           $('.div-main-content')[0]
         );
-        React.render(
-          <BxsLinkForm />,
-          $('#link-form')[0]
-        );
         break;
      }
   });

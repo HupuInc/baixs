@@ -39,6 +39,8 @@ paths:
       responses:
         201:
           description: Success
+          schema:
+            type: string
         default:
           description: Error
           schema:

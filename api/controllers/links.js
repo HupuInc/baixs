@@ -30,6 +30,9 @@ exports.create = function create(req, res) {
         message: err.toString()
       });
     }
-    res.status(201).send(void 0);
+
+    models.Link.fetchAll(function(err, links) {
+      res.status(201).json(links);
+    });
   });
 };

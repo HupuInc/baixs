@@ -108,11 +108,9 @@ var UrlTab = React.createClass({
       contentType: 'application/json',
       data: JSON.stringify(link),
       dataType: 'json',
-      statusCode: {
-        201: function() {
-          console.log('A new link has been created');
-        }
-      }
+      success: function(data) {
+        this.setState({data: data});
+      }.bind(this)
     })
   },
   render: function() {

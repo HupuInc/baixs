@@ -57,30 +57,9 @@ var BxsLink = React.createClass({
 });
 
 var BxsLinkForm = React.createClass({
-  handleSubmit: function(evt) {
-    evt.preventDefault();
-    var $form = $(evt.target);
-    var input = $form.serializeArray();
-    var link = input.reduce(function(prev, current) {
-      prev[current.name] = current.value;
-      return prev;
-    }, {});
-    console.log('Submit a new link:', {link: link});
-    $form.find('input[type=text]').val('');
-    $.ajax({
-      type: 'POST',
-      url: $form.attr('action'),
-      contentType: 'application/json',
-      data: JSON.stringify(link),
-      dataType: 'json',
-      success: function() {
-        console.log('A new link has been created');
-      }
-    });
-  },
   render: function() {
     return (
-      <form method="POST" action="/api/links" onSubmit={this.handleSubmit}>
+      <form method="POST" action="/api/links" onSubmit={this.props.handleSubmit}>
         URL <input type="text" name="url" />
         Proxy <input type="text" name="proxy" />
         <input type="submit" />
@@ -111,6 +90,31 @@ var UrlTab = React.createClass({
       this.setState({data: data.update});
     }
   },
+  handleSubmit: function(evt) {
+    evt.preventDefault();
+    var $form = $(evt.target);
+    var input = $form.serializeArray();
+    var link = input.reduce(function(prev, current) {
+      prev[current.name] = current.value;
+      return prev;
+    }, {});
+
+    console.log('Submit a new link:', {link: link});
+
+    $form.find('input[type=text]').val('');
+    $.ajax({
+      type: 'POST',
+      url: $form.attr('action'),
+      contentType: 'application/json',
+      data: JSON.stringify(link),
+      dataType: 'json',
+      statusCode: {
+        201: function() {
+          console.log('A new link has been created');
+        }
+      }
+    })
+  },
   render: function() {
     return (
     <div>
@@ -126,7 +130,7 @@ var UrlTab = React.createClass({
           <div className="row center-block">
               <div className="col-md-10 col-xs-10">
               <p>
-              <div id="link-form" className="collapse"><BxsLinkForm /></div>
+              <div id="link-form" className="collapse"><BxsLinkForm handleSubmit={this.handleSubmit}/></div>
               </p>
               </div>
           </div>

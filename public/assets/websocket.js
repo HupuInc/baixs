@@ -57,9 +57,24 @@ var BxsLink = React.createClass({
 });
 
 var BxsLinkForm = React.createClass({
+  handleSubmit: function(evt) {
+    evt.preventDefault();
+    var $form = $(evt.target);
+    var input = $form.serializeArray();
+    var link = input.reduce(function(prev, current) {
+      prev[current.name] = current.value;
+      return prev;
+    }, {});
+
+    console.log('Submit a new link:', {link: link});
+
+    $form.find('input[type=text]').val('');
+
+    this.props.handleSubmit($form.attr('action'), link)
+  },
   render: function() {
     return (
-      <form method="POST" action="/api/links" onSubmit={this.props.handleSubmit}>
+      <form method="POST" action="/api/links" onSubmit={this.handleSubmit}>
         URL <input type="text" name="url" />
         Proxy <input type="text" name="proxy" />
         <input type="submit" />
@@ -90,28 +105,17 @@ var UrlTab = React.createClass({
       this.setState({data: data.update});
     }
   },
-  handleSubmit: function(evt) {
-    evt.preventDefault();
-    var $form = $(evt.target);
-    var input = $form.serializeArray();
-    var link = input.reduce(function(prev, current) {
-      prev[current.name] = current.value;
-      return prev;
-    }, {});
-
-    console.log('Submit a new link:', {link: link});
-
-    $form.find('input[type=text]').val('');
+  handleSubmit: function(action, link) {
     $.ajax({
       type: 'POST',
-      url: $form.attr('action'),
+      url: action,
       contentType: 'application/json',
       data: JSON.stringify(link),
       dataType: 'json',
       success: function(data) {
         this.setState({data: data});
       }.bind(this)
-    })
+    });
   },
   render: function() {
     return (

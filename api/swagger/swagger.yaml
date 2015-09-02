@@ -26,7 +26,6 @@ paths:
         default:
           description: Return all the links
           schema:
-            format: string
             type: string
     post:
       description: Create a new Link to be monitored
@@ -44,7 +43,7 @@ paths:
         default:
           description: Error
           schema:
-            $ref: "#/definitions/ErrorResponse"
+            type: string
   /vmhosts:
     x-swagger-router-controller: vmhosts
     get:
@@ -78,6 +77,8 @@ definitions:
       - url
     properties:
       url:
+        type: string
+      proxy:
         type: string
       satus:
         type: integer

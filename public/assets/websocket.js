@@ -13,7 +13,7 @@ var BxsMonitor = React.createClass({
               <th>总请求次数</th>
           </tr>
       </thead>
-      <BxsLinkList data={this.props.data}/>
+      <BxsLinkList {...this.props}/>
       </table>
     );
   }
@@ -21,9 +21,10 @@ var BxsMonitor = React.createClass({
 
 var BxsLinkList = React.createClass({
   render: function() {
+    var editable = this.props.editable;
     var attrNodes = this.props.data.map(function(hashedLink, idx) {
       return (
-        <BxsLink data={hashedLink.value} index={idx + 1}/>
+        <BxsLink data={hashedLink.value} index={idx + 1} editable={editable}/>
       );
     });
     return (
@@ -38,13 +39,24 @@ var BxsLink = React.createClass({
   render: function() {
     var link = this.props.data;
     var idx = this.props.index;
+    var editable = this.props.editable;
     var statusClass = '';
+
     if (link.status >= 400) {
       statusClass = 'warning';
     }
+
+    var editingColumn = idx;
+    if (editable) {
+      editingColumn =  <td>
+        <button className="btn btn-xs btn-danger" type="button">
+          <span className="glyphicon glyphicon-minus"></span>
+        </button>
+      </td>
+    }
     return (
       <tr className={statusClass}>
-        <td>{idx}</td>
+        <td>{editingColumn}</td>
         <td>{link.url}</td>
         <td>{link.proxy}</td>
         <td>{link.status}</td>
@@ -85,7 +97,7 @@ var BxsLinkForm = React.createClass({
 
 var UrlTab = React.createClass({
   getInitialState: function() {
-    return {data: []}
+    return {data: [], editable: false}
   },
   connect: function() {
     var url = 'ws://' + document.URL.substr(7).split('/')[0];
@@ -117,6 +129,11 @@ var UrlTab = React.createClass({
       }.bind(this)
     });
   },
+  handleEdit: function(evt) {
+    var editable = this.state.editable;
+    this.setState({editable: !editable});
+    $(evt.currentTarget).children('span.glyphicon').toggleClass('glyphicon-pencil').toggleClass('glyphicon-log-out');
+  },
   render: function() {
     return (
     <div>
@@ -128,7 +145,7 @@ var UrlTab = React.createClass({
                   </button>
               </div>
               <div className="col-md-1 col-xs-1">
-                  <button className="btn btn-primary" type="button">
+                  <button className="btn btn-primary" type="button" onClick={this.handleEdit}>
                       编辑 <span className="glyphicon glyphicon-pencil"></span>
                   </button>
               </div>
@@ -143,7 +160,7 @@ var UrlTab = React.createClass({
           </div>
 
           <div id="bxs-monitor-table" className="table-responsive">
-            <BxsMonitor data={this.state.data}/>
+            <BxsMonitor data={this.state.data} editable={this.state.editable}/>
           </div>
       </div>
     </div>

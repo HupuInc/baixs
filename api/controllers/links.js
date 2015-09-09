@@ -9,7 +9,7 @@ exports.getLinks = function getLinks(req, res) {
       results.push(
         tmpl(
           _.defaults(
-            aLink.value, { proxy: ''}
+            aLink.value, { proxy: '', lastResTime: '', avgResTime: '', count: 0 }
           )
         )
       );

@@ -39,9 +39,23 @@ paths:
         201:
           description: Success
           schema:
-            type: string
+            $ref: "#/definitions/Link"
         default:
           description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /links/{id}:
+    x-swagger-router-controller: links
+    delete:
+      operationId: del
+      parameters:
+        - name: id
+          required: true
+          type: string
+          in: path
+      responses:
+        default:
+          description: Array of links left
           schema:
             type: string
   /vmhosts:
@@ -87,12 +101,6 @@ definitions:
       avgResTime:
         type: integer
       description:
-        type: string
-  HelloWorldResponse:
-    required:
-      - message
-    properties:
-      message:
         type: string
   ErrorResponse:
     required:

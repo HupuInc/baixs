@@ -125,6 +125,10 @@ module.exports = function(leveldb, etcd) {
 
   Link.create = Link.update;
 
+  Link.del = function(id, done) {
+    leveldb.del(id, done)
+  };
+
   Task.update = function(doc, done) {
     var uuid = doc.uuid;
      delete doc.uuid;

@@ -22,9 +22,10 @@ var BxsMonitor = React.createClass({
 var BxsLinkList = React.createClass({
   render: function() {
     var editable = this.props.editable;
+    var handleRemove = this.props.handleRemove;
     var attrNodes = this.props.data.map(function(hashedLink, idx) {
       return (
-        <BxsLink data={hashedLink.value} index={idx + 1} editable={editable}/>
+        <BxsLink data={hashedLink} index={idx + 1} editable={editable} handleRemove={handleRemove}/>
       );
     });
     return (
@@ -36,23 +37,24 @@ var BxsLinkList = React.createClass({
 });
 
 var BxsLink = React.createClass({
-  render: function() {
+  handleClick: function(evt) {
+    evt.preventDefault();
     var link = this.props.data;
+    this.props.handleRemove(link);
+  },
+  render: function() {
+    var link = this.props.data.value;
     var idx = this.props.index;
     var editable = this.props.editable;
     var statusClass = '';
-
     if (link.status >= 400) {
       statusClass = 'warning';
     }
-
     var editingColumn = idx;
     if (editable) {
-      editingColumn =  <td>
-        <button className="btn btn-xs btn-danger" type="button">
+      editingColumn = <button className="btn btn-xs btn-danger" type="button" onClick={this.handleClick}>
           <span className="glyphicon glyphicon-minus"></span>
         </button>
-      </td>
     }
     return (
       <tr className={statusClass}>
@@ -129,6 +131,20 @@ var UrlTab = React.createClass({
       }.bind(this)
     });
   },
+  handleRemove: function(link) {
+    var answer = window.confirm('确定要删除 ' + link.value.url + ' 这个监控？');
+
+    if(answer) {
+      $.ajax({
+        type: 'DELETE',
+        url: '/api/links/' + link.key,
+        dataType: 'json',
+        success: function(data) {
+          this.setState({data: data});
+        }.bind(this)
+      });
+    }
+  },
   handleEdit: function(evt) {
     var editable = this.state.editable;
     this.setState({editable: !editable});
@@ -160,7 +176,7 @@ var UrlTab = React.createClass({
           </div>
 
           <div id="bxs-monitor-table" className="table-responsive">
-            <BxsMonitor data={this.state.data} editable={this.state.editable}/>
+            <BxsMonitor data={this.state.data} editable={this.state.editable} handleRemove={this.handleRemove}/>
           </div>
       </div>
     </div>

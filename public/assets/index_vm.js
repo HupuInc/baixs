@@ -93,11 +93,15 @@ var HostItem = React.createClass({
   },
   render: function() {
     var item = this.props.data;
-    var vmList = item.domain.map(function(vm) {
-      return (
-        <VmList data={vm} />
-      );
-    });
+    var length = 0;
+    if (item.domain) {
+      var vmList = item.domain.map(function(vm) {
+        return (
+          <VmList data={vm} />
+        );
+      });
+      length = item.domain.length
+    }
 
     return (
       <div className="div-vm-host-item">
@@ -109,7 +113,7 @@ var HostItem = React.createClass({
       <span>----</span>
       <span className="span-vm-ip">{item.ip}</span>
       <div className="div-vm-badge">
-        <span className="badge">{item.domain.length}</span>
+        <span className="badge">{length}</span>
       </div>
       <div className="div-layout-spacer"></div>
       <span className="span-collapse-expand"><i className="fa fa-caret-down"> </i></span>

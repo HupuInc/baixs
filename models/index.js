@@ -156,19 +156,21 @@ module.exports = function(leveldb, etcd) {
       var count = 0;
 
       vmHosts.forEach(function(host) {
-        count += host.domain.length;
-        host.domain.forEach(function(guest) {
-          var key = util.format(that.perfix + '%s/hostname', guest.ip);
-          that.get(key, function(error, body, resp) {
-            if (!error) {
-              guest.hostname = body.node.value;
-            }
-            count--;
-            if (count <= 0) {
-              done(vmHosts);
-            }
+        if (host.domain) {
+          count += host.domain.length;
+          host.domain.forEach(function(guest) {
+            var key = util.format(that.perfix + '%s/hostname', guest.ip);
+            that.get(key, function(error, body, resp) {
+              if (!error) {
+                guest.hostname = body.node.value;
+              }
+              count--;
+              if (count <= 0) {
+                done(vmHosts);
+              }
+            });
           });
-        });
+        }
       });
     }
 

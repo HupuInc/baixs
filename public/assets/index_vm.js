@@ -3,11 +3,11 @@ var SearchForm = React.createClass({
     $(".search-form-input-t").val('');
     if($(".search-form-input-t").css('display') == 'none') {
       $(".search-form-input-t").show();
-      $(".search-form-input-t").animate({"width": "+=176px"}, 200);
+      $(".search-form-input-t").animate({"width": "+=120px"}, 200);
       $(".search-form-input-t").focus();
     }
     else {
-      $(".search-form-input-t").animate({"width": "-=176px"}, 200, function() {
+      $(".search-form-input-t").animate({"width": "-=120px"}, 200, function() {
         $('.search-form-input-t').hide();
       });
     }
@@ -105,17 +105,16 @@ var HostItem = React.createClass({
 
     return (
       <div className="div-vm-host-item">
-      <div className="div-vm-host-d" onClick={this.handleToggle}>
-      <span className="span-vm-icon">
+      <div className="div-vm-host-d row" onClick={this.handleToggle}>
+      <span className="span-vm-icon col-md-1 col-xs-1">
         <i className="fa fa-circle"> </i>
       </span>
+      <div className="col-md-10 col-xs-10">
       <span className="span-vm-hostname">{item.hostname}</span>
       <span>----</span>
       <span className="span-vm-ip">{item.ip}</span>
-      <div className="div-vm-badge">
-        <span className="badge">{length}</span>
+      <span className="span-badge badge">{length}</span>
       </div>
-      <div className="div-layout-spacer"></div>
       <span className="span-collapse-expand"><i className="fa fa-caret-down"> </i></span>
       </div>
       <div className="div-guests-content">

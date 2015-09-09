@@ -8,44 +8,49 @@
         <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
         <link rel="stylesheet" media="screen" type="text/css" href="/assets/css/font-awesome.css" />
         <link rel="stylesheet" media="screen" type="text/css" href="/assets/css/index_vm.css" />
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="container-fluid row">
+                <div class="div-left-nav col-xs-12 col-md-1 row">
+                    <div class="div-nav-header col-md-12 col-xs-12">
+                        <span class="fa fa-hand-spock-o"></span>
+                    </div>
+                    <div class="col-md-12 col-xs-12">
+                        <ul>
+                            <li id="vmTab" class="slice-selected">
+                                <span class="fa fa-clone"></span>
+                            </li>
+                            <li id="urlTab">
+                                <span class="fa fa-rocket"></span>
+                            </li>               
+                        </ul>
+                    </div>
+                </div>
+                <div class="div-wrapper col-md-11 col-xs-12 row">
+                    <div class="div-header col-md-12 col-xs-12">
+                        <div class="div-header-content row">
+                            <span class="span-header-title col-md-1 col-xs-1">VM</span>
+                            <div class="col-md-9 col-xs-5"></div>
+                            <div id="divSearchForm" class="div-search-form form-group">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="div-right-content col-md-12 col-xs-12">
+                        <div id="divMainContent" class="div-main-content">
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script type="text/javascript" src="/assets/jquery.min.js"></script>
         <script type="text/javascript" src="/assets/bootstrap.min.js"></script>
         <script type="text/javascript" src="/assets/JSXTransformer.js"></script>
         <script type="text/javascript" src="/assets/react.min.js"></script>
         <script type="text/jsx" src="/assets/index_vm.js"></script>
         <script type="text/jsx" src="/assets/websocket.js"></script>
-    </head>
-    <body>
-    <div class="div-main">
-            <div class="div-container">
-                <div class="div-header">
-                    <div class="div-header-content">
-                        <span class="span-header-title">VM</span>
-                        <div class="div-layout-spacer"></div>
-                        <div id="divSearchForm" class="div-search-form form-group">
-                            
-                        </div>
-                    </div>
-                </div>
-                <div class="div-left-nav">
-                    <div class="div-nav-header">
-                        <span class="fa fa-hand-spock-o"></span>
-                    </div>
-                    <ul>
-                        <li id="vmTab" class="slice-selected">
-                            <span class="fa fa-clone"></span>
-                        </li>
-                        <li id="urlTab">
-                            <span class="fa fa-rocket"></span>
-                        </li>               
-                    </ul>
-                </div>
-                <div class="div-right-content">
-                    <div id="divMainContent" class="div-main-content">
-                        
-                    </div>
-                </div>
-            </div>
-        </div>
     </body>
 </html>

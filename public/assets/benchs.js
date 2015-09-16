@@ -24,6 +24,13 @@ var BenchItem = React.createClass({
   },
   render: function() {
     var item = this.props.data.value;
+    var markedDate = new Date();
+    var releaseDate = new Date();
+    markedDate.setTime(item.markedAt);
+    releaseDate.setTime(item.releaseAt);
+    var releaseAt = item.releaseAt ? releaseDate.toLocaleString() : '';
+    var markedAt = markedDate.toLocaleString();
+
     return (
       <tr>
         <td>
@@ -35,8 +42,7 @@ var BenchItem = React.createClass({
         </td>
         <td>{item.hostname}</td>
         <td>{item.ip}</td>
-        <td>2015-09-15 07:00:01</td>
-        <td></td>
+        <td>{markedAt}</td>
       </tr>
     );
   }
@@ -220,7 +226,6 @@ var BenchList = React.createClass({
               <td>Hostname</td>
               <td>IP</td>
               <td>Marked Date</td>
-              <td>Release Date</td>
             </tr>
             {benchs}
           </tbody>

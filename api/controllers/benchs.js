@@ -31,6 +31,7 @@ exports.create = function create(req, res) {
     }
     var hostname = body.node.value;
     data.hostname = hostname;
+    data.markedAt = (new Date()).valueOf();
     models.Benchs.create(data, function(err) {
       if (err) {
         errorRes(err);
@@ -63,6 +64,7 @@ exports.del = function del(req, res) {
   }
   console.log(data);
   _.forEach(data, function(bench) {
+    bench.releaseAt = (new Date()).valueOf();
     models.Benchs.move2history(bench, function(err) {
       if (err) {
         errorRes(err);

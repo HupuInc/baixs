@@ -37,6 +37,7 @@ Cron.prototype.start = function() {
           problems.push(data);
           models.Hostvars.get(util.format(perfix + '%s/has_problems', data.value.ip), function(error, body, resp) {
             if (body.node.value === 'no') {
+              data.value.releaseAt = (new Date()).valueOf();
               models.Benchs.move2history(data.value, function(){});
             }
           });
@@ -74,11 +75,12 @@ Cron.prototype.start = function() {
   });
 
   this.syncTimer = setInterval(sync, CHECK_INTERVAL);
-  emitter.on('sync', function(hosts, problems) {
-    _.forEach(hosts, function(host) {
-      var id = models.Benchs.uuid(host);
+  emitter.on('sync', function(benchs, problems) {
+    _.forEach(benchs, function(bench) {
+      var id = models.Benchs.uuid(bench);
       if (!_.find(problems, { 'key': id })) {
-        models.Benchs.create(host, function() {});
+        bench.markedAt = (new Date()).valueOf();
+        models.Benchs.create(bench, function() {});
       }
     });
   });

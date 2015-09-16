@@ -121,9 +121,18 @@ var HostItem = React.createClass({
         <div className="tb-guest-item table-responsive">
         <table className="table table-hover">
           <thead>
-          <tr><th>status</th><th>Hostname</th><th>IP</th><th>Domain</th><th>UUID</th><th>MAC</th></tr>
+            <tr>
+              <th>status</th>
+              <th>Hostname</th>
+              <th>IP</th>
+              <th>Domain</th>
+              <th>UUID</th>
+              <th>MAC</th>
+            </tr>
           </thead>
-          <tbody>{vmList}</tbody>
+          <tbody>
+            {vmList}
+          </tbody>
         </table>
         </div>
       </div>

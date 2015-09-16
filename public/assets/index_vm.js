@@ -21,7 +21,7 @@ var SearchForm = React.createClass({
     return (
       <form action="/api/vm_search" method="get" acceptCharset="utf-8" className="search-form form-remote" onSubmit={this.handleSubmit}>
         <div id="divSearchIcon" className="search-icon fa fa-search" onClick={this.handleShowSearch}> </div>
-          <input className="search-form-input-t search-form-input" type="text" name="q" placeholder="Search" />
+          <input className="search-form-input-t search-form-input" type="text" name="q" placeholder="搜索" />
       </form>
     );
   }
@@ -122,12 +122,12 @@ var HostItem = React.createClass({
         <table className="table table-hover">
           <thead>
             <tr>
-              <th>status</th>
-              <th>Hostname</th>
-              <th>IP</th>
-              <th>Domain</th>
+              <th>状态</th>
+              <th>主机名</th>
+              <th>IP地址</th>
+              <th>KVM域</th>
               <th>UUID</th>
-              <th>MAC</th>
+              <th>MAC地址</th>
             </tr>
           </thead>
           <tbody>

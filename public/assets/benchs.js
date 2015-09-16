@@ -12,7 +12,7 @@ var BenchMarkForm = React.createClass({
   render: function() {
     return (
       <form action="/api/benchs" method="put" acceptCharset="utf-8" className="bench-mark-form form-remote" onSubmit={this.handleSubmit}>
-        <input className="bench-mark-form-input-t bench-mark-form-input" type="text" name="ip" placeholder="Ipaddress" />
+        <input className="bench-mark-form-input-t bench-mark-form-input" type="text" name="ip" placeholder="IP地址" />
       </form>
     );
   }
@@ -113,7 +113,7 @@ var BenchList = React.createClass({
     if (checkedInputs.length > 0) {
       $(".div-row-selected").show();
       $(".div-row-action").hide();
-      $(".span-selected").html($("#inputAllCheck").prop('checked') === true ? checkedInputs.length - 1 + " items selected" : checkedInputs.length + " items selected");
+      $(".span-selected").html($("#inputAllCheck").prop('checked') === true ? checkedInputs.length - 1 + " 项已选中" : checkedInputs.length + " 项已选中");
     }
     else {
       $(".div-row-selected").hide();
@@ -204,7 +204,7 @@ var BenchList = React.createClass({
       <div className="div-data-table table-responsive">
         <div className="div-actionbar">
           <div className="div-row-action">
-            <a className="a-mark-row" onClick={this.handleMarkHost}>MARK</a>
+            <a className="a-mark-row" onClick={this.handleMarkHost}>标记</a>
             <span className="span-badge badge">{length}</span>
             <BenchMarkForm handleSubmit={this.handleSubmit}/>
           </div>
@@ -223,9 +223,9 @@ var BenchList = React.createClass({
                   </label>
                 </div>
               </td>
-              <td>Hostname</td>
-              <td>IP</td>
-              <td>Marked Date</td>
+              <td>主机名</td>
+              <td>IP地址</td>
+              <td>标记时间</td>
             </tr>
             {benchs}
           </tbody>

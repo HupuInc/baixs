@@ -17,7 +17,7 @@ Link.uuid = function uuid(doc) {
 
 function Task(link) {
   var linkId = Link.uuid(link);
-  this.createdAt = (new Date).valueOf();
+  this.createdAt = (new Date()).valueOf();
   this.uuid = util.format(Task.ns, linkId, this.createdAt);
   this.link = link;
 }
@@ -55,8 +55,8 @@ Task.prototype.run = function(done) {
       return done(err);
     }
     else {
-      self.endAt = (new Date).valueOf();
-      self.link.status = resp.statusCode
+      self.endAt = (new Date()).valueOf();
+      self.link.status = resp.statusCode;
       self.link.lastTime = self.endAt;
       // last response time
       var lastResTime = self.endAt - self.createdAt;
@@ -67,7 +67,7 @@ Task.prototype.run = function(done) {
         var avgResTime = self.link.avgResTime;
         self.link.avgResTime = Math.round(
           ((avgResTime * count) + lastResTime) / (count + 1)
-        )
+        );
       }
       else {
         self.link.avgResTime =  lastResTime;
@@ -84,6 +84,7 @@ var Hostvars = {
   perfix: '/hostvars/',
   reg: /^\/hostvars\/(192.168.[2-9]\d.(\d+))/,
   regDomain: /^\/hostvars\/(192.168.[2-9]\d.\d+)\/(.+)/,
+  regHost: /^\/hostvars\/(\d+.\d+.\d+.\d+)/,
 };
 
 Hostvars._argParser = function(options, callback) {
@@ -92,6 +93,27 @@ Hostvars._argParser = function(options, callback) {
   } else {
     return [options, callback];
   }
+};
+
+var Benchs = {
+  ns: 'benchs:%s',
+  his: 'benchs_history:%s',
+};
+
+Benchs.uuid = function uuid(doc) {
+  var keyObj = {
+    hostname: doc.hostname,
+    ip: doc.ip
+  };
+  return util.format(this.ns, shasum(keyObj));
+};
+
+Benchs.hisUuid = function uuid(doc) {
+  var keyObj = {
+    hostname: doc.hostname,
+    ip: doc.ip
+  };
+  return util.format(this.his, shasum(keyObj));
 };
 
 module.exports = function(leveldb, etcd) {
@@ -106,7 +128,7 @@ module.exports = function(leveldb, etcd) {
     if ('function' === typeof done) {
       var links = [];
       stream.on('data', function(aLink) {
-        links.push(aLink)
+        links.push(aLink);
       })
       .on('err', done)
       .on('close', function() {
@@ -126,7 +148,7 @@ module.exports = function(leveldb, etcd) {
   Link.create = Link.update;
 
   Link.del = function(id, done) {
-    leveldb.del(id, done)
+    leveldb.del(id, done);
   };
 
   Task.update = function(doc, done) {
@@ -146,11 +168,17 @@ module.exports = function(leveldb, etcd) {
     etcd.get(key, options, callback);
   };
 
+  Hostvars.set = function(key, value, options, callback) {
+    var opt, ref;
+    ref = this._argParser(options, callback), options = ref[0], callback = ref[1];
+    etcd.set(key, value, options, callback);
+  };
+
   Hostvars.fetchVmmHost = function(done) {
     var vmmHosts = [],
       vmHosts = [],
       count = 0,
-      that = this;
+      self = this;
 
     function fetchGuestHostname() {
       var count = 0;
@@ -159,8 +187,8 @@ module.exports = function(leveldb, etcd) {
         if (host.domain) {
           count += host.domain.length;
           host.domain.forEach(function(guest) {
-            var key = util.format(that.perfix + '%s/hostname', guest.ip);
-            that.get(key, function(error, body, resp) {
+            var key = util.format(self.perfix + '%s/hostname', guest.ip);
+            self.get(key, function(error, body, resp) {
               if (!error) {
                 guest.hostname = body.node.value;
               }
@@ -190,7 +218,7 @@ module.exports = function(leveldb, etcd) {
         result = null;
       var nodes = body.node.nodes;
       _.forEach(nodes, function(value) {
-        result = value.key.match(that.regDomain);
+        result = value.key.match(self.regDomain);
         vmmHost.ip = result[1];
         if (result[2] === 'domain') {
           vmmHost.domain = [];
@@ -214,22 +242,82 @@ module.exports = function(leveldb, etcd) {
     function findVmmHost(error, body, resp) {
       var nodes = body.node.nodes;
       _.forEach(nodes, function(host) {
-        var result = host.key.match(that.reg);
-        if (result && result[2] <= 30)
+        var result = host.key.match(self.reg);
+        if (result && result[2] <= 30) {
           vmmHosts.push(host.key);
+        }
       });
       count = vmmHosts.length;
       vmmHosts.forEach(function(host) {
-        that.get(host, { recursive: true }, domains);
+        self.get(host, { recursive: true }, domains);
       });
     }
 
-    that.get(that.perfix, findVmmHost);
+    self.get(self.perfix, findVmmHost);
+  };
+
+  Hostvars.fetchHasProblems = function(done) {
+    var self = this;
+    function findHasProblems(error, body, resp) {
+      var nodes = body.node.nodes,
+        hosts = [];
+      _.forEach(nodes, function(host) {
+        var props = host.nodes;
+        var key = host.key;
+        if (_.find(props, {'key': key + '/has_problems', 'value': 'yes' })) {
+          hosts.push({
+            hostname: _.result(_.find(props, { 'key': key + '/hostname' }), 'value'),
+            ip: key.match(self.regHost)[1],
+          });
+        }
+      });
+      done(hosts);
+    }
+    self.get(self.perfix, { recursive: true}, findHasProblems);
+  };
+
+  Benchs.create = function(data, done) {
+    var id = this.uuid(data);
+    leveldb.put(id, data, { valueEncoding: 'json'}, done);
+  };
+
+  Benchs.del = function(id, done) {
+    leveldb.del(id, done);
+  };
+
+  Benchs.move2history = function(data, done) {
+    var id = this.hisUuid(data);
+    var key = this.uuid(data);
+    this.del(key, function() {
+      leveldb.put(id, data, { valueEncoding: 'json' }, done);
+    });
+  };
+
+  Benchs.fetchCurrentAll = function(done) {
+    var stream = leveldb.createReadStream({
+      gte: 'benchs:0',
+      lte: 'benchs:z'
+    });
+
+    if ('function' === typeof done) {
+      var problems = [];
+      stream.on('data', function(host) {
+        problems.push(host);
+      })
+      .on('err', done)
+      .on('close', function() {
+        done(null, problems);
+      });
+    }
+    else {
+      return stream;
+    }
   };
 
   return {
     Link: Link,
     Task: Task,
     Hostvars: Hostvars,
+    Benchs: Benchs,
   };
 };

@@ -100,7 +100,7 @@ var HostItem = React.createClass({
           <VmList data={vm} />
         );
       });
-      length = item.domain.length
+      length = item.domain.length;
     }
 
     return (
@@ -148,8 +148,6 @@ var VmList = React.createClass({
   }
 });
 
-
-
 $(document).ready(function() {
   var mainContent;
 
@@ -164,12 +162,21 @@ $(document).ready(function() {
           <SearchForm onSearchSubmit={mainContent.handleSearchSubmit} />,
           $('#divSearchForm')[0]
         );
+        $('.span-header-title').html('VM');
         break;
       case 'urlTab':
         mainContent = React.render(
           <UrlTab />,
           $('.div-main-content')[0]
         );
+        $('.span-header-title').html('URL Monitor');
+        break;
+      case 'benchTab':
+        mainContent = React.render(
+          <BenchList />,
+          $('.div-main-content')[0]
+        );
+        $('.span-header-title').html('Benchs');
         break;
      }
   });

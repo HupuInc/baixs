@@ -39,7 +39,7 @@ exports.create = function create(req, res) {
 
 exports.del = function del(req, res) {
   var models = req.app.get('models');
-  var id = req.swagger.params.id.value
+  var id = req.swagger.params.id.value;
   models.Link.del(id, function(err) {
     if (err) {
       res.status(400).json({

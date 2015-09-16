@@ -1,7 +1,9 @@
 var EventEmitter = require('events').EventEmitter;
+var util = require('util');
+var _ = require('lodash');
 
 // To check all the links every 1 minute
-var CHECK_INTERVAL = process.env.CHECK_INTERVAL || 60 * 1000;
+var CHECK_INTERVAL = process.env.CHECK_INTERVAL || 30 * 1000;
 var emitter = new EventEmitter();
 
 function Cron(db, channel) {
@@ -26,6 +28,29 @@ Cron.prototype.start = function() {
       });
   }
 
+  function sync() {
+    function fetch(hosts) {
+      var problems = [],
+        perfix = models.Hostvars.perfix;
+      models.Benchs.fetchCurrentAll()
+        .on('data', function(data) {
+          problems.push(data);
+          models.Hostvars.get(util.format(perfix + '%s/has_problems', data.value.ip), function(error, body, resp) {
+            if (body.node.value === 'no') {
+              models.Benchs.move2history(data.value, function(){});
+            }
+          });
+        })
+        .on('err', function(err) {
+          console.error(err);
+        })
+        .on('close', function() {
+          emitter.emit('sync', hosts, problems);
+        });
+    }
+    models.Hostvars.fetchHasProblems(fetch);
+  }
+
   this.timer = setInterval(dispatch, CHECK_INTERVAL);
   emitter.on('data', function execute(data) {
     var task = new models.Task(data.value);
@@ -47,6 +72,17 @@ Cron.prototype.start = function() {
       }
     });
   });
+
+  this.syncTimer = setInterval(sync, CHECK_INTERVAL);
+  emitter.on('sync', function(hosts, problems) {
+    _.forEach(hosts, function(host) {
+      var id = models.Benchs.uuid(host);
+      if (!_.find(problems, { 'key': id })) {
+        models.Benchs.create(host, function() {});
+      }
+    });
+  });
+
 };
 
 Cron.prototype.stop = function() {

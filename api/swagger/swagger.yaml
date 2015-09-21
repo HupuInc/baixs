@@ -124,7 +124,7 @@ paths:
           description: Array of benchs left
           schema:
             $ref: "#/definitions/Benchs"
-    
+
 # complex objects have schema definitions
 definitions:
   Link:
@@ -133,6 +133,7 @@ definitions:
     properties:
       url:
         type: string
+        pattern: "https?:\/\/.+"
       proxy:
         type: string
       satus:

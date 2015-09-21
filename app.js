@@ -4,6 +4,7 @@ var WebSocketServer = require('websocket').server;
 
 var Cron = require('./cron');
 var openDb = require('./db');
+var fs = require('fs');
 
 var app = express();
 app.use('/', express.static(__dirname + '/public'));
@@ -13,6 +14,18 @@ app.use('/assets/jquery.min.js', express.static(__dirname + '/node_modules/jquer
 app.use('/assets/bootstrap.min.js', express.static(__dirname + '/node_modules/bootstrap/dist/js/bootstrap.min.js'));
 app.use('/assets/JSXTransformer.js', express.static(__dirname + '/node_modules/react/dist/JSXTransformer.js'));
 app.use('/assets/react.min.js', express.static(__dirname + '/node_modules/react/dist/react.js'));
+
+app.get('/version', function(req, res) {
+  fs.readFile(__dirname + '/version', function(err, data) {
+    if (err) {
+      res.status(400).send(err.toString());
+    } else {
+      res.set('Content-Type', 'text/plain')
+        .status(200)
+        .send(data);
+    }
+  });
+});
 
 var db = openDb(initApp);
 

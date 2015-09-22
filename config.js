@@ -44,15 +44,7 @@ var config = {
   },
 
   production: function() {
-    return _.merge(defaultConfig, {
-      // production environment config
-      database: {
-      },
-      etcd: {
-      },
-      zabbix: {
-      }
-    });
+    return _.merge(defaultConfig, require('./config.production.js'));
   }
 };
 

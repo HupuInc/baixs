@@ -103,11 +103,17 @@ var UrlTab = React.createClass({
   },
   connect: function() {
     var url = 'ws://' + document.URL.substr(7).split('/')[0] + '/channel';
-    var socket = new WebSocket(url, 'baixs-protocol');
-    socket.onmessage = this.onSocketMessage;
+    this.socket = new WebSocket(url, 'baixs-protocol');
+    this.socket.onmessage = this.onSocketMessage;
+  },
+  disconnect: function() {
+    this.socket.close();
   },
   componentDidMount: function() {
     this.connect();
+  },
+  componentWillUnmount: function() {
+    this.disconnect();
   },
   onSocketMessage: function(evt) {
     var data = JSON.parse(evt.data);

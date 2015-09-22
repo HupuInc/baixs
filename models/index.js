@@ -116,7 +116,7 @@ Benchs.hisUuid = function uuid(doc) {
   return util.format(this.his, shasum(keyObj));
 };
 
-module.exports = function(leveldb, etcd) {
+module.exports = function(leveldb, etcd, zapi) {
 
   Link.fetchAll = function(done) {
 
@@ -312,6 +312,35 @@ module.exports = function(leveldb, etcd) {
     else {
       return stream;
     }
+  };
+
+  Benchs.fetchCurrentEvent = function(done) {
+    zapi.call('trigger.get', {
+      'monitored': true,
+      'filter': {'value': 1},
+      'skipDependent': true,
+      'output': 'extend',
+      'selectHosts': [
+        'host',
+        'hostid',
+        'maintenance_status',
+      ],
+      'selectLastEvent':[
+        'eventid',
+        'acknowledged',
+        'objectid',
+        'clock',
+        'ns',
+      ],
+      'expandDescription':
+      true
+    }, done);
+  };
+
+  Benchs.getHostInterface = function(hostid, done) {
+    zapi.call('hostinterface.get', {
+      'hostids': hostid
+    }, done);
   };
 
   return {

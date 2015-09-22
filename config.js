@@ -9,6 +9,11 @@ var defaultConfig = {
     host: 'racktables.hupu.com',
     port: '4001',
   },
+  zabbix: {
+    url: 'http://al.zabbix.hupu.com/api_jsonrpc.php',
+    user: 'admin',
+    password: '',
+  },
 };
 
 var config = {
@@ -17,6 +22,11 @@ var config = {
       database: {
       },
       etcd: {
+      },
+      zabbix: {
+        url: 'http://192.168.8.225/zabbix/api_jsonrpc.php',
+        user: 'Admin',
+        password: 'zabbix',
       },
     });
   },
@@ -28,6 +38,8 @@ var config = {
       },
       etcd: {
       },
+      zabbix: {
+      },
     });
   },
 
@@ -38,6 +50,8 @@ var config = {
       },
       etcd: {
       },
+      zabbix: {
+      }
     });
   }
 };

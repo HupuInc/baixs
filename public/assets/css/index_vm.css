@@ -95,15 +95,15 @@ ul {
 }
 
 .div-header {
-    height: 64px;
+    height: 69px;
     border: none;
-    background-color: #fff;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.22);
+    background-color: #f5f5f5;
 }
 
 .div-header-content {
     height: 64px;
     margin: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
 }
 
 .span-header-title {
@@ -232,11 +232,19 @@ hr {
     line-height: 65px;
 }
 
-.a-mark-row, .span-selected {
+.a-mark-row {
     float: left;
     margin-left: 15px;
     color: #4889F1;
     cursor: pointer;
+    font-size: 18px;
+}
+
+.span-selected, .span-event {
+    float: left;
+    margin-left: 15px;
+    color: #4889F1;
+    cursor: default;
     font-size: 18px;
 }
 
@@ -252,8 +260,8 @@ hr {
     margin-bottom: 30px;
 }
 
-.table-benchs > thead > tr > td, 
-.table-benchs > tbody > tr > td, 
+.table-benchs > thead > tr > td,
+.table-benchs > tbody > tr > td,
 .table-benchs > tfoot > tr > td {
     padding: 14px;
 }
@@ -315,4 +323,44 @@ hr {
     -ms-transition: 0.2s ease;
     transition: 0.2s ease;
     border: none;
+}
+
+.a-wrench {
+    cursor: pointer;
+}
+
+.td-prioriy {
+
+}
+
+.td-prioriy-classified {
+    background-color: #f5f5f5;
+}
+
+.td-prioriy-info {
+    background-color: #D6F6FF;
+}
+
+.td-prioriy-warning {
+    background-color: #FFF6A5;
+}
+
+.td-prioriy-average {
+    background-color: #FFB689;
+}
+
+.td-prioriy-high {
+    background-color: #FF9999;
+}
+
+.td-prioriy-disaster {
+    color: #fff;
+    background-color: #FF3838;
+}
+
+.span-benchs, .span-injury {
+    display: block;
+    line-height: 60px;
+    padding-left: 20px;
+    font-size: 18px;
 }

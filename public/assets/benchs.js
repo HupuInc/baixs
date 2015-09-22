@@ -7,7 +7,10 @@ var BenchMarkForm = React.createClass({
       return prev;
     }, {});
     console.log(bench);
-    this.props.handleSubmit(bench);
+    var answer = window.confirm('确定要换下这台主机(' + bench.ip + ')吗？');
+    if (answer) {
+      this.props.handleSubmit(bench);
+    }
   },
   render: function() {
     return (
@@ -44,6 +47,124 @@ var BenchItem = React.createClass({
         <td>{item.ip}</td>
         <td>{markedAt}</td>
       </tr>
+    );
+  }
+});
+
+var EventItem = React.createClass({
+  handleCheck: function(ev) {
+    ev.preventDefault();
+    var ip = this.props.data.hosts[0].ip;
+    var bench = {
+      ip: ip
+    };
+    var answer = window.confirm('确定要换下这台主机(' + ip + ')吗？');
+    if (answer) {
+      $('#' + this.props.data.triggerid).html('');
+      $('#' + this.props.data.triggerid).prev().html('yes');
+      this.props.handleSubmit(bench);
+    }
+  },
+  render: function() {
+    var item = this.props.data;
+    var markedIcon = '';
+    var hasProblem = item.hosts[0].maintenance_status === '0' ? 'no' : 'yes';
+    var priority = '';
+    var priorityClassName = 'td-prioriy ';
+    if (item.hosts[0].maintenance_status === '0') {
+      markedIcon = <a className="a-wrench" onClick={this.handleCheck}>
+            <i className="fa fa-wrench"> </i>
+          </a>
+    }
+
+    switch(item.priority) {
+      case "0":
+        priority = '未定义';
+        priorityClassName += 'td-prioriy-classified';
+        break;
+      case "1":
+        priority = '信息';
+        priorityClassName += 'td-prioriy-info';
+        break;
+      case "2":
+        priority = '警告';
+        priorityClassName += 'td-prioriy-warning';
+        break;
+      case "3":
+        priority = '普通';
+        priorityClassName += 'td-prioriy-average';
+        break;
+      case "4":
+        priority = '重要';
+        priorityClassName += 'td-prioriy-high';
+        break;
+      case "5":
+        priority = '灾难';
+        priorityClassName += 'td-prioriy-disaster';
+        break;
+    }
+
+    return (
+      <tr>
+        <td className={priorityClassName}>{priority}</td>
+        <td>{item.hosts[0].host}</td>
+        <td>{item.hosts[0].ip}</td>
+        <td>{item.description}</td>
+        <td>{item.age}</td>
+        <td>{hasProblem}</td>
+        <td id={item.triggerid}>{markedIcon}</td>
+      </tr>
+    );
+  }
+});
+
+var AlertList = React.createClass({
+  getInitialState: function() {
+    return {
+      data: [],
+    };
+  },
+  componentDidMount: function() {
+    $.ajax({
+      url: '/api/events',
+      dataType: 'json',
+      method: 'get',
+      success: function(data) {
+        this.setState({
+          data: data
+        });
+      }.bind(this),
+      error: function(error, status) {
+        console.log('Please handle ajax error');
+      }.bind(this)
+    });
+  },
+  render: function() {
+    var item = this.state.data;
+    var self = this;
+    var events = item.map(function(event) {
+      return (
+        <EventItem data={event} handleSubmit={self.props.handleSubmit}/>
+      );
+    });
+    var length = item.length;
+    return (
+      <div className="div-data-table table-responsive">
+        <table className="table-benchs table table-hover">
+            <tbody>
+              <tr>
+                <td>告警级别</td>
+                <td>主机名</td>
+                <td>IP地址</td>
+                <td>详细信息</td>
+                <td>持续时间</td>
+                <td>维护状态</td>
+                <td> </td>
+              </tr>
+              {events}
+            </tbody>
+          </table>
+      </div>
     );
   }
 });
@@ -151,30 +272,38 @@ var BenchList = React.createClass({
   handleReleaseHost: function() {
     var checkeds = this.state.checkeds;
     console.log(checkeds);
-    $.ajax({
-      url: '/api/benchs',
-      dataType: 'json',
-      method: 'delete',
-      contentType: 'application/json',
-      data: JSON.stringify(checkeds),
-      dataType: 'json',
-      success: function(data) {
-        $(".div-row-selected").hide();
-        $(".div-row-action").show();
-        $(".table-benchs input:checked").each(function(index) {
-          $(this).parent().parent().parent().parent().css("background-color", "white");
-          $(this).prop("checked", false);
-        });
+    var hosts = checkeds.reduce(function(prev, current) {
+      prev += current.hostname + '\n';
+      return prev;
+    }, '');
 
-        this.setState({
-          data: data,
-          checkeds: [],
-        });
-      }.bind(this),
-      error: function(error, status) {
-        console.log('Please handle ajax error');
-      }.bind(this)
-    });
+    var answer = window.confirm('确定要让这些主机上场吗？\n' + hosts);
+    if (answer) {
+      $.ajax({
+        url: '/api/benchs',
+        dataType: 'json',
+        method: 'delete',
+        contentType: 'application/json',
+        data: JSON.stringify(checkeds),
+        dataType: 'json',
+        success: function(data) {
+          $(".div-row-selected").hide();
+          $(".div-row-action").show();
+          $(".table-benchs input:checked").each(function(index) {
+            $(this).parent().parent().parent().parent().css("background-color", "white");
+            $(this).prop("checked", false);
+          });
+
+          this.setState({
+            data: data,
+            checkeds: [],
+          });
+        }.bind(this),
+        error: function(error, status) {
+          console.log('Please handle ajax error');
+        }.bind(this)
+      });
+    }
   },
   componentDidMount: function() {
     $.ajax({
@@ -201,36 +330,46 @@ var BenchList = React.createClass({
     });
     var length = item.length;
     return (
-      <div className="div-data-table table-responsive">
-        <div className="div-actionbar">
-          <div className="div-row-action">
-            <a className="a-mark-row" onClick={this.handleMarkHost}>标记</a>
-            <span className="span-badge badge">{length}</span>
-            <BenchMarkForm handleSubmit={this.handleSubmit}/>
-          </div>
-          <div className="div-row-selected">
-            <span className="span-selected"></span>
-            <span className="span-release" onClick={this.handleReleaseHost}><i className="fa fa-trash"> </i></span>
-          </div>
+      <div>
+        <div>
+          <span className="span-injury">伤病名单</span>
         </div>
-        <table className="table-benchs table table-hover">
-          <tbody>
-            <tr>
-              <td>
-                <div className="checkbox">
-                  <label>
-                    <input type="checkbox" id="inputAllCheck" value="all" onClick={this.handleCheck}/>
-                  </label>
-                </div>
-              </td>
-              <td>主机名</td>
-              <td>IP地址</td>
-              <td>标记时间</td>
-            </tr>
-            {benchs}
-          </tbody>
-        </table>
+        <AlertList handleSubmit={this.handleSubmit}/>
+        <div>
+          <span className="span-benchs">板凳席</span>
+        </div>
+        <div className="div-data-table table-responsive">
+          <div className="div-actionbar">
+            <div className="div-row-action">
+              <a className="a-mark-row" onClick={this.handleMarkHost}>标记</a>
+              <span className="span-badge badge">{length}</span>
+              <BenchMarkForm handleSubmit={this.handleSubmit}/>
+            </div>
+            <div className="div-row-selected">
+              <span className="span-selected"></span>
+              <span className="span-release" onClick={this.handleReleaseHost}><i className="fa fa-trash"> </i></span>
+            </div>
+          </div>
+          <table className="table-benchs table table-hover">
+            <tbody>
+              <tr>
+                <td>
+                  <div className="checkbox">
+                    <label>
+                      <input type="checkbox" id="inputAllCheck" value="all" onClick={this.handleCheck}/>
+                    </label>
+                  </div>
+                </td>
+                <td>主机名</td>
+                <td>IP地址</td>
+                <td>标记时间</td>
+              </tr>
+              {benchs}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }
 });
+

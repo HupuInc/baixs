@@ -124,6 +124,15 @@ paths:
           description: Array of benchs left
           schema:
             $ref: "#/definitions/Benchs"
+  /events:
+    x-swagger-router-controller: benchs
+    get:
+      operationId: events
+      responses:
+        default:
+          description: Array of current events in Zabbix
+          schema:
+            type: string
 
 # complex objects have schema definitions
 definitions:

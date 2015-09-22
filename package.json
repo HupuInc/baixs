@@ -28,7 +28,8 @@
     "shasum": "^1.0.1",
     "swagger-express-mw": "0.0.x",
     "websocket": "^1.0.21",
-    "node-etcd": "^4.1.0"
+    "node-etcd": "^4.1.0",
+    "zabbix-node": "^0.1.0"
   },
   "devDependencies": {
     "memdown": "^1.0.0",

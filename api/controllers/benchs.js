@@ -15,9 +15,9 @@ exports.benchs = function benchs(req, res) {
 };
 
 exports.create = function create(req, res) {
-  var models = req.app.get('models'),
-    perfix = models.Hostvars.perfix,
-    data = req.body;
+  var models = req.app.get('models');
+  var perfix = models.Hostvars.perfix;
+  var data = req.body;
 
   function errorRes(err) {
     res.status(400).json({
@@ -52,10 +52,10 @@ exports.create = function create(req, res) {
 };
 
 exports.del = function del(req, res) {
-  var models = req.app.get('models'),
-    perfix = models.Hostvars.perfix,
-    data = req.body;
-    count = data.length;
+  var models = req.app.get('models');
+  var perfix = models.Hostvars.perfix;
+  var data = req.body;
+  var count = data.length;
 
   function errorRes(err) {
     res.status(400).json({
@@ -84,5 +84,52 @@ exports.del = function del(req, res) {
         }
       });
     });
+  });
+};
+
+exports.events = function events(req, res) {
+  var models = req.app.get('models');
+  var result = [];
+
+  function calcAge(value) {
+    var result = '';
+    var minutes = value / 60;
+    var seconds = parseInt(value % 60);
+    var hours = minutes / 60;
+    var days = hours / 24;
+    var months = parseInt(days / 30);
+    minutes = parseInt(minutes % 60);
+    hours = parseInt(hours % 24);
+    days = parseInt(days % 30);
+
+    result += months === 0 ? '' : months + '月 ';
+    result += days === 0 ? '' : days + '天 ';
+    result += hours === 0 ? '' : hours + '小时 ';
+    result += minutes === 0 ? '' : minutes + '分钟 ';
+    result += seconds === 0 ? '' : seconds + '秒';
+    return result;
+  }
+
+  models.Benchs.fetchCurrentEvent(function(error, resp, body) {
+    if (error) {
+      res.status(500).json(error);
+    }
+    else {
+      var count = body.length;
+      _.forEach(body, function(data) {
+        var hostid = data.hosts[0].hostid;
+        data.age = calcAge(new Date().valueOf() / 1000 - data.lastchange);
+        models.Benchs.getHostInterface(hostid, function(error, resp, body) {
+          count--;
+          if (!error) {
+            data.hosts[0].ip = body[0].ip;
+          }
+          result.push(data);
+          if (count <= 0) {
+            res.type('json').json(result);
+          }
+        });
+      });
+    }
   });
 };

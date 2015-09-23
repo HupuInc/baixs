@@ -39,44 +39,55 @@ Task.sched = function(task, done) {
   }, this.interval);
 };
 
+Task.prototype._updateStats = function(ifSuccess, timeSpent, statusCode) {
+  if (ifSuccess) {
+    this.link.status = statusCode;
+    this.link.lastResTime = timeSpent;
+    this.link.count = this.link.count || 0;
+
+    // calculate average response time
+    if (this.link.count > 0) {
+      var avgResTime = this.link.avgResTime;
+      this.link.avgResTime = Math.round(
+        ((avgResTime * count) + timeSpent) / (count + 1)
+      );
+    }
+    else {
+      this.link.avgResTime = timeSpent;
+    }
+
+    this.link.count ++;
+  }
+  else {
+    this.link.status = null;
+  }
+};
+
 Task.prototype.sched = function(done) {
   Task.sched(this, done);
 };
 
 Task.prototype.run = function(done) {
   var self = this;
+
   request.get({
     url: this.link.url,
     proxy: this.link.proxy,
     followRedirect: false,
     timeout: Task.timeout
   }, function(err, resp, body) {
+    self.endAt = (new Date()).valueOf();
+    var timeSpent = self.endAt - self.createdAt;
+    var ifSuccess = true;
+
     if (err) {
-      return done(err);
+      ifSuccess = false;
     }
-    else {
-      self.endAt = (new Date()).valueOf();
-      self.link.status = resp.statusCode;
-      self.link.lastTime = self.endAt;
-      // last response time
-      var lastResTime = self.endAt - self.createdAt;
-      self.link.lastResTime = lastResTime;
-      var count = self.link.count || 0;
-      // average response time
-      if (count > 0) {
-        var avgResTime = self.link.avgResTime;
-        self.link.avgResTime = Math.round(
-          ((avgResTime * count) + lastResTime) / (count + 1)
-        );
-      }
-      else {
-        self.link.avgResTime =  lastResTime;
-      }
-      self.link.count = count + 1;
-      Link.update(self.link,function() {
-        self.save(done);
-      });
-    }
+
+    self._updateStats(ifSuccess, timeSpent, resp && resp.statusCode);
+    Link.update(self.link, function() {
+      self.save(done);
+    });
   });
 };
 

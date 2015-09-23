@@ -10,7 +10,7 @@ var BxsMonitor = React.createClass({
               <th>状态码</th>
               <th>最近一次请求耗时（毫秒）</th>
               <th>平均请求耗时</th>
-              <th>总请求次数</th>
+              <th>成功求次数</th>
           </tr>
       </thead>
       <BxsLinkList {...this.props}/>
@@ -47,9 +47,14 @@ var BxsLink = React.createClass({
     var idx = this.props.index;
     var editable = this.props.editable;
     var statusClass = '';
-    if (link.status >= 400) {
+
+    if (link.status == null) {
       statusClass = 'warning';
     }
+    else if (link.status >= 400) {
+      statusClass = 'warning';
+    }
+
     var editingColumn = idx;
     if (editable) {
       editingColumn = <button className="btn btn-xs btn-danger" type="button" onClick={this.handleClick}>
@@ -61,7 +66,7 @@ var BxsLink = React.createClass({
         <td>{editingColumn}</td>
         <td>{link.url}</td>
         <td>{link.proxy}</td>
-        <td>{link.status}</td>
+        <td>{link.status || 'Error'}</td>
         <td>{link.lastResTime}</td>
         <td>{link.avgResTime}</td>
         <td>{link.count}</td>

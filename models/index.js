@@ -47,6 +47,7 @@ Task.prototype._updateStats = function(ifSuccess, timeSpent, statusCode) {
 
     // calculate average response time
     if (this.link.count > 0) {
+      var count = this.link.count;
       var avgResTime = this.link.avgResTime;
       this.link.avgResTime = Math.round(
         ((avgResTime * count) + timeSpent) / (count + 1)

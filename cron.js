@@ -36,6 +36,9 @@ Cron.prototype.start = function() {
         .on('data', function(data) {
           problems.push(data);
           models.Hostvars.get(util.format(perfix + '%s/has_problems', data.value.ip), function(error, body, resp) {
+            if (!body) {
+              return;
+            }
             if (error || body.node.value === 'no') {
               data.value.releaseAt = (new Date()).valueOf();
               models.Benchs.move2history(data.value, function(){});

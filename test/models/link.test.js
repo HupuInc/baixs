@@ -47,11 +47,12 @@ describe('Model - Link', function() {
   });
 
   describe('Update a link status', function() {
-    var link = _.clone(linkDoc);
+    var doc = _.clone(linkDoc);
+    doc.status = 404;
+    var link = new models.Link(doc);
 
     before(function(done) {
-      link.status = 404;
-      models.Link.update(link, done)
+      link.save(done);
     });
 
     it('should update successfully', function(done) {

@@ -64,14 +64,16 @@ Cron.prototype.start = function() {
         console.trace(err);
       }
       else {
-        // TODO only broadcast updated link, i.e. task.link
-        models.Link.fetchAll(function(err, links) {
-          self.channel.broadcast(
-            JSON.stringify({
-              id: 'link-update',
-              update: links
-            })
-          );
+        models.Link.create(task.link, function() {
+          // TODO only broadcast updated link, i.e. task.link
+          models.Link.fetchAll(function(err, links) {
+            self.channel.broadcast(
+              JSON.stringify({
+                id: 'link-update',
+                update: links
+              })
+            );
+          });
         });
       }
     });

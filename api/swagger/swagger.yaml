@@ -133,6 +133,23 @@ paths:
           description: Array of current events in Zabbix
           schema:
             type: string
+  /history:
+    x-swagger-router-controller: benchs
+    get:
+      description: Return all history of benchs during several days
+      operationId: history
+      parameters:
+        - name: start
+          in: query
+          type: string
+        - name: end
+          in: query
+          type: string
+      responses:
+        default:
+          description: Array of history
+          schema:
+            $ref: "#/definitions/Benchs"
 
 # complex objects have schema definitions
 definitions:
@@ -193,4 +210,8 @@ definitions:
       ip:
         type: string
       hostname:
+        type: string
+      markedAt:
+        type: string
+      releaseAt:
         type: string

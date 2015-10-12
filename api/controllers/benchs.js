@@ -133,3 +133,17 @@ exports.events = function events(req, res) {
     }
   });
 };
+
+exports.history = function history(req, res) {
+  var start = req.query.start;
+  var end = req.query.end;
+
+  function sender(error, data) {
+    res.type('json').send(JSON.stringify(data));
+  }
+
+  var Benchs = req.app.get('models').Benchs;
+  Benchs.fetchHistory(start, end, function(error, data) {
+    res.type('json').send(JSON.stringify(data));
+  });
+};

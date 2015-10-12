@@ -109,7 +109,7 @@ Hostvars._argParser = function(options, callback) {
 
 var Benchs = {
   ns: 'benchs:%s',
-  his: 'benchs_history:%s',
+  his: 'benchs_history:%s:%s',
 };
 
 Benchs.uuid = function uuid(doc) {
@@ -120,12 +120,19 @@ Benchs.uuid = function uuid(doc) {
   return util.format(this.ns, shasum(keyObj));
 };
 
-Benchs.hisUuid = function uuid(doc) {
+Benchs.hisUuid = function hisUuid(doc) {
   var keyObj = {
     hostname: doc.hostname,
     ip: doc.ip
   };
-  return util.format(this.his, shasum(keyObj));
+  var date = this.formatDate(new Date());
+  return util.format(this.his, date, shasum(keyObj));
+};
+
+Benchs.formatDate = function formatDate(date) {
+  var m = date.getMonth() + 1;
+  var d = date.getDate();
+  return util.format('%s%s%s' , date.getFullYear(), (m < 10 ? '0':'') + m, (d < 10 ? '0':'') + d);
 };
 
 module.exports = function(leveldb, etcd, zapi) {
@@ -353,6 +360,27 @@ module.exports = function(leveldb, etcd, zapi) {
     zapi.call('hostinterface.get', {
       'hostids': hostid
     }, done);
+  };
+
+  Benchs.fetchHistory = function(start, end, done) {
+    var stream = leveldb.createReadStream({
+      gte: 'benchs_history:' + start + ':0',
+      lte: 'benchs_history:' + end + ':z',
+    });
+
+    if ('function' === typeof done) {
+      var historys = [];
+      stream.on('data', function(host) {
+        historys.push(host);
+      })
+      .on('err', done)
+      .on('close', function() {
+        done(null, historys);
+      });
+    }
+    else {
+      return stream;
+    }
   };
 
   return {

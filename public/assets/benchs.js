@@ -31,8 +31,8 @@ var BenchItem = React.createClass({
     var releaseDate = new Date();
     markedDate.setTime(item.markedAt);
     releaseDate.setTime(item.releaseAt);
-    var releaseAt = item.releaseAt ? releaseDate.toLocaleString() : '';
-    var markedAt = markedDate.toLocaleString();
+    var releaseAt = item.releaseAt ? formatDateTime(releaseDate) : '';
+    var markedAt = formatDateTime(markedDate);
 
     return (
       <tr>

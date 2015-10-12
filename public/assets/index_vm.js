@@ -187,6 +187,13 @@ $(document).ready(function() {
         );
         $('.span-header-title').html('Benchs');
         break;
+      case 'benchHisTab':
+        mainContent = React.render(
+          <BenchHis />,
+          $('.div-main-content')[0]
+        );
+        $('.span-header-title').html('Benchs History');
+        break;
      }
   });
 

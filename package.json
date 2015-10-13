@@ -12,7 +12,7 @@
     "url": "https://github.com/HupuInc/baixs.git"
   },
   "scripts": {
-    "start": "node app.js",
+    "start": "node server.js",
     "test": "NODE_ENV=test mocha -b --reporter dot 'test/**/*.test.js'",
     "deploy": "rsync -rlptD --exclude-from ./.npmignore . $DEPLOY_HOST:/data/www-data/baixs"
   },

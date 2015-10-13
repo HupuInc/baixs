@@ -43,4 +43,4 @@ module.exports = function(done) {
       done(app);
     });
   });
-}; // for testing
+};

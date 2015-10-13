@@ -2,9 +2,17 @@ var should = require('should');
 var request = require('supertest');
 var _ = require('lodash');
 
-var server = require('../../../app');
+var init = require('../../../app');
+var server;
 
 describe('controllers', function() {
+  before(function(done) {
+    init(function(instance) {
+      server = instance;
+      done();
+    });
+  });
+
   describe('Links API', function() {
     describe('POST /links', function() {
       it('should create a new Link', function(done) {

@@ -4,22 +4,26 @@ exports.getLinks = function getLinks(req, res) {
   var results = ['url\t\tproxy\t\tlastResTime\tavgResTime\tcount'];
   var tmpl = _.template('<%=url%>\t<%=proxy%>\t<%=lastResTime%>\t<%=avgResTime%>\t<%=count%>');
 
-  req.app.get('models').Link.fetchAll()
-    .on('data', function(aLink) {
-      results.push(
-        tmpl(
-          _.defaults(
-            aLink.value, { proxy: '', lastResTime: '', avgResTime: '', count: 0 }
-          )
-        )
-      );
-    })
-    .on('end', function() {
-      res.type('.txt').send(results.join('\n') + '\n');
-    })
-    .on('err', function(err) {
+  req.app.get('models').Link.fetchAll(function(err, links) {
+    if(err) {
       console.error(err);
-    });
+    }
+    else {
+      var defaultLink = {
+        proxy: '',
+        lastResTime: '',
+        avgResTime: '',
+        count: 0
+      };
+
+      links.forEach(function(aLink) {
+        results.push(
+          tmpl(_.defaults(aLink.value, defaultLink))
+        );
+      });
+      res.type('.txt').send(results.join('\n') + '\n');
+    }
+  });
 };
 
 exports.create = function create(req, res) {
@@ -30,10 +34,11 @@ exports.create = function create(req, res) {
         message: err.toString()
       });
     }
-
-    models.Link.fetchAll(function(err, links) {
-      res.status(201).json(links);
-    });
+    else {
+      models.Link.fetchAll(function(err, links) {
+        res.status(201).json(links);
+      });
+    }
   });
 };
 

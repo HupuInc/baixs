@@ -10,8 +10,8 @@ var defaultConfig = {
     port: '4001',
   },
   zabbix: {
-    url: 'http://al.zabbix.hupu.com/api_jsonrpc.php',
-    user: 'admin',
+    url: '',
+    user: '',
     password: '',
   },
 };
@@ -37,6 +37,8 @@ var config = {
         backend: 'memdown'
       },
       etcd: {
+        host: 'localhost',
+        port: 4001
       },
       zabbix: {
       },

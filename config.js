@@ -6,7 +6,7 @@ var defaultConfig = {
     file: __dirname + '/data/baixs.db'
   },
   etcd: {
-    host: 'racktables.hupu.com',
+    host: 'localhost',
     port: '4001',
   },
   zabbix: {
@@ -19,10 +19,6 @@ var defaultConfig = {
 var config = {
   development: function() {
     return _.merge(defaultConfig, {
-      database: {
-      },
-      etcd: {
-      },
       zabbix: {
         url: 'http://192.168.8.225/zabbix/api_jsonrpc.php',
         user: 'Admin',
@@ -39,8 +35,6 @@ var config = {
       etcd: {
         host: 'localhost',
         port: 4001
-      },
-      zabbix: {
       },
     });
   },

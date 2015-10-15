@@ -83,25 +83,6 @@ exports.events = function events(req, res) {
   var models = req.app.get('models');
   var result = [];
 
-  function calcAge(value) {
-    var result = '';
-    var minutes = value / 60;
-    var seconds = parseInt(value % 60);
-    var hours = minutes / 60;
-    var days = hours / 24;
-    var months = parseInt(days / 30);
-    minutes = parseInt(minutes % 60);
-    hours = parseInt(hours % 24);
-    days = parseInt(days % 30);
-
-    result += months === 0 ? '' : months + '月 ';
-    result += days === 0 ? '' : days + '天 ';
-    result += hours === 0 ? '' : hours + '小时 ';
-    result += minutes === 0 ? '' : minutes + '分钟 ';
-    result += seconds === 0 ? '' : seconds + '秒';
-    return result;
-  }
-
   models.Benchs.fetchCurrentEvent(function(error, resp, body) {
     if (error) {
       return res.status(400).json(error);
@@ -110,7 +91,6 @@ exports.events = function events(req, res) {
       var count = body.length;
       _.forEach(body, function(data) {
         var hostid = data.hosts[0].hostid;
-        data.age = calcAge(new Date().valueOf() / 1000 - data.lastchange);
         models.Benchs.getHostInterface(hostid, function(error, resp, body) {
           if (error) {
             return res.status(400).json(error);
@@ -130,8 +110,8 @@ exports.events = function events(req, res) {
 };
 
 exports.history = function history(req, res) {
-  var start = req.query.start + "000000";
-  var end = req.query.end + "235959";
+  var start = req.query.start;
+  var end = req.query.end;
 
   var Benchs = req.app.get('models').Benchs;
   Benchs.fetchHistory(start, end, function(error, data) {

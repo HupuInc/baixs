@@ -104,13 +104,15 @@ var EventItem = React.createClass({
         break;
     }
 
+    var age = calcAge(new Date().valueOf() / 1000 - item.lastchange);
+
     return (
       <tr>
         <td className={priorityClassName}>{priority}</td>
         <td>{item.hosts[0].host}</td>
         <td>{item.hosts[0].ip}</td>
         <td>{item.description}</td>
-        <td>{item.age}</td>
+        <td>{age}</td>
         <td>{hasProblem}</td>
         <td id={item.triggerid}>{markedIcon}</td>
       </tr>

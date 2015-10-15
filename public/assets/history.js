@@ -22,7 +22,17 @@ var BenchHisList = React.createClass({
   handleSubmit: function(e) {
     e.preventDefault();
     var form = $(e.target);
-    var data = form.serialize();
+    var data = "";
+    var dataArray = form.serializeArray();
+    dataArray.forEach(function(d) {
+      var timestamp = new Date(d.value).valueOf() / 1000;
+      if (d.name === 'end') {
+        timestamp += 86400;
+      }
+
+      data += d.name + "=" + timestamp + "&"
+    })
+    data = data.substring(0, data.length - 1);
     var action = form.attr('action');
     $.ajax({
       url: action + '?' + data,
@@ -51,7 +61,7 @@ var BenchHisList = React.createClass({
     $("#hisStartDate").val(strStartDate);
     $("#hisEndDate").val(strEndDate);
     $.ajax({
-      url: '/api/history?start=' + strStartDate + '&end=' + strEndDate,
+      url: '/api/history?start=' + parseInt(defaultStartDate.valueOf() / 1000) + "" + '&end=' + parseInt(defaultEndDate.valueOf() / 1000) + "",
       method: 'get',
       dataType: 'json',
       success: function(data) {
@@ -84,7 +94,7 @@ var BenchHisList = React.createClass({
                 <input type="text" id="hisEndDate" className="form-control" name="end" />
               </div>
               <input type="submit" className="btn btn-primary" value="查询" />
-              <span>(注:时间格式为yyyymmdd)</span>
+              <span>(注:时间格式为yyyy-mm-dd)</span>
             </form>
           </div>
           <table className="table-benchs table table-hover">

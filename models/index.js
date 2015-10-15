@@ -52,8 +52,12 @@ module.exports = function(leveldb, etcd, zapi) {
   Benchs.move2history = function(data, done) {
     var id = this.hisUuid(data);
     var key = this.uuid(data);
-    this.del(key, function() {
-      leveldb.put(id, data, { valueEncoding: 'json' }, done);
+    var self = this;
+    leveldb.get(key, function(err, value) {
+      self.del(key, function() {
+        value = _.merge(value, data);
+        leveldb.put(id, value, { valueEncoding: 'json' }, done);
+      });
     });
   };
 
@@ -118,7 +122,7 @@ module.exports = function(leveldb, etcd, zapi) {
       stream.on('data', function(host) {
         historys.push(host);
       })
-      .on('err', done)
+      .on('error', done)
       .on('close', function() {
         done(null, historys);
       });

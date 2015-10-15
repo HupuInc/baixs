@@ -65,23 +65,30 @@ exports.del = function del(req, res) {
   console.log(data);
   _.forEach(data, function(bench) {
     bench.releaseAt = (new Date()).valueOf();
-    models.Benchs.move2history(bench, function(err) {
-      if (err) {
-        errorRes(err);
+    models.Hostvars.get(util.format(perfix + '%s/hostname', bench.ip), function(error, body, resp) {
+      if (error) {
+        errorRes(error);
       }
-      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.ip), 'no', function(error, body, resp) {
-        if (error) {
-          errorRes(error);
+      var hostname = body.node.value;
+      bench.hostname = hostname;
+      models.Benchs.move2history(bench, function(err) {
+        if (err) {
+          errorRes(err);
         }
-        count--;
-        if (count === 0) {
-          models.Benchs.fetchCurrentAll(function(err, benchs) {
-            if (err) {
-              errorRes(err);
-            }
-            res.status(201).json(benchs);
-          });
-        }
+        models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.ip), 'no', function(error, body, resp) {
+          if (error) {
+            errorRes(error);
+          }
+          count--;
+          if (count === 0) {
+            models.Benchs.fetchCurrentAll(function(err, benchs) {
+              if (err) {
+                errorRes(err);
+              }
+              res.status(201).json(benchs);
+            });
+          }
+        });
       });
     });
   });

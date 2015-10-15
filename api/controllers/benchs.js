@@ -27,22 +27,22 @@ exports.create = function create(req, res) {
 
   models.Hostvars.get(util.format(perfix + '%s/hostname', data.ip), function(error, body, resp) {
     if (error) {
-      errorRes(error);
+      return errorRes(error);
     }
     var hostname = body.node.value;
     data.hostname = hostname;
     data.markedAt = (new Date()).valueOf();
     models.Benchs.create(data, function(err) {
       if (err) {
-        errorRes(err);
+        return errorRes(err);
       }
       models.Hostvars.set(util.format(perfix + '%s/has_problems', data.ip), 'yes', function(error, body, resp) {
         if (error) {
-          errorRes(error);
+          return errorRes(error);
         }
         models.Benchs.fetchCurrentAll(function(err, benchs) {
           if (err) {
-            errorRes(err);
+            return errorRes(err);
           }
           res.status(201).json(benchs);
         });
@@ -67,23 +67,23 @@ exports.del = function del(req, res) {
     bench.releaseAt = (new Date()).valueOf();
     models.Hostvars.get(util.format(perfix + '%s/hostname', bench.ip), function(error, body, resp) {
       if (error) {
-        errorRes(error);
+        return errorRes(error);
       }
       var hostname = body.node.value;
       bench.hostname = hostname;
       models.Benchs.move2history(bench, function(err) {
         if (err) {
-          errorRes(err);
+          return errorRes(err);
         }
         models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.ip), 'no', function(error, body, resp) {
           if (error) {
-            errorRes(error);
+            return errorRes(error);
           }
           count--;
           if (count === 0) {
             models.Benchs.fetchCurrentAll(function(err, benchs) {
               if (err) {
-                errorRes(err);
+                return errorRes(err);
               }
               res.status(201).json(benchs);
             });
@@ -119,7 +119,7 @@ exports.events = function events(req, res) {
 
   models.Benchs.fetchCurrentEvent(function(error, resp, body) {
     if (error) {
-      res.status(500).json(error);
+      return res.status(400).json(error);
     }
     else {
       var count = body.length;
@@ -127,6 +127,9 @@ exports.events = function events(req, res) {
         var hostid = data.hosts[0].hostid;
         data.age = calcAge(new Date().valueOf() / 1000 - data.lastchange);
         models.Benchs.getHostInterface(hostid, function(error, resp, body) {
+          if (error) {
+            return res.status(400).json(error);
+          }
           count--;
           if (!error) {
             data.hosts[0].ip = body[0].ip;

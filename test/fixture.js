@@ -203,9 +203,33 @@ var hostTwo = {
   "createdIndex": 390
 };
 
+var benches = [{
+  "key": "benchs:7a870ca1c0883eb0e41d4045d9c65a7e2bca7658",
+  "value": {
+    "hostname": "ready-to-use.vm",
+    "ip": "192.168.9.173",
+    "markedAt": 1444887238019
+  }
+}, {
+  "key": "benchs:a02d2f73471aafbe5c81366fc2e98d04ced89c4f",
+  "value": {
+    "hostname": "xx-5-6-switch-a-50p-v1",
+    "ip": "192.168.10.4",
+    "markedAt": 1443601370196
+  }
+}, {
+  "key": "benchs:e9847359493da26d4ba98048cc5a76f5a4d8549e",
+  "value": {
+    "hostname": "proxy-srv-2-32-prd",
+    "ip": "10.145.7.250",
+    "markedAt": 1444887238018
+  }
+}];
+
 exports.vmmOne = vmmOne;
 exports.vmHostOne = vmHostOne;
 exports.vmHostTwo = vmHostTwo;
 exports.vmHostThree = vmHostThree;
 exports.hostOne = hostOne;
 exports.hostTwo = hostTwo;
+exports.benches = benches;

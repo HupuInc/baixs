@@ -13,7 +13,6 @@ var Benchs = {
 
 Benchs.uuid = function uuid(doc) {
   var keyObj = {
-    hostname: doc.hostname,
     ip: doc.ip
   };
   return util.format(this.ns, shasum(keyObj));
@@ -21,17 +20,24 @@ Benchs.uuid = function uuid(doc) {
 
 Benchs.hisUuid = function hisUuid(doc) {
   var keyObj = {
-    hostname: doc.hostname,
     ip: doc.ip
   };
-  var date = this.formatDate(new Date());
-  return util.format(this.his, date, shasum(keyObj));
+  var datetime = this.formatDateTime(new Date());
+  return util.format(this.his, datetime, shasum(keyObj));
 };
 
-Benchs.formatDate = function formatDate(date) {
+Benchs.formatDateTime = function formatDateTime(date) {
   var m = date.getMonth() + 1;
   var d = date.getDate();
-  return util.format('%s%s%s' , date.getFullYear(), (m < 10 ? '0':'') + m, (d < 10 ? '0':'') + d);
+  var hh = date.getHours();
+  var mm = date.getMinutes();
+  var ss = date.getSeconds();
+  m = (m < 10 ? '0':'') + m;
+  d = (d < 10 ? '0':'') + d;
+  hh = (hh < 10 ? '0':'') + hh;
+  mm = (mm < 10 ? '0':'') + mm;
+  ss = (ss < 10 ? '0':'') + ss;
+  return util.format('%s%s%s%s%s%s' , date.getFullYear(), m, d, hh, mm, ss);
 };
 
 module.exports = function(leveldb, etcd, zapi) {

@@ -1,17 +1,15 @@
 var _ = require('lodash');
 var util = require('util');
 
-function fetchCurrentAll(req, res, done) {
-  var Benchs = req.app.get('models').Benchs;
+function fetchCurrentAll(Benchs, done) {
   Benchs.fetchCurrentAll(done);
 }
 
 exports.benchs = function benchs(req, res) {
-  function sender(error, data) {
-    res.type('json').send(JSON.stringify(data));
-  }
-
-  fetchCurrentAll(req, res, sender);
+  var Benchs = req.app.get('models').Benchs;
+  fetchCurrentAll(Benchs, function(error, data) {
+    res.json(data);
+  });
 };
 
 exports.create = function create(req, res) {
@@ -40,11 +38,8 @@ exports.create = function create(req, res) {
         if (error) {
           return errorRes(error);
         }
-        models.Benchs.fetchCurrentAll(function(err, benchs) {
-          if (err) {
-            return errorRes(err);
-          }
-          res.status(201).json(benchs);
+        fetchCurrentAll(models.Benchs, function(err, data) {
+          res.status(201).json(data);
         });
       });
     });
@@ -65,30 +60,20 @@ exports.del = function del(req, res) {
   console.log(data);
   _.forEach(data, function(bench) {
     bench.releaseAt = (new Date()).valueOf();
-    models.Hostvars.get(util.format(perfix + '%s/hostname', bench.ip), function(error, body, resp) {
-      if (error) {
-        return errorRes(error);
+    models.Benchs.move2history(bench, function(err) {
+      if (err) {
+        return errorRes(err);
       }
-      var hostname = body.node.value;
-      bench.hostname = hostname;
-      models.Benchs.move2history(bench, function(err) {
-        if (err) {
-          return errorRes(err);
+      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.ip), 'no', function(error, body, resp) {
+        if (error) {
+          return errorRes(error);
         }
-        models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.ip), 'no', function(error, body, resp) {
-          if (error) {
-            return errorRes(error);
-          }
-          count--;
-          if (count === 0) {
-            models.Benchs.fetchCurrentAll(function(err, benchs) {
-              if (err) {
-                return errorRes(err);
-              }
-              res.status(201).json(benchs);
-            });
-          }
-        });
+        count--;
+        if (count === 0) {
+          fetchCurrentAll(models.Benchs, function(err, data) {
+            res.json(data);
+          });
+        }
       });
     });
   });
@@ -136,7 +121,7 @@ exports.events = function events(req, res) {
           }
           result.push(data);
           if (count <= 0) {
-            res.type('json').json(result);
+            res.json(result);
           }
         });
       });
@@ -145,15 +130,11 @@ exports.events = function events(req, res) {
 };
 
 exports.history = function history(req, res) {
-  var start = req.query.start;
-  var end = req.query.end;
-
-  function sender(error, data) {
-    res.type('json').send(JSON.stringify(data));
-  }
+  var start = req.query.start + "000000";
+  var end = req.query.end + "235959";
 
   var Benchs = req.app.get('models').Benchs;
   Benchs.fetchHistory(start, end, function(error, data) {
-    res.type('json').send(JSON.stringify(data));
+    res.json(data);
   });
 };

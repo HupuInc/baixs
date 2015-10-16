@@ -89,6 +89,9 @@ exports.events = function events(req, res) {
     }
     else {
       var count = body.length;
+      if (count === 0) {
+        return res.json(result);
+      }
       _.forEach(body, function(data) {
         var hostid = data.hosts[0].hostid;
         models.Benchs.getHostInterface(hostid, function(error, resp, body) {
@@ -101,7 +104,7 @@ exports.events = function events(req, res) {
           }
           result.push(data);
           if (count <= 0) {
-            res.json(result);
+            return res.json(result);
           }
         });
       });

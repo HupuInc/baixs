@@ -29,7 +29,7 @@ describe('Model - Benchs', function() {
       Benchs.fetchCurrentAll(function(err, hosts) {
         should.not.exist(err);
         hosts.should.be.an.Array;
-        hosts.should.have.lengthOf(3);
+        hosts.should.have.lengthOf(4);
         done();
       });
     });
@@ -64,6 +64,32 @@ describe('Model - Benchs', function() {
         should.not.exist(err);
         list.should.be.an.Array;
         list.should.have.lengthOf(1);
+        done();
+      });
+    });
+  });
+
+  describe('Mark duplication of host into benches', function() {
+    it('should return a list of hosts which were in the benches', function(done) {
+      var host = fixture.hostThree;
+      Benchs.create(host, function(err){
+        should.not.exist(err);
+        Benchs.fetchCurrentAll(function(err, hosts) {
+          should.not.exist(err);
+          hosts.should.be.an.Array;
+          hosts.should.have.lengthOf(3);
+          done();
+        });
+      });
+    });
+
+    it('should return a list of hosts which were in the historys', function(done) {
+      var start = '0';
+      var end = 'z';
+      Benchs.fetchHistory(start, end, function(err, historys) {
+        should.not.exist(err);
+        historys.should.be.an.Array;
+        historys.should.have.lengthOf(2);
         done();
       });
     });

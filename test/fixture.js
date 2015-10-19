@@ -224,7 +224,20 @@ var benches = [{
     "ip": "10.145.7.250",
     "markedAt": 1444887238018
   }
+}, {
+  "key": "benchs:64b2b1f479eb2b72f40d01b1f0107a3da54432a2",
+  "value": {
+    "hostname": "baixs-web-1-1-prd",
+    "ip": "192.168.1.1",
+    "markedAt": 14452452785394
+  }
 }];
+
+var hostThree = {
+  "hostname": "baixs-web-1-1-prd",
+  "ip": "192.168.1.1",
+  "markedAt": 14452452785394
+};
 
 exports.vmmOne = vmmOne;
 exports.vmHostOne = vmHostOne;
@@ -233,3 +246,4 @@ exports.vmHostThree = vmHostThree;
 exports.hostOne = hostOne;
 exports.hostTwo = hostTwo;
 exports.benches = benches;
+exports.hostThree = hostThree;

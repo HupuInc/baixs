@@ -39,8 +39,12 @@ Benchs.move2history = function(data, done) {
   var id = this.hisUuid(data);
   var key = this.uuid(data);
   Benchs.leveldb.get(key, function(err, value) {
+    if (err || !value) {
+      return done(null);
+    }
     Benchs.del(key, function() {
       value = _.merge(value, data);
+      console.log(value);
       Benchs.leveldb.put(id, value, {
         valueEncoding: 'json'
       }, done);
@@ -109,10 +113,10 @@ Benchs.fetchHistory = function(start, end, done) {
     stream.on('data', function(host) {
       historys.push(host);
     })
-      .on('err', done)
-      .on('close', function() {
-        done(null, historys);
-      });
+    .on('error', done)
+    .on('close', function() {
+      done(null, historys);
+    });
   } else {
     return stream;
   }

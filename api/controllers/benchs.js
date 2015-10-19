@@ -16,6 +16,7 @@ exports.create = function create(req, res) {
   var models = req.app.get('models');
   var perfix = models.Hostvars.perfix;
   var data = req.body;
+  console.log(data);
 
   function errorRes(err) {
     res.status(400).json({
@@ -118,6 +119,9 @@ exports.history = function history(req, res) {
 
   var Benchs = req.app.get('models').Benchs;
   Benchs.fetchHistory(start, end, function(error, data) {
+    if (error) {
+      return res.status(400).json(error);
+    }
     res.json(data);
   });
 };

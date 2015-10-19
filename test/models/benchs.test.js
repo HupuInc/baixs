@@ -57,6 +57,15 @@ describe('Model - Benchs', function() {
   });
 
   describe('Fetch all the historical benchs', function() {
-    it('should return a list of hosts which were in the benchs');
+    it('should return a list of hosts which were in the benchs', function(done) {
+      var now = parseInt((new Date()).valueOf() / 1000);
+      var start = now - 60; // a minute ago
+      Benchs.fetchHistory(start, now, function(err, list) {
+        should.not.exist(err);
+        list.should.be.an.Array;
+        list.should.have.lengthOf(1);
+        done();
+      });
+    });
   });
 });

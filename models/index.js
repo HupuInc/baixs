@@ -1,17 +1,16 @@
-var Link = require('./link');
-var Hostvars = require('./hostvars');
-var Benchs = require('./benchs');
+var models = {};
+var modelsToLoad = ['Link', 'Hostvars', 'Benchs'];
 
 module.exports = function(leveldb, etcd, zapi) {
 
-  Link.leveldb = leveldb;
-  Hostvars.etcd = etcd;
-  Benchs.leveldb = leveldb;
-  Benchs.zapi = zapi;
+  modelsToLoad.forEach(function(className) {
+    var TheClass = require(__dirname + '/' + className.toLowerCase());
+    TheClass.leveldb = leveldb;
+    TheClass.etcd = etcd;
+    TheClass.zapi = zapi;
 
-  return {
-    Link: Link,
-    Hostvars: Hostvars,
-    Benchs: Benchs,
-  };
+    models[className] = TheClass;
+  });
+
+  return models;
 };

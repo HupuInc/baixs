@@ -1,12 +1,22 @@
+var EventEmitter = require('events').EventEmitter;
+var request = require('request');
 var shasum = require('shasum');
 var util = require('util');
 
 var NS = 'link:%s';
+// default to 20 seconds
+var TIMEOUT = 20 * 1000;
+// default to run task every 1 minute
+var INTERVAL = 60 * 1000;
 
 function Link(doc) {
+  EventEmitter.call(this);
+
   this.doc = doc
   this.id = Link.uuid(doc);
 }
+
+util.inherits(Link, EventEmitter);
 
 Link.uuid = function(doc) {
   var keyObj = {
@@ -19,6 +29,10 @@ Link.uuid = function(doc) {
 Link.create = function(doc, done) {
   var link = new Link(doc);
   link.save(done);
+};
+
+Link.fetch = function(key, done) {
+  Link.leveldb.get(key, done);
 };
 
 Link.fetchAll = function(done) {
@@ -48,6 +62,64 @@ Link.prototype.save = function(done) {
 
 Link.prototype.del = function(done) {
   Link.leveldb.del(this.id, done);
+};
+
+Link.prototype.start = function() {
+  // create a new Task
+  setTimeout(this._execute.bind(this), INTERVAL);
+};
+
+Link.prototype._updateStats = function(timeSpent, statusCode) {
+  this.doc.status = statusCode;
+  this.doc.lastResTime = timeSpent;
+  this.doc.count = this.doc.count || 0;
+
+  // calculate average response time
+  if (this.doc.count > 0) {
+    var count = this.doc.count;
+    var avgResTime = this.doc.avgResTime;
+    this.doc.avgResTime = Math.round(
+      ((avgResTime * count) + timeSpent) / (count + 1)
+    );
+  }
+  else {
+    this.doc.avgResTime = timeSpent;
+  }
+
+  this.doc.count ++;
+};
+
+Link.prototype._execute = function() {
+  var self = this;
+  var createdAt = (new Date()).valueOf();
+  request.get({
+    url: this.doc.url,
+    proxy: this.doc.proxy,
+    followRedirect: false,
+    timeout: TIMEOUT,
+  }, function(err, resp) {
+    var endAt = (new Date()).valueOf();
+    var timeSpent = endAt - createdAt;
+    var ifSuccess = true;
+
+    if (err) {
+      ifSuccess = false;
+    }
+
+    if (ifSuccess) {
+      self._updateStats(timeSpent, resp && resp.statusCode);
+    }
+    else {
+      // handle timeout
+      if (err.code === 'ETIMEDOUT') {
+      }
+      self.doc.status = null;
+    }
+
+    self.save(function() {
+      self.emit('end');
+    });
+  });
 };
 
 module.exports = Link;

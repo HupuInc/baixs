@@ -1,4 +1,6 @@
-require('should');
+var nock = require('nock');
+var should = require('should');
+var sinon = require('sinon');
 var _ = require('lodash');
 var bootstrap = require('../');
 
@@ -64,6 +66,80 @@ describe('Model - Link', function() {
           doc.status.should.eql(404);
           done();
         }
+      });
+    });
+  });
+
+  describe('Monitor a link', function() {
+
+    var doc = {
+      url: 'http://www.baidu.com',
+      proxy: ''
+    };
+    var link = new Link(doc);
+
+    before(function(done) {
+      this.clock = sinon.useFakeTimers();
+      link.save(done);
+    });
+
+    after(function() {
+      this.clock.restore();
+    });
+
+    describe('When respond with success',function() {
+      before(function() {
+        nock.disableNetConnect();
+        this.scope = nock('http://www.baidu.com/')
+          .get('/').reply(201, 'OK');
+      });
+
+      after(function() {
+        this.scope.done();
+      });
+
+      it('should update stats of the link', function(done) {
+        link.once('end', function() {
+          Link.fetch(link.id, function(err, theLink) {
+            should.not.exist(err);
+            theLink.status.should.eql(201);
+            theLink.count.should.eql(1);
+            theLink.lastResTime.should.above(0);
+            theLink.avgResTime.should.above(0);
+          });
+
+          done();
+        });
+        link.start();
+        this.clock.tick(60 * 1000);
+      });
+    });
+
+    describe('When respond with timeout',function() {
+
+      before(function() {
+        nock.disableNetConnect();
+        this.scope = nock('http://www.baidu.com/')
+                            .get('/')
+                            .socketDelay(60000)
+                            .reply(500, 'OK');
+      });
+
+      after(function() {
+        this.scope.done();
+      });
+
+      it('should return a null status', function(done) {
+        link.once('end', function() {
+          Link.fetch(link.id, function(err, theLink) {
+            should.not.exist(err);
+            should(theLink.status).be.null;
+
+            done();
+          });
+        });
+        link.start();
+        this.clock.tick(60 * 1000);
       });
     });
   });

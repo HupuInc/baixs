@@ -26,9 +26,21 @@ Benchs.hisUuid = function hisUuid(doc) {
 
 Benchs.create = function(data, done) {
   var id = this.uuid(data);
-  Benchs.leveldb.put(id, data, {
-    valueEncoding: 'json'
-  }, done);
+  Benchs.leveldb.get(id, function(err, value) {
+    if (err) {
+      Benchs.leveldb.put(id, data, {
+        valueEncoding: 'json'
+      }, done);
+    }
+    else {
+      value.releaseAt = (new Date()).valueOf();
+      Benchs.move2history(value, function() {
+        Benchs.leveldb.put(id, data, {
+          valueEncoding: 'json'
+        }, done);
+      });
+    }
+  });
 };
 
 Benchs.del = function(id, done) {
@@ -44,7 +56,7 @@ Benchs.move2history = function(data, done) {
     }
     Benchs.del(key, function() {
       value = _.merge(value, data);
-      console.log(value);
+      console.log("history value:" + value);
       Benchs.leveldb.put(id, value, {
         valueEncoding: 'json'
       }, done);

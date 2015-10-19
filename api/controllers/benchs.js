@@ -16,7 +16,7 @@ exports.create = function create(req, res) {
   var models = req.app.get('models');
   var perfix = models.Hostvars.perfix;
   var data = req.body;
-  console.log(data);
+  console.log("put into bench:" + data);
 
   function errorRes(err) {
     res.status(400).json({
@@ -58,7 +58,7 @@ exports.del = function del(req, res) {
       message: err.toString()
     });
   }
-  console.log(data);
+  console.log("delete benches:" + data);
   _.forEach(data, function(bench) {
     bench.releaseAt = (new Date()).valueOf();
     models.Benchs.move2history(bench, function(err) {

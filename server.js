@@ -1,5 +1,5 @@
 var WebSocketServer = require('websocket').server;
-var Cron = require('./cron');
+var Crawler = require('./lib/crawler');
 
 function originIsAllowed(origin) {
   // put logic here to detect whether the specified origin is allowed.
@@ -52,12 +52,33 @@ var port = process.env.PORT || 10010;
 var hostname = process.env.HOST || '127.0.0.1';
 
 initApp(function(app) {
+  var models = app.get('models');
+
   console.log('Starting in env', process.env.NODE_ENV);
   var httpServer = app.listen(port);
-  var wsSocket = startWebsocket(httpServer, app.get('models'));
+  var wsSocket = startWebsocket(httpServer, models);
 
-  var cron = new Cron(app.get('db'), wsSocket);
-  cron.start();
+  var crawler = new Crawler();
+  models.Link.fetchAll(function(err, list) {
+    if (err) {
+      throw err;
+    }
+
+    list.forEach(function(link) {
+      crawler.enqueue(link);
+    });
+  });
+
+  crawler.on('end', function() {
+    models.Link.fetchAll(function(err, links) {
+      wsSocket.broadcast(
+        JSON.stringify({
+          id: 'link-update',
+          update: links
+        })
+      );
+    });
+  });
 });
 
 console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');

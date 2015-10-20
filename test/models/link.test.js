@@ -36,6 +36,15 @@ describe('Model - Link', function() {
     batch.write(done);
   });
 
+  after(function(done) {
+    var batch = leveldb.batch();
+    fixtures.links.forEach(function(link) {
+      batch.del(Link.uuid(link));
+    });
+
+    batch.write(done);
+  });
+
   it('should contain the record', function(done) {
     var id = models.Link.uuid(linkDoc);
     leveldb.get(id, function(err, doc) {

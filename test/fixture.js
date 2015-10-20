@@ -1,3 +1,8 @@
+var linkOne = {
+  url: "http://www.gov.cn",
+  proxy: null
+};
+
 var vmmOne = {
   "key": "/hostvars/192.168.20.3",
   "dir": true,
@@ -245,5 +250,6 @@ exports.vmHostTwo = vmHostTwo;
 exports.vmHostThree = vmHostThree;
 exports.hostOne = hostOne;
 exports.hostTwo = hostTwo;
-exports.benches = benches;
 exports.hostThree = hostThree;
+exports.benches = benches;
+exports.linkOne = linkOne;

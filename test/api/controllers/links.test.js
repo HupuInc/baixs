@@ -6,6 +6,10 @@ var init = require('../../../app');
 var server;
 
 describe('controllers', function() {
+  var newLink = {
+    url: 'http://localhost'
+  };
+
   before(function(done) {
     init(function(instance) {
       server = instance;
@@ -13,12 +17,14 @@ describe('controllers', function() {
     });
   });
 
+  after(function(done) {
+    var Link = server.get('models').Link;
+    new Link(newLink).del(done);
+  });
+
   describe('Links API', function() {
     describe('POST /links', function() {
       it('should create a new Link', function(done) {
-        var newLink = {
-          url: 'http://localhost'
-        };
         request(server)
           .post('/api/links')
           .send(newLink)

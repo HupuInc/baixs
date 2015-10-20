@@ -54,7 +54,7 @@ var hostname = process.env.HOST || '127.0.0.1';
 initApp(function(app) {
   var models = app.get('models');
 
-  console.log('Starting in env', process.env.NODE_ENV);
+  console.log('Starting in env', app.get('env'));
   var httpServer = app.listen(port, hostname);
   var wsSocket = startWebsocket(httpServer, models);
 

@@ -32,7 +32,14 @@ Link.create = function(doc, done) {
 };
 
 Link.fetch = function(key, done) {
-  Link.leveldb.get(key, done);
+  Link.leveldb.get(key, function(err, doc) {
+    if (err) {
+      done(err);
+    }
+    else {
+      done(null, new Link(doc));
+    }
+  });
 };
 
 Link.fetchAll = function(done) {
@@ -44,7 +51,7 @@ Link.fetchAll = function(done) {
   if ('function' === typeof done) {
     var links = [];
     stream.on('data', function(aLink) {
-      links.push(aLink);
+      links.push(new Link(aLink.value));
     })
     .on('err', done)
     .on('close', function() {
@@ -56,6 +63,13 @@ Link.fetchAll = function(done) {
   }
 };
 
+Link.prototype.toJSON = function() {
+  return {
+    key: this.id,
+    value: this.doc
+  };
+};
+
 Link.prototype.save = function(done) {
   Link.leveldb.put(this.id, this.doc, { valueEncoding: 'json' }, done);
 };
@@ -65,7 +79,6 @@ Link.prototype.del = function(done) {
 };
 
 Link.prototype.start = function() {
-  // create a new Task
   setTimeout(this._execute.bind(this), INTERVAL);
 };
 
@@ -117,7 +130,7 @@ Link.prototype._execute = function() {
     }
 
     self.save(function() {
-      self.emit('end');
+      self.emit('end', self);
     });
   });
 };

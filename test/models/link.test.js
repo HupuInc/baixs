@@ -79,8 +79,11 @@ describe('Model - Link', function() {
     var link = new Link(doc);
 
     before(function(done) {
-      this.clock = sinon.useFakeTimers();
       link.save(done);
+    });
+
+    before(function() {
+      this.clock = sinon.useFakeTimers();
     });
 
     after(function() {
@@ -133,8 +136,8 @@ describe('Model - Link', function() {
         link.once('end', function() {
           Link.fetch(link.id, function(err, theLink) {
             should.not.exist(err);
-            should(theLink.status).be.null;
-
+            var doc = theLink.doc;
+            should(doc.status).be.null;
             done();
           });
         });

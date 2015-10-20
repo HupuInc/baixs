@@ -7,7 +7,7 @@ var NS = 'link:%s';
 // default to 20 seconds
 var TIMEOUT = 20 * 1000;
 // default to run task every 1 minute
-var INTERVAL = 60 * 1000;
+var INTERVAL = process.env.CHECK_INTERVAL * 1000 || 60 * 1000;
 
 function Link(doc) {
   EventEmitter.call(this);

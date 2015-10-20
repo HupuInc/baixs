@@ -55,7 +55,7 @@ initApp(function(app) {
   var models = app.get('models');
 
   console.log('Starting in env', process.env.NODE_ENV);
-  var httpServer = app.listen(port);
+  var httpServer = app.listen(port, hostname);
   var wsSocket = startWebsocket(httpServer, models);
 
   var crawler = new Crawler();

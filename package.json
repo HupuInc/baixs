@@ -14,7 +14,13 @@
   "scripts": {
     "start": "node server.js",
     "test": "NODE_ENV=test mocha -b --reporter dot 'test/**/*.test.js'",
-    "deploy": "rsync -rlptD --exclude-from ./.npmignore . $DEPLOY_HOST:/data/www-data/baixs"
+    "deploy": "rsync -rlptD --exclude-from ./.npmignore . $DEPLOY_HOST:/data/www-data/baixs",
+    "build": "browserify ui/entry.js -t [envify --NODE_ENV production] > public/assets/bundle.min.js"
+  },
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
   },
   "dependencies": {
     "bootstrap": "^3.3.5",
@@ -32,11 +38,15 @@
     "zabbix-node": "^0.1.0"
   },
   "devDependencies": {
+    "browserify": "^11.2.0",
+    "envify": "^3.4.0",
     "memdown": "^1.1.0",
     "mocha": "^2.2.5",
     "nock": "^2.9.1",
+    "reactify": "^1.1.1",
     "should": "^5.2.0",
     "sinon": "^1.17.1",
-    "supertest": "^0.15.0"
+    "supertest": "^0.15.0",
+    "watchify": "^3.4.0"
   }
 }

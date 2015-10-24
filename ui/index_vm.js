@@ -1,3 +1,6 @@
+var $ = require('jquery');
+var React = require('react');
+
 var SearchForm = React.createClass({
   handleShowSearch: function(ev) {
     $(".search-form-input-t").val('');

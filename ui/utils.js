@@ -1,12 +1,12 @@
-function formatDate(date) {
+exports.formatDate = function formatDate(date) {
   var m = date.getMonth() + 1;
   var d = date.getDate();
   m = (m < 10 ? '0':'') + m;
   d = (d < 10 ? '0':'') + d;
   return date.getFullYear() + "-" + m + "-" + d;
-}
+};
 
-function formatDateTime(date) {
+exports.formatDateTime = function formatDateTime(date) {
   var m = date.getMonth() + 1;
   var d = date.getDate();
   var hh = date.getHours();
@@ -18,9 +18,9 @@ function formatDateTime(date) {
   mm = (mm < 10 ? '0':'') + mm;
   ss = (ss < 10 ? '0':'') + ss;
   return date.getFullYear() + "-" + m + "-" + d + " " + hh + ":" + mm + ":" + ss;
-}
+};
 
-function calcAge(value) {
+exports.calcAge = function calcAge(value) {
   var result = '';
   var minutes = value / 60;
   var seconds = parseInt(value % 60);
@@ -37,4 +37,4 @@ function calcAge(value) {
   result += minutes === 0 ? '' : minutes + '分钟 ';
   result += seconds === 0 ? '' : seconds + '秒';
   return result;
-}
+};

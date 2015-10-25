@@ -1,3 +1,8 @@
+var $ = require('jquery');
+var React = require('react');
+var formatDateTime = require('./utils').formatDateTime;
+var formatDate = require('./utils').formatDate;
+
 var BenchHisItem = React.createClass({
   render: function() {
     var item = this.props.data.value;
@@ -125,3 +130,5 @@ var BenchHis = React.createClass({
     );
   }
 });
+
+module.exports = BenchHis;

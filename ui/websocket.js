@@ -1,3 +1,6 @@
+var $ = require('jquery');
+var React = require('react');
+
 var BxsMonitor = React.createClass({
   render: function() {
     return (
@@ -194,3 +197,5 @@ var UrlTab = React.createClass({
     );
   }
 });
+
+module.exports = UrlTab;

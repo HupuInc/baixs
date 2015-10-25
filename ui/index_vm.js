@@ -1,5 +1,10 @@
-var $ = require('jquery');
+var $ = jQuery = require('jquery');
 var React = require('react');
+var BenchList = require('./benchs');
+var BenchHis = require('./history');
+var UrlTab = require('./websocket');
+
+require('bootstrap');
 
 var SearchForm = React.createClass({
   handleShowSearch: function(ev) {

@@ -1,3 +1,7 @@
+var $ = require('jquery');
+var React = require('react');
+var formatDateTime = require('./utils').formatDateTime;
+
 var BenchMarkForm = React.createClass({
   handleSubmit: function(ev) {
     ev.preventDefault();
@@ -375,3 +379,4 @@ var BenchList = React.createClass({
   }
 });
 
+module.exports = BenchList;

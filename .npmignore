@@ -15,3 +15,4 @@ config/runtime.yaml
 data/
 test/
 .git
+*.min.js

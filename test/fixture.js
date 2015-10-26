@@ -3,6 +3,10 @@ var linkOne = {
   proxy: null
 };
 
+var linkTwo = {
+  url: "http://www.cntv.cn",
+};
+
 var vmmOne = {
   "key": "/hostvars/192.168.20.3",
   "dir": true,
@@ -253,3 +257,4 @@ exports.hostTwo = hostTwo;
 exports.hostThree = hostThree;
 exports.benches = benches;
 exports.linkOne = linkOne;
+exports.linkTwo = linkTwo;

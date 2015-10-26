@@ -8,6 +8,7 @@ var fixture = require('../fixture');
 var models = bootstrap.models;
 var Link = models.Link;
 var linkOne = fixture.linkOne;
+var linkTwo = fixture.linkTwo;
 
 describe('Crawler', function() {
 
@@ -19,8 +20,19 @@ describe('Crawler', function() {
     new Link(linkOne).del(done);
   });
 
-  describe('Enqueue a link', function() {
+  describe('Enqueue or Dequeue a link', function() {
     var crawler1 = new Crawler();
+    var thirdLink = new Link({
+      url: "http://www.baidu.com"
+    });
+
+    before(function(done) {
+      Link.create(linkTwo, done);
+    });
+
+    after(function(done) {
+      new Link(linkTwo).del(done);
+    });
 
     before(function() {
       this.mock = sinon.mock(crawler1, '_startOnce');
@@ -30,14 +42,22 @@ describe('Crawler', function() {
       this.mock.restore();
     });
 
-    it('should start to monitor the link once', function() {
-      this.mock.expects('_startOnce').once();
+    it('should start to monitor the link once', function(done) {
+      this.mock.expects('_startOnce').twice();
 
       Link.fetchAll(function(err, list) {
         list.forEach(function(link) {
           crawler1.enqueue(link);
         });
+
+        done();
       });
+    });
+
+    it('should dequeue the third link', function() {
+      crawler1.queue.unshift(thirdLink.id)
+      crawler1.dequeue(thirdLink).should.be.true;
+      crawler1.queue.should.have.lengthOf(2);
     });
   });
 

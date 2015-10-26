@@ -3,6 +3,7 @@ var React = require('react');
 var BenchList = require('./benchs');
 var BenchHis = require('./history');
 var UrlTab = require('./websocket');
+var Dashboard = require('./dashboard');
 
 require('bootstrap');
 
@@ -173,6 +174,13 @@ $(document).ready(function() {
     var parent = $(ev.target).parent();
     $(parent).addClass('slice-selected');
     switch($(parent).attr('id')) {
+      case 'dashTab':
+        mainContent = React.render(
+          <Dashboard />,
+          $('.div-main-content')[0]
+        );
+        $('.span-header-title').html('Dashboard');
+        break;
       case 'vmTab':
         mainContent = React.render(<HostList />, $('.div-main-content')[0]);
         React.render(
@@ -205,5 +213,5 @@ $(document).ready(function() {
      }
   });
 
-  $('#vmTab > span').trigger('click');
+  $('#dashTab > span').trigger('click');
 });

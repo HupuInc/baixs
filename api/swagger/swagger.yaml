@@ -150,6 +150,16 @@ paths:
           description: Array of history
           schema:
             $ref: "#/definitions/Benchs"
+  /dashboard/mttr:
+    x-swagger-router-controller: dashboard
+    get:
+      description: Return all mttr during seven days
+      operationId: mttr
+      responses:
+        default:
+          description: Object of mttr
+          schema:
+            $ref: "#/definitions/Mttr"
 
 # complex objects have schema definitions
 definitions:
@@ -215,3 +225,14 @@ definitions:
         type: string
       releaseAt:
         type: string
+  Mttr:
+    properties:
+      project:
+        type: string
+      hosts:
+        description: total number of hosts
+        type: integer
+      mttr:
+        type: integer
+      rate:
+        type: number

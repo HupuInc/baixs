@@ -1,5 +1,6 @@
 var $ = require('jquery');
 var React = require('react');
+var LinkStore = require('./store/link');
 
 var BxsMonitor = React.createClass({
   render: function() {
@@ -112,26 +113,21 @@ var UrlTab = React.createClass({
   connect: function() {
     var url = 'ws://' + document.URL.substr(7).split('/')[0] + '/channel';
     this.socket = new WebSocket(url, 'baixs-protocol');
-    this.socket.onmessage = this.onSocketMessage;
+    this.socket.onmessage = LinkStore.parse.bind(LinkStore);
   },
   disconnect: function() {
     this.socket.close();
   },
   componentDidMount: function() {
+    LinkStore.on('change', this.handleChange);
     this.connect();
   },
   componentWillUnmount: function() {
+    LinkStore.removeListner('change', this.handleChange);
     this.disconnect();
   },
-  onSocketMessage: function(evt) {
-    var data = JSON.parse(evt.data);
-    if (data.id === 'link-list') {
-      // The 1st time to render the table
-      this.setState({data: data.list});
-    }
-    else if (data.id === 'link-update') {
-      this.setState({data: data.update});
-    }
+  handleChange: function(data) {
+    this.setState({data: data});
   },
   handleSubmit: function(action, link) {
     $.ajax({

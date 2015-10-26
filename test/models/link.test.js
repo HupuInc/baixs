@@ -142,13 +142,10 @@ describe('Model - Link', function() {
       });
 
       it('should return a null status', function(done) {
-        link.once('end', function() {
-          Link.fetch(link.id, function(err, theLink) {
-            should.not.exist(err);
-            var doc = theLink.doc;
-            should(doc.status).be.null;
-            done();
-          });
+        link.once('end', function(theLink) {
+          var doc = theLink.doc;
+          should(doc.status).be.null;
+          done();
         });
         link.start();
         this.clock.tick(60 * 1000);

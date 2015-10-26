@@ -75,10 +75,7 @@ describe('Crawler', function() {
         var self = this;
 
         Link.fetchAll(function(err, list) {
-          list.forEach(function(link) {
-            crawler.enqueue(link);
-          });
-
+          crawler.enqueue(list[0]);
           self.spy.calledOnce.should.be.true;
           self.clock.tick(60 * 1000);
         });
@@ -86,7 +83,7 @@ describe('Crawler', function() {
         crawler.once('end', function() {
           self.spy.calledTwice.should.be.true;
 
-          crawler.once('end', function(link) {
+          crawler.once('end', function() {
             self.spy.calledThrice.should.be.true;
             done();
           });

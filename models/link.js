@@ -129,9 +129,7 @@ Link.prototype._execute = function() {
       self.doc.status = null;
     }
 
-    self.save(function() {
-      self.emit('end', self);
-    });
+    self.emit('end', self);
   });
 };
 

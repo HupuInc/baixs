@@ -123,7 +123,7 @@ var UrlTab = React.createClass({
     this.connect();
   },
   componentWillUnmount: function() {
-    LinkStore.removeListner('change', this.handleChange);
+    LinkStore.removeListener('change', this.handleChange);
     this.disconnect();
   },
   handleChange: function(data) {

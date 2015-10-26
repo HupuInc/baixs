@@ -71,12 +71,14 @@ initApp(function(app) {
   });
 
   crawler.on('end', function(link) {
-    wsSocket.broadcast(
-      JSON.stringify({
-        id: 'link-update',
-        update: link
-      })
-    );
+    if (link) {
+      wsSocket.broadcast(
+        JSON.stringify({
+          id: 'link-update',
+          update: link
+        })
+      );
+    }
   });
 });
 

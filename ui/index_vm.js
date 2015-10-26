@@ -2,7 +2,7 @@ var $ = jQuery = require('jquery');
 var React = require('react');
 var BenchList = require('./benchs');
 var BenchHis = require('./history');
-var UrlTab = require('./websocket');
+var UrlTab = require('./urltab');
 var Dashboard = require('./dashboard');
 
 require('bootstrap');

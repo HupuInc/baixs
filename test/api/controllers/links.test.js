@@ -4,6 +4,11 @@ var _ = require('lodash');
 
 var init = require('../../../app');
 var server;
+var crawler = {
+  dequeue: function() {},
+  enqueue: function() {},
+  contains: function() {}
+};
 
 describe('controllers', function() {
   var newLink = {
@@ -13,6 +18,7 @@ describe('controllers', function() {
   before(function(done) {
     init(function(instance) {
       server = instance;
+      server.set('crawler', crawler);
       done();
     });
   });
@@ -34,10 +40,8 @@ describe('controllers', function() {
           .end(function(err, res) {
             should.not.exist(err);
             var result = res.body;
-            res.body.length.should.be.above(0);
-            _.some(result, function(item) {
-              return _.contains(item.value, newLink.url);
-            }).should.be.true;
+            result.should.have.properties('key', 'value');
+            result.value.should.eql(newLink);
             done();
           });
       });

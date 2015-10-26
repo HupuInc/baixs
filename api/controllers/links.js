@@ -38,7 +38,7 @@ exports.create = function create(req, res) {
       });
     }
     else {
-      crawler.enqueu(link)
+      crawler.enqueue(link)
       res.status(201).json(link);
     }
   });

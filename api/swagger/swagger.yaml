@@ -39,7 +39,15 @@ paths:
         201:
           description: Success
           schema:
-            $ref: "#/definitions/Link"
+            required:
+              - key
+              - value
+            properties:
+              key:
+                type: string
+              value:
+                $ref: "#/definitions/Link"
+
         default:
           description: Error
           schema:

@@ -137,7 +137,7 @@ var UrlTab = React.createClass({
       data: JSON.stringify(link),
       dataType: 'json',
       success: function(data) {
-        this.setState({data: data});
+        LinkStore.update(data.key, data.value);
       }.bind(this)
     });
   },
@@ -150,7 +150,7 @@ var UrlTab = React.createClass({
         url: '/api/links/' + link.key,
         dataType: 'json',
         success: function(data) {
-          this.setState({data: data});
+          LinkStore.remove(link.key);
         }.bind(this)
       });
     }

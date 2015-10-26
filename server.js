@@ -59,6 +59,7 @@ initApp(function(app) {
   var wsSocket = startWebsocket(httpServer, models);
 
   var crawler = new Crawler();
+  app.set('crawler', crawler);
   models.Link.fetchAll(function(err, list) {
     if (err) {
       throw err;

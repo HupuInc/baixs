@@ -69,15 +69,13 @@ initApp(function(app) {
     });
   });
 
-  crawler.on('end', function() {
-    models.Link.fetchAll(function(err, links) {
-      wsSocket.broadcast(
-        JSON.stringify({
-          id: 'link-update',
-          update: links
-        })
-      );
-    });
+  crawler.on('end', function(link) {
+    wsSocket.broadcast(
+      JSON.stringify({
+        id: 'link-update',
+        update: link
+      })
+    );
   });
 });
 

@@ -1,17 +1,12 @@
 var $ = require('jquery');
 var React = require('react');
-var formatDateTime = require('./utils').formatDateTime;
-var formatDate = require('./utils').formatDate;
+var moment = require('moment');
 
 var BenchHisItem = React.createClass({
   render: function() {
     var item = this.props.data.value;
-    var markedDate = new Date();
-    var releaseDate = new Date();
-    markedDate.setTime(item.markedAt);
-    releaseDate.setTime(item.releaseAt);
-    var releaseAt = item.releaseAt ? formatDateTime(releaseDate) : '';
-    var markedAt = formatDateTime(markedDate);
+    var releaseAt = item.releaseAt ? moment.unix(item.releaseAt / 1000).format("YYYY-MM-DD HH:mm:ss") : '';
+    var markedAt = moment.unix(item.markedAt / 1000).format("YYYY-MM-DD HH:mm:ss");
     return (
       <tr>
         <td>{item.hostname}</td>
@@ -30,7 +25,7 @@ var BenchHisList = React.createClass({
     var data = "";
     var dataArray = form.serializeArray();
     dataArray.forEach(function(d) {
-      var timestamp = new Date(d.value).valueOf() / 1000;
+      var timestamp = moment(d.value, "YYYY-MM-DD").unix();
       if (d.name === 'end') {
         timestamp += 86400;
       }
@@ -59,14 +54,14 @@ var BenchHisList = React.createClass({
     };
   },
   componentDidMount: function() {
-    var defaultEndDate = new Date();
-    var defaultStartDate = new Date(defaultEndDate.getTime() - 7 * 86400 * 1000);
-    var strStartDate = formatDate(defaultStartDate);
-    var strEndDate = formatDate(defaultEndDate);
+    var defaultEndDate = moment();
+    var defaultStartDate = moment.unix(defaultEndDate.unix() - 7 * 86400);
+    var strStartDate = defaultStartDate.format("YYYY-MM-DD");
+    var strEndDate = defaultEndDate.format("YYYY-MM-DD");
     $("#hisStartDate").val(strStartDate);
     $("#hisEndDate").val(strEndDate);
     $.ajax({
-      url: '/api/history?start=' + parseInt(defaultStartDate.valueOf() / 1000) + "" + '&end=' + parseInt(defaultEndDate.valueOf() / 1000) + "",
+      url: '/api/history?start=' + defaultStartDate.unix() + "" + '&end=' + defaultEndDate.unix() + "",
       method: 'get',
       dataType: 'json',
       success: function(data) {

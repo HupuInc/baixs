@@ -36,7 +36,8 @@
     "swagger-express-mw": "0.0.x",
     "websocket": "^1.0.21",
     "node-etcd": "^4.1.0",
-    "zabbix-node": "^0.1.0"
+    "zabbix-node": "^0.1.0",
+    "moment": "^2.10.6"
   },
   "devDependencies": {
     "browserify": "^11.2.0",

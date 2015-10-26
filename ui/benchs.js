@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var React = require('react');
-var formatDateTime = require('./utils').formatDateTime;
+var moment = require('moment');
 
 var BenchMarkForm = React.createClass({
   handleSubmit: function(ev) {
@@ -31,12 +31,8 @@ var BenchItem = React.createClass({
   },
   render: function() {
     var item = this.props.data.value;
-    var markedDate = new Date();
-    var releaseDate = new Date();
-    markedDate.setTime(item.markedAt);
-    releaseDate.setTime(item.releaseAt);
-    var releaseAt = item.releaseAt ? formatDateTime(releaseDate) : '';
-    var markedAt = formatDateTime(markedDate);
+    var releaseAt = item.releaseAt ? moment.unix(item.releaseAt / 1000).format("YYYY-MM-DD HH:mm:ss") : '';
+    var markedAt = moment.unix(item.markedAt / 1000).format("YYYY-MM-DD HH:mm:ss");
 
     return (
       <tr>
@@ -108,7 +104,7 @@ var EventItem = React.createClass({
         break;
     }
 
-    var age = calcAge(new Date().valueOf() / 1000 - item.lastchange);
+    var age = moment.unix(item.lastchange).fromNow();
 
     return (
       <tr>

@@ -27,11 +27,6 @@ describe('controllers', function() {
       server = instance;
       done();
     });
-
-
-  });
-
-  after(function() {
   });
 
   describe('hostvars API', function() {

@@ -36,6 +36,9 @@ Hostvars.fetchVmmHost = function(done) {
   }
 
   function findVmmHost(error, body, resp) {
+    if (error || !body) {
+      return done(vmmHosts);
+    }
     nodes = body.node.nodes;
     _.forEach(nodes, function(host) {
       var vmmHost = {};

@@ -1,7 +1,6 @@
 var $ = jQuery = require('jquery');
 var React = require('react');
 var BenchList = require('./benchs');
-var BenchHis = require('./history');
 var UrlTab = require('./urltab');
 var Dashboard = require('./dashboard');
 
@@ -202,13 +201,6 @@ $(document).ready(function() {
           $('.div-main-content')[0]
         );
         $('.span-header-title').html('Benchs');
-        break;
-      case 'benchHisTab':
-        mainContent = React.render(
-          <BenchHis />,
-          $('.div-main-content')[0]
-        );
-        $('.span-header-title').html('Benchs History');
         break;
      }
   });

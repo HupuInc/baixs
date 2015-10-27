@@ -4,7 +4,6 @@ var _ = require('lodash');
 var Hostvars = {
   perfix: '/hostvars/',
   reg: /^\/hostvars\/(192.168.[2-9]\d.(\d+))/,
-  regDomain: /^\/hostvars\/(192.168.[2-9]\d.\d+)\/(.+)/,
   regHost: /^\/hostvars\/(\d+.\d+.\d+.\d+)/,
 };
 
@@ -17,85 +16,48 @@ Hostvars.set = function(key, value, options, callback) {
 };
 
 Hostvars.fetchVmmHost = function(done) {
-  var vmmHosts = [],
-    vmHosts = [],
-    count = 0,
-    self = this;
+  var vmmHosts = [];
+  var self = this;
+  var nodes = null;
 
-  function fetchGuestHostname() {
-    var count = 0;
-
-    vmHosts.forEach(function(host) {
-      if (host.domain) {
-        count += host.domain.length;
-        host.domain.forEach(function(guest) {
-          var key = util.format(self.perfix + '%s/hostname', guest.ip);
-          self.get(key, function(error, body, resp) {
-            if (!error) {
-              guest.hostname = body.node.value;
-            }
-            count--;
-            if (count <= 0) {
-              done(vmHosts);
-            }
-          });
-        });
-      }
+  function domains(vmm) {
+    var guests = [];
+    _.forEach(vmm.nodes, function(node) {
+      var guest = {};
+      _.forEach(node.nodes, function(vm) {
+        key = _.last(vm.key.split('/'));
+        guest[key] = vm.value;
+      });
+      guest.domain = _.last(node.key.split('/'));
+      guest.hostname = _.result(_.find(_.result(_.find(nodes, {'key': self.perfix + guest.ip}), 'nodes'), {'key': self.perfix + guest.ip + "/hostname"}), 'value');
+      guests.push(guest);
     });
-  }
-
-  function guests(host) {
-    var guest = {};
-
-    host.nodes.forEach(function(vm) {
-      key = _.last(vm.key.split('/'));
-      guest[key] = vm.value;
-    });
-    guest.domain = _.last(host.key.split('/'));
-    return guest;
-  }
-
-  function domains(error, body, resp) {
-    var vmmHost = {},
-      result = null;
-    var nodes = body.node.nodes;
-    _.forEach(nodes, function(value) {
-      result = value.key.match(self.regDomain);
-      vmmHost.ip = result[1];
-      if (result[2] === 'domain') {
-        vmmHost.domain = [];
-        if (value.nodes) {
-          value.nodes.forEach(function(host) {
-            vmmHost.domain.push(guests(host));
-          });
-        }
-      }
-      else {
-        vmmHost[result[2]] = value.value;
-      }
-    });
-    count--;
-    vmHosts.push(vmmHost);
-    if (count <= 0) {
-      fetchGuestHostname();
-    }
+    return guests;
   }
 
   function findVmmHost(error, body, resp) {
-    var nodes = body.node.nodes;
+    nodes = body.node.nodes;
     _.forEach(nodes, function(host) {
+      var vmmHost = {};
+      var domainKey = host.key + "/domain";
+      var vmms = _.find(host.nodes, {'key': domainKey});
       var result = host.key.match(self.reg);
-      if (result && result[2] <= 30) {
-        vmmHosts.push(host.key);
+      if (vmms && result) {
+        vmmHost.domain = domains(vmms);
+        host.nodes.forEach(function(v) {
+          key = _.last(v.key.split('/'));
+          if (key !== 'domain') {
+            vmmHost[key] = v.value;
+          }
+        });
+        vmmHost.ip = _.last(host.key.split('/'));
+        vmmHosts.push(vmmHost);
       }
     });
-    count = vmmHosts.length;
-    vmmHosts.forEach(function(host) {
-      self.get(host, { recursive: true }, domains);
-    });
+    done(vmmHosts);
   }
 
-  self.get(self.perfix, findVmmHost);
+  self.get(self.perfix, { recursive: true }, findVmmHost);
 };
 
 Hostvars.fetchHasProblems = function(done) {
@@ -115,7 +77,7 @@ Hostvars.fetchHasProblems = function(done) {
     });
     done(hosts);
   }
-  self.get(self.perfix, { recursive: true}, findHasProblems);
+  self.get(self.perfix, { recursive: true }, findHasProblems);
 };
 
 module.exports = Hostvars;

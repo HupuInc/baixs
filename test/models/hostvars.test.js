@@ -90,31 +90,8 @@ describe('Model - Hostvars', function() {
       nock.disableNetConnect();
       this.scope = nock('http://localhost:4001/')
         .get('/v2/keys/hostvars/')
-        .reply(200, mockedResponse)
-        .get('/v2/keys/hostvars/192.168.20.3')
         .query({ recursive: true })
-        .reply(200, { node: vmmOne })
-        .get('/v2/keys/hostvars/192.168.20.83/hostname')
-        .reply(200, {
-          node: {
-            "key": "/hostvars/192.168.20.83/hostname",
-            "value": "baixs-test-20-83-prd.vm",
-          }
-        })
-        .get('/v2/keys/hostvars/192.168.20.84/hostname')
-        .reply(200, {
-          node: {
-            "key": "/hostvars/192.168.20.84/hostname",
-            "value": "kq-fake-20-84-prd.vm",
-          }
-        })
-        .get('/v2/keys/hostvars/192.168.20.92/hostname')
-        .reply(200, {
-          node: {
-            "key": "/hostvars/192.168.20.92/hostname",
-            "value": "passport-ucenter-20-92-prd.vm.jh.hupu.com",
-          }
-        });
+        .reply(200, mockedResponse);
     });
 
     after(function() {

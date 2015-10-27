@@ -55,7 +55,7 @@ describe('controllers', function() {
           .post('/api/links')
           .send(newLink)
           .set('Accept', 'application/json')
-          .expect('Content-Type', /html/)
+          .expect('Content-Type', /json/)
           .expect(400)
           .end(function(err, res) {
             should.not.exist(err);

@@ -33,7 +33,7 @@
     "react": "^0.13.3",
     "request": "^2.60.0",
     "shasum": "^1.0.1",
-    "swagger-express-mw": "0.0.x",
+    "swagger-express-mw": "^0.1.0",
     "websocket": "^1.0.21",
     "node-etcd": "^4.1.0",
     "zabbix-node": "^0.1.0",

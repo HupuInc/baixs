@@ -113,20 +113,15 @@ Link.prototype._execute = function() {
   }, function(err, resp) {
     var endAt = (new Date()).valueOf();
     var timeSpent = endAt - createdAt;
-    var ifSuccess = true;
 
     if (err) {
-      ifSuccess = false;
-    }
-
-    if (ifSuccess) {
-      self._updateStats(timeSpent, resp && resp.statusCode);
+      self.doc.status = 600;
+      if (err.code === 'ETIMEDOUT') {
+        self.doc.status = 599;
+      }
     }
     else {
-      // handle timeout
-      if (err.code === 'ETIMEDOUT') {
-      }
-      self.doc.status = null;
+      self._updateStats(timeSpent, resp && resp.statusCode);
     }
 
     self.emit('end', self);

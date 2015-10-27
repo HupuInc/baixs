@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var EventEmitter = require('events').EventEmitter;
 var inherits = require('util').inherits;
 var CHANGE_EVENT = 'change';
@@ -21,12 +22,18 @@ LinkStore.prototype.remove = function remove(id) {
 };
 
 LinkStore.prototype.toArray = function() {
-  return Object.keys(links).map(function(key) {
-    return {
-      key: key,
-      value: links[key]
-    };
-  });
+  return _.sortByOrder(
+    Object.keys(links).map(function(key) {
+      return {
+        key: key,
+        value: links[key]
+      };
+    }),
+    function(link) {
+      return link.value.status;
+    },
+    'desc'
+  );
 };
 
 LinkStore.prototype.parse = function(evt) {

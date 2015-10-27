@@ -56,7 +56,7 @@ var BxsLink = React.createClass({
       statusClass = 'warning';
     }
     else if (link.status >= 400) {
-      statusClass = 'warning';
+      statusClass = 'danger';
     }
 
     var editingColumn = idx;
@@ -70,7 +70,7 @@ var BxsLink = React.createClass({
         <td>{editingColumn}</td>
         <td>{link.url}</td>
         <td>{link.proxy}</td>
-        <td>{link.status || 'Error'}</td>
+        <td>{link.status || ''}</td>
         <td>{link.lastResTime}</td>
         <td>{link.avgResTime}</td>
         <td>{link.count}</td>

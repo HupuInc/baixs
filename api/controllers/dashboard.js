@@ -13,9 +13,9 @@ exports.mttr = function mttr(req, res) {
     }
 
     histories.forEach(function(history) {
-      var hostname = history.value.hostname;
+      var hostname = history.data.hostname;
       var project = hostname.split('-')[0];
-      var during = parseInt((history.value.releaseAt - history.value.markedAt) / 1000);
+      var during = parseInt((history.data.releaseAt - history.data.markedAt) / 1000);
       if (!_.has(mttrArray, project)) {
         mttrArray[project] = {
           'project': project,

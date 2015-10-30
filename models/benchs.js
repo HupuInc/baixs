@@ -4,76 +4,57 @@ var _ = require('lodash');
 
 // A Benchs object should contain - hostname / ip / markedAt,
 //   when moved to history, it should contain - releaseAt
-var Benchs = {
-  ns: 'benchs:%s',
-  his: 'benchs_history:%s:%s',
+var BENCHS_NS = 'benchs:%s';
+var BENCHS_HIS = 'benchs_history:%s:%s';
+
+function Benchs(data) {
+  this.data = data;
+  this.id = Benchs.uuid(data);
+}
+
+Benchs.uuid = function(data) {
+  return util.format(BENCHS_NS, shasum({ip: data.ip}));
 };
 
-Benchs.uuid = function uuid(doc) {
-  var keyObj = {
-    ip: doc.ip
-  };
-  return util.format(this.ns, shasum(keyObj));
-};
-
-Benchs.hisUuid = function hisUuid(doc) {
-  var keyObj = {
-    ip: doc.ip
-  };
+Benchs.hisUuid = function(data) {
   var timestamp = parseInt(new Date().valueOf() / 1000);
-  return util.format(this.his, timestamp, shasum(keyObj));
+  return util.format(BENCHS_HIS, timestamp, shasum({ip: data.ip}));
+};
+
+Benchs.prototype.save = function(done) {
+  Benchs.leveldb.put(this.id, this.data, {
+    valueEncoding: 'json'
+  }, done);
+};
+
+Benchs.prototype.get = function(done) {
+  Benchs.leveldb.get(this.id, done);
+};
+
+Benchs.prototype.del = function(done) {
+  Benchs.leveldb.del(this.id, done);
 };
 
 Benchs.create = function(data, done) {
-  var id = this.uuid(data);
-  Benchs.leveldb.get(id, function(err, value) {
-    if (err) {
-      Benchs.leveldb.put(id, data, {
-        valueEncoding: 'json'
-      }, done);
-    }
-    else {
-      value.releaseAt = (new Date()).valueOf();
-      Benchs.move2history(value, function() {
-        Benchs.leveldb.put(id, data, {
-          valueEncoding: 'json'
-        }, done);
-      });
-    }
-  });
+  var bench = new Benchs(data);
+  bench.save(done);
 };
 
-Benchs.del = function(id, done) {
-  Benchs.leveldb.del(id, done);
+Benchs.createHistory = function(data, done) {
+  var bench = new Benchs(data);
+  bench.id = Benchs.hisUuid(bench.data);
+  bench.data.releaseAt = new Date().valueOf();
+  console.log("history value:" + bench.data);
+  bench.save(done);
 };
 
-Benchs.move2history = function(data, done) {
-  var id = this.hisUuid(data);
-  var key = this.uuid(data);
-  Benchs.leveldb.get(key, function(err, value) {
-    if (err || !value) {
-      return done(null);
-    }
-    Benchs.del(key, function() {
-      value = _.merge(value, data);
-      console.log("history value:" + value);
-      Benchs.leveldb.put(id, value, {
-        valueEncoding: 'json'
-      }, done);
-    });
-  });
-};
-
-Benchs.fetchCurrentAll = function(done) {
-  var stream = Benchs.leveldb.createReadStream({
-    gte: 'benchs:0',
-    lte: 'benchs:z'
-  });
+Benchs.fetch = function(condition, done) {
+  var stream = Benchs.leveldb.createReadStream(condition);
 
   if ('function' === typeof done) {
     var problems = [];
-    stream.on('data', function(host) {
-      problems.push(host);
+    stream.on('data', function(bench) {
+      problems.push(new Benchs(bench.value));
     })
       .on('error', done)
       .on('close', function() {
@@ -82,6 +63,22 @@ Benchs.fetchCurrentAll = function(done) {
   } else {
     return stream;
   }
+};
+
+Benchs.fetchCurrent = function(done) {
+  var condition = {
+    gte: 'benchs:0',
+    lte: 'benchs:z'
+  };
+  this.fetch(condition, done);
+};
+
+Benchs.fetchHistory = function(start, end, done) {
+  var condition = {
+    gte: 'benchs_history:' + start + ':0',
+    lte: 'benchs_history:' + end + ':z',
+  };
+  this.fetch(condition, done);
 };
 
 Benchs.fetchCurrentEvent = function(done) {
@@ -112,26 +109,6 @@ Benchs.getHostInterface = function(hostid, done) {
   this.zapi.call('hostinterface.get', {
     'hostids': hostid
   }, done);
-};
-
-Benchs.fetchHistory = function(start, end, done) {
-  var stream = Benchs.leveldb.createReadStream({
-    gte: 'benchs_history:' + start + ':0',
-    lte: 'benchs_history:' + end + ':z',
-  });
-
-  if ('function' === typeof done) {
-    var historys = [];
-    stream.on('data', function(host) {
-      historys.push(host);
-    })
-    .on('error', done)
-    .on('close', function() {
-      done(null, historys);
-    });
-  } else {
-    return stream;
-  }
 };
 
 module.exports = Benchs;

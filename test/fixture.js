@@ -248,6 +248,12 @@ var hostThree = {
   "markedAt": 14452452785394
 };
 
+var hostFour = {
+  "hostname": "baixs-web-1-44-prd",
+  "ip": "192.168.1.44",
+  "markedAt": 14461829965674
+};
+
 exports.vmmOne = vmmOne;
 exports.vmHostOne = vmHostOne;
 exports.vmHostTwo = vmHostTwo;
@@ -255,6 +261,7 @@ exports.vmHostThree = vmHostThree;
 exports.hostOne = hostOne;
 exports.hostTwo = hostTwo;
 exports.hostThree = hostThree;
+exports.hostFour = hostFour;
 exports.benches = benches;
 exports.linkOne = linkOne;
 exports.linkTwo = linkTwo;

@@ -1,13 +1,13 @@
 var _ = require('lodash');
 var util = require('util');
 
-function fetchCurrentAll(Benchs, done) {
-  Benchs.fetchCurrentAll(done);
+function fetchCurrent(Benchs, done) {
+  Benchs.fetchCurrent(done);
 }
 
 exports.benchs = function benchs(req, res) {
   var Benchs = req.app.get('models').Benchs;
-  fetchCurrentAll(Benchs, function(error, data) {
+  fetchCurrent(Benchs, function(error, data) {
     res.json(data);
   });
 };
@@ -24,25 +24,35 @@ exports.create = function create(req, res) {
     });
   }
 
+  function saveBenchs(bench) {
+    bench.save(function() {
+      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'yes', function(error, body, resp) {
+        if (error) {
+          return errorRes(error);
+        }
+        fetchCurrent(models.Benchs, function(err, data) {
+          return res.status(201).json(data);
+        });
+      });
+    });
+  }
+
   models.Hostvars.get(util.format(perfix + '%s/hostname', data.ip), function(error, body, resp) {
     if (error) {
       return errorRes(error);
     }
-    var hostname = body.node.value;
-    data.hostname = hostname;
-    data.markedAt = (new Date()).valueOf();
-    models.Benchs.create(data, function(err) {
+    data.hostname = body.node.value;
+    data.markedAt = new Date().valueOf();
+    var bench = new models.Benchs(data);
+    bench.get(function(err, value) {
       if (err) {
-        return errorRes(err);
+        saveBenchs(bench);
       }
-      models.Hostvars.set(util.format(perfix + '%s/has_problems', data.ip), 'yes', function(error, body, resp) {
-        if (error) {
-          return errorRes(error);
-        }
-        fetchCurrentAll(models.Benchs, function(err, data) {
-          res.status(201).json(data);
+      else {
+        models.Benchs.createHistory(value, function() {
+          saveBenchs(bench);
         });
-      });
+      }
     });
   });
 };
@@ -50,31 +60,36 @@ exports.create = function create(req, res) {
 exports.del = function del(req, res) {
   var models = req.app.get('models');
   var perfix = models.Hostvars.perfix;
-  var data = req.body;
-  var count = data.length;
+  var body = req.body;
+  var count = body.length;
 
   function errorRes(err) {
     res.status(400).json({
       message: err.toString()
     });
   }
-  console.log("delete benches:" + data);
-  _.forEach(data, function(bench) {
-    bench.releaseAt = (new Date()).valueOf();
-    models.Benchs.move2history(bench, function(err) {
+
+  console.log("delete benches:" + body);
+  _.forEach(body, function(data) {
+    var bench = new models.Benchs(data);
+    bench.get(function(err, value) {
       if (err) {
         return errorRes(err);
       }
-      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.ip), 'no', function(error, body, resp) {
-        if (error) {
-          return errorRes(error);
-        }
-        count--;
-        if (count === 0) {
-          fetchCurrentAll(models.Benchs, function(err, data) {
-            res.json(data);
+      models.Benchs.createHistory(value, function() {
+        bench.del(function() {
+          models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'no', function(error, body, resp) {
+            if (error) {
+              return errorRes(error);
+            }
+            count--;
+            if (count === 0) {
+              fetchCurrent(models.Benchs, function(err, data) {
+                return res.json(data);
+              });
+            }
           });
-        }
+        });
       });
     });
   });

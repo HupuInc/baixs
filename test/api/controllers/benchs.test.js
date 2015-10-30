@@ -18,11 +18,11 @@ describe('controllers', function() {
   });
 
   after(function(done) {
-    var benchs = server.get('models').Benchs;
-    benchs.fetchHistory(0, 9, function(err, hosts) {
-      _.forEach(hosts, function(host) {
-        if (host.value.ip === newHost.ip) {
-          return benchs.del(host.key, done);
+    var Benchs = server.get('models').Benchs;
+    Benchs.fetchHistory(0, 9, function(err, benches) {
+      _.forEach(benches, function(bench) {
+        if (bench.data.ip === newHost.ip) {
+          return bench.del(done);
         }
       });
     });
@@ -62,6 +62,31 @@ describe('controllers', function() {
           .send(newHost)
           .set('Accept', 'application/json')
           .expect(201)
+          .end(function(err, res) {
+            should.not.exist(err);
+            res.body.should.be.instanceof(Array).and.have.lengthOf(1);
+          });
+        done();
+      });
+    });
+
+    describe('Mark duplication of host into benches', function() {
+      it('should return a list of hosts which were in the benches', function(done) {
+        request(server)
+          .put('/api/benchs')
+          .send(newHost)
+          .set('Accept', 'application/json')
+          .expect(201)
+          .end(function(err, res) {
+            should.not.exist(err);
+            res.body.should.be.instanceof(Array).and.have.lengthOf(1);
+          });
+        var end = new Date().valueOf() / 1000 + 3600;
+        var start = end - 86400 - 3600;
+        request(server)
+          .get('/api/history?start' + parseInt(start) + '&end=' + parseInt(end))
+          .set('Accept', 'application/json')
+          .expect(200)
           .end(function(err, res) {
             should.not.exist(err);
             res.body.should.be.instanceof(Array).and.have.lengthOf(1);

@@ -30,7 +30,7 @@ var BenchItem = React.createClass({
     this.props.handleCheck(ev, this.props.data);
   },
   render: function() {
-    var item = this.props.data.value;
+    var item = this.props.data.data;
     var releaseAt = item.releaseAt ? moment.unix(item.releaseAt / 1000).format("YYYY-MM-DD HH:mm:ss") : '';
     var markedAt = moment.unix(item.markedAt / 1000).format("YYYY-MM-DD HH:mm:ss");
 
@@ -190,13 +190,13 @@ var BenchList = React.createClass({
     function allChecked() {
       var benchs = [];
       self.state.data.map(function(bench) {
-        benchs.push(bench.value);
+        benchs.push(bench.data);
       });
       return benchs;
     }
 
     function filter(obj) {
-      if (obj.ip === bench.value.ip && obj.hostname === bench.value.hostname) {
+      if (obj.ip === bench.data.ip && obj.hostname === bench.data.hostname) {
         return false;
       }
       else {
@@ -222,7 +222,7 @@ var BenchList = React.createClass({
     }
     else if ($(ev.target).prop('checked') === true) {
       checkeds = this.state.checkeds;
-      checkeds.push(bench.value);
+      checkeds.push(bench.data);
     }
     else if (!id) {
       checkeds = this.state.checkeds;

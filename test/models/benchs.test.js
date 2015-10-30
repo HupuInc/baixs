@@ -26,32 +26,10 @@ describe('Model - Benchs', function() {
 
   describe('Fetch all the benchs', function() {
     it('should return a list of hosts in the benchs', function(done) {
-      Benchs.fetchCurrentAll(function(err, hosts) {
+      Benchs.fetchCurrent(function(err, hosts) {
         should.not.exist(err);
-        hosts.should.be.an.Array;
-        hosts.should.have.lengthOf(4);
+        hosts.should.be.an.instanceof(Array).and.have.lengthOf(4);
         done();
-      });
-    });
-  });
-
-  describe('Move a host out from benchs', function() {
-    var benchToMove = fixture.benches[0];
-    it('should remove the host from benchs list, and make a new history record', function(done) {
-      Benchs.move2history(benchToMove.value, function(err) {
-        should.not.exist(err);
-
-        Benchs.leveldb.get(benchToMove.key, function(err, item) {
-          err.should.have.property('type').eql('NotFoundError');
-          should.not.exist(item);
-
-          var key = Benchs.hisUuid(benchToMove.value);
-          Benchs.leveldb.get(key, function(err, historyBench) {
-            should.not.exist(err);
-            historyBench.should.have.properties('ip', 'hostname', 'markedAt');
-            done();
-          });
-        });
       });
     });
   });
@@ -69,28 +47,31 @@ describe('Model - Benchs', function() {
     });
   });
 
-  describe('Mark duplication of host into benches', function() {
-    it('should return a list of hosts which were in the benches', function(done) {
-      var host = fixture.hostThree;
-      Benchs.create(host, function(err){
-        should.not.exist(err);
-        Benchs.fetchCurrentAll(function(err, hosts) {
+  describe('Manage bench', function() {
+    it('should contain the new record', function(done) {
+      Benchs.create(fixture.hostFour, function() {
+        var id = Benchs.uuid(fixture.hostFour);
+        Benchs.leveldb.get(id, function(err, value) {
           should.not.exist(err);
-          hosts.should.be.an.Array;
-          hosts.should.have.lengthOf(3);
-          done();
+          if (err) {
+            done(err);
+          } else {
+            value.should.be.eql(fixture.hostFour);
+            done();
+          }
         });
       });
     });
 
-    it('should return a list of hosts which were in the historys', function(done) {
-      var start = '0';
-      var end = 'z';
-      Benchs.fetchHistory(start, end, function(err, historys) {
-        should.not.exist(err);
-        historys.should.be.an.Array;
-        historys.should.have.lengthOf(2);
-        done();
+    it('should not contain the new record', function(done) {
+      var bench = new Benchs(fixture.hostFour);
+      var id = bench.id;
+      bench.del(function(error) {
+        Benchs.leveldb.get(id, function(err, value) {
+          should.exist(err);
+          should.not.exist(value);
+          done();
+        });
       });
     });
   });

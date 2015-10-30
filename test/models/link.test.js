@@ -1,5 +1,4 @@
 var nock = require('nock');
-var should = require('should');
 var sinon = require('sinon');
 var _ = require('lodash');
 var bootstrap = require('../');
@@ -141,10 +140,10 @@ describe('Model - Link', function() {
         this.scope.done();
       });
 
-      it('should return a null status', function(done) {
+      it('should return a status with code 600', function(done) {
         link.once('end', function(theLink) {
           var doc = theLink.doc;
-          should(doc.status).be.null;
+          doc.status.should.eql(600);
           done();
         });
         link.start();

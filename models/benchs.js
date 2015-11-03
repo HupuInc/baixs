@@ -1,11 +1,14 @@
 var shasum = require('shasum');
 var util = require('util');
 var _ = require('lodash');
+var zabbix = require('zabbix-node');
+var zabbixConfig = require('../config').zabbix;
 
 // A Benchs object should contain - hostname / ip / markedAt,
 //   when moved to history, it should contain - releaseAt
 var BENCHS_NS = 'benchs:%s';
 var BENCHS_HIS = 'benchs_history:%s:%s';
+var zapi = new zabbix(zabbixConfig.url, zabbixConfig.user, zabbixConfig.password);
 
 function Benchs(data) {
   this.data = data;
@@ -82,33 +85,47 @@ Benchs.fetchHistory = function(start, end, done) {
 };
 
 Benchs.fetchCurrentEvent = function(done) {
-  this.zapi.call('trigger.get', {
-    'monitored': true,
-    'filter': {
-      'value': 1
-    },
-    'skipDependent': true,
-    'output': 'extend',
-    'selectHosts': [
-      'host',
-      'hostid',
-      'maintenance_status',
-    ],
-    'selectLastEvent': [
-      'eventid',
-      'acknowledged',
-      'objectid',
-      'clock',
-      'ns',
-    ],
-    'expandDescription': true
-  }, done);
+  zapi.login(function(err) {
+    if (err) {
+      done(err);
+    }
+    else {
+      zapi.call('trigger.get', {
+        'monitored': true,
+        'filter': {
+          'value': 1
+        },
+        'skipDependent': true,
+        'output': 'extend',
+        'selectHosts': [
+          'host',
+          'hostid',
+          'maintenance_status',
+        ],
+        'selectLastEvent': [
+          'eventid',
+          'acknowledged',
+          'objectid',
+          'clock',
+          'ns',
+        ],
+        'expandDescription': true
+      }, done);
+    }
+  });
 };
 
 Benchs.getHostInterface = function(hostid, done) {
-  this.zapi.call('hostinterface.get', {
-    'hostids': hostid
-  }, done);
+  zapi.login(function(err) {
+    if (err) {
+      done(err);
+    }
+    else {
+      zapi.call('hostinterface.get', {
+        'hostids': hostid
+      }, done);
+    }
+  });
 };
 
 module.exports = Benchs;

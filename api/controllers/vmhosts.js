@@ -11,7 +11,9 @@ exports.getVmHosts = function getVmHosts(req, res) {
     res.type('json').send(JSON.stringify(data));
   }
 
-  fetchVmmHost(req, res, sender);
+  fetchVmmHost(req, res, function(data) {
+    sender(_.sortBy(data, 'hostname'));
+  });
 };
 
 exports.search = function search(req, res) {
@@ -37,6 +39,7 @@ exports.search = function search(req, res) {
 
   function filter(data) {
     var searchResult = [];
+    data = _.sortBy(data, 'hostname');
     data.forEach(function(host) {
       var domains = _.filter(host.domain, function(guest) {
         return matchesValue(guest);

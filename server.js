@@ -51,15 +51,11 @@ var initApp = require('./app');
 var port = process.env.PORT || 10010;
 var hostname = process.env.HOST || '127.0.0.1';
 
-initApp(function(app) {
+function setupCrawler(app, wsSocket) {
   var models = app.get('models');
-
-  console.log('Starting in env', app.get('env'));
-  var httpServer = app.listen(port, hostname);
-  var wsSocket = startWebsocket(httpServer, models);
-
   var crawler = new Crawler();
   app.set('crawler', crawler);
+
   models.Link.fetchAll(function(err, list) {
     if (err) {
       throw err;
@@ -80,6 +76,13 @@ initApp(function(app) {
       );
     }
   });
+}
+
+initApp(function(app) {
+  console.log('Starting in env', app.get('env'));
+  var httpServer = app.listen(port, hostname);
+  var wsSocket = startWebsocket(httpServer, app.get('models'));
+  setupCrawler(app, wsSocket);
 });
 
 console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');

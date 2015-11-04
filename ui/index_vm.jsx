@@ -1,8 +1,8 @@
 var $ = jQuery = require('jquery');
 var React = require('react');
-var BenchList = require('./benchs');
-var UrlTab = require('./urltab');
-var Dashboard = require('./dashboard');
+var BenchList = require('./benchs.jsx');
+var UrlTab = require('./urltab.jsx');
+var Dashboard = require('./dashboard.jsx');
 
 require('bootstrap');
 

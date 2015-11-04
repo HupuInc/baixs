@@ -8,6 +8,9 @@
     "jsx": true
   },
   "extends": "eslint:recommended",
+  "plugins": [
+    "react"
+  ],
   "rules": {
     "quotes": [1, "single", "avoid-escape"],
     "eol-last": [2],

@@ -37,7 +37,8 @@
     "websocket": "^1.0.21",
     "node-etcd": "^4.1.0",
     "zabbix-node": "^0.2.0",
-    "moment": "^2.10.6"
+    "moment": "^2.10.6",
+    "nodemailer": "^1.8.0"
   },
   "devDependencies": {
     "browserify": "^11.2.0",

@@ -35,5 +35,5 @@ config/runtime.yaml
 
 data/
 version
-config.production.js
+*.production.js
 *.min.js

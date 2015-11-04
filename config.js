@@ -3,7 +3,7 @@ var _ = require('lodash');
 var defaultConfig = {
   database: {
     backend: 'leveldown',
-    file: __dirname + '/data/baixs.db'
+    file: __dirname + '/data/baixs.db',
   },
   etcd: {
     host: 'localhost',
@@ -30,18 +30,18 @@ var config = {
   test: function() {
     return _.merge(defaultConfig,{
       database:{
-        backend: 'memdown'
+        backend: 'memdown',
       },
       etcd: {
         host: 'localhost',
-        port: 4001
+        port: 4001,
       },
     });
   },
 
   production: function() {
     return _.merge(defaultConfig, require('./config.production.js'));
-  }
+  },
 };
 
 var env = process.env.NODE_ENV || 'development';

@@ -1,5 +1,4 @@
 var _ = require('lodash');
-var util = require('util');
 
 function fetchVmmHost(req, res, done) {
   var Hostvars = req.app.get('models').Hostvars;

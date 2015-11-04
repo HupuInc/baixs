@@ -22,7 +22,7 @@ describe('Crawler', function() {
   describe('Enqueue or Dequeue a link', function() {
     var crawler1 = new Crawler();
     var thirdLink = new Link({
-      url: "http://www.baidu.com"
+      url: 'http://www.baidu.com',
     });
 
     before(function(done) {
@@ -132,12 +132,14 @@ describe('Crawler', function() {
 
         crawler.once('end', function(link) {
           self.spy.calledOnce.should.be.true;
+          should.exist(link);
 
           crawler.dequeue(link);
           crawler.queue.should.have.lengthOf(0);
 
           crawler.once('end', function(link) {
             self.spy.calledOnce.should.be.true;
+            should(link).be.empty;
             done();
           });
 

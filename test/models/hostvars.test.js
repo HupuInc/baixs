@@ -4,7 +4,6 @@ var bootstrap = require('../');
 var fixture = require('../fixture');
 
 var models = bootstrap.models;
-var leveldb = bootstrap.leveldb;
 var Hostvars = models.Hostvars;
 
 describe('Model - Hostvars', function() {
@@ -13,14 +12,14 @@ describe('Model - Hostvars', function() {
   var hostTwo = fixture.hostTwo;
 
   var mockedHostvars= {
-    "node": {
-      "key": "/hostvars",
-      "dir": true,
-      nodes: [ hostOne, hostTwo ]
+    'node': {
+      'key': '/hostvars',
+      'dir': true,
+      nodes: [ hostOne, hostTwo ],
     },
-    "modifiedIndex": 3,
-    "createdIndex": 3,
-    "action": "get"
+    'modifiedIndex': 3,
+    'createdIndex': 3,
+    'action': 'get',
   };
 
   describe('Get a single host', function() {
@@ -76,14 +75,14 @@ describe('Model - Hostvars', function() {
     var vmHostThree = fixture.vmHostThree;
 
     var mockedResponse = {
-      "node": {
-        "key": "/hostvars",
-        "dir": true,
-        "nodes": [ vmmOne, vmHostOne, vmHostTwo, vmHostThree ]
+      'node': {
+        'key': '/hostvars',
+        'dir': true,
+        'nodes': [ vmmOne, vmHostOne, vmHostTwo, vmHostThree ],
       },
-      "modifiedIndex": 3,
-      "createdIndex": 3,
-      "action": "get"
+      'modifiedIndex': 3,
+      'createdIndex': 3,
+      'action': 'get',
     };
 
     before(function() {

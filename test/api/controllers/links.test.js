@@ -1,18 +1,17 @@
 var should = require('should');
 var request = require('supertest');
-var _ = require('lodash');
 
 var init = require('../../../app');
 var server;
 var crawler = {
   dequeue: function() {},
   enqueue: function() {},
-  contains: function() {}
+  contains: function() {},
 };
 
 describe('controllers', function() {
   var newLink = {
-    url: 'http://localhost'
+    url: 'http://localhost',
   };
 
   before(function(done) {
@@ -49,7 +48,7 @@ describe('controllers', function() {
       it('should fail if a link does not have property url', function(done) {
         var newLink = {
           proxy: 'random proxy',
-          description: 'a link only for testing'
+          description: 'a link only for testing',
         };
         request(server)
           .post('/api/links')
@@ -57,7 +56,7 @@ describe('controllers', function() {
           .set('Accept', 'application/json')
           .expect('Content-Type', /json/)
           .expect(400)
-          .end(function(err, res) {
+          .end(function(err) {
             should.not.exist(err);
             done();
           });

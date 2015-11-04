@@ -12,14 +12,14 @@ describe('controllers', function() {
   var vmHostThree = fixture.vmHostThree;
 
   var mockedResponse = {
-    "node": {
-      "key": "/hostvars",
-      "dir": true,
-      "nodes": [ vmmOne, vmHostOne, vmHostTwo, vmHostThree ]
+    'node': {
+      'key': '/hostvars',
+      'dir': true,
+      'nodes': [ vmmOne, vmHostOne, vmHostTwo, vmHostThree ],
     },
-    "modifiedIndex": 3,
-    "createdIndex": 3,
-    "action": "get"
+    'modifiedIndex': 3,
+    'createdIndex': 3,
+    'action': 'get',
   };
 
   before(function(done) {
@@ -31,11 +31,18 @@ describe('controllers', function() {
 
   describe('hostvars API', function() {
     describe('GET /vm_search', function() {
-      it('should return the specifying vmm host', function(done) {
-        var scope = nock('http://localhost:4001/')
+      before(function() {
+        this.scope = nock('http://localhost:4001/')
           .get('/v2/keys/hostvars/')
           .query({ recursive: true })
           .reply(200, mockedResponse);
+      });
+
+      after(function() {
+        this.scope.done();
+      });
+
+      it('should return the specifying vmm host', function(done) {
 
         request(server)
           .get('/api/vm_search?q=20.83')

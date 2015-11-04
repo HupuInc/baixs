@@ -1,4 +1,3 @@
-var util = require('util');
 var _ = require('lodash');
 
 var Hostvars = {
@@ -25,30 +24,30 @@ Hostvars.fetchVmmHost = function(done) {
     _.forEach(vmm.nodes, function(node) {
       var guest = {};
       _.forEach(node.nodes, function(vm) {
-        key = _.last(vm.key.split('/'));
+        var key = _.last(vm.key.split('/'));
         guest[key] = vm.value;
       });
       guest.domain = _.last(node.key.split('/'));
-      guest.hostname = _.result(_.find(_.result(_.find(nodes, {'key': self.perfix + guest.ip}), 'nodes'), {'key': self.perfix + guest.ip + "/hostname"}), 'value');
+      guest.hostname = _.result(_.find(_.result(_.find(nodes, {'key': self.perfix + guest.ip}), 'nodes'), {'key': self.perfix + guest.ip + '/hostname'}), 'value');
       guests.push(guest);
     });
     return guests;
   }
 
-  function findVmmHost(error, body, resp) {
+  function findVmmHost(error, body) {
     if (error || !body) {
       return done(vmmHosts);
     }
     nodes = body.node.nodes;
     _.forEach(nodes, function(host) {
       var vmmHost = {};
-      var domainKey = host.key + "/domain";
+      var domainKey = host.key + '/domain';
       var vmms = _.find(host.nodes, {'key': domainKey});
       var result = host.key.match(self.reg);
       if (vmms && result) {
         vmmHost.domain = domains(vmms);
         host.nodes.forEach(function(v) {
-          key = _.last(v.key.split('/'));
+          var key = _.last(v.key.split('/'));
           if (key !== 'domain') {
             vmmHost[key] = v.value;
           }
@@ -65,7 +64,7 @@ Hostvars.fetchVmmHost = function(done) {
 
 Hostvars.fetchHasProblems = function(done) {
   var self = this;
-  function findHasProblems(error, body, resp) {
+  function findHasProblems(error, body) {
     var nodes = body.node.nodes,
       hosts = [];
     _.forEach(nodes, function(host) {

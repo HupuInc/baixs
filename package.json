@@ -15,7 +15,7 @@
     "start": "node server.js",
     "test": "NODE_ENV=test mocha -b --reporter dot 'test/**/*.test.js'",
     "deploy": "rsync -rlptD --exclude-from ./.npmignore . $DEPLOY_HOST:/data/www-data/baixs",
-    "lint": "eslint .",
+    "lint": "eslint --ignore-pattern public/ .",
     "build": "browserify ui/entry.js -t [envify --NODE_ENV production] > public/assets/bundle.min.js",
     "watch": "watchify ui/entry.js -o public/assets/bundle.min.js -v -d"
   },

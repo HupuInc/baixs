@@ -1,6 +1,5 @@
 var shasum = require('shasum');
 var util = require('util');
-var _ = require('lodash');
 var zabbix = require('zabbix-node');
 var zabbixConfig = require('../config').zabbix;
 
@@ -25,9 +24,7 @@ Benchs.hisUuid = function(data) {
 };
 
 Benchs.prototype.save = function(done) {
-  Benchs.leveldb.put(this.id, this.data, {
-    valueEncoding: 'json'
-  }, done);
+  Benchs.leveldb.put(this.id, this.data, { valueEncoding: 'json' }, done);
 };
 
 Benchs.prototype.get = function(done) {
@@ -47,7 +44,7 @@ Benchs.createHistory = function(data, done) {
   var bench = new Benchs(data);
   bench.id = Benchs.hisUuid(bench.data);
   bench.data.releaseAt = new Date().valueOf();
-  console.log("history value:" + bench.data);
+  console.log('history value:' + bench.data);
   bench.save(done);
 };
 
@@ -71,7 +68,7 @@ Benchs.fetch = function(condition, done) {
 Benchs.fetchCurrent = function(done) {
   var condition = {
     gte: 'benchs:0',
-    lte: 'benchs:z'
+    lte: 'benchs:z',
   };
   this.fetch(condition, done);
 };
@@ -93,7 +90,7 @@ Benchs.fetchCurrentEvent = function(done) {
       zapi.call('trigger.get', {
         'monitored': true,
         'filter': {
-          'value': 1
+          'value': 1,
         },
         'skipDependent': true,
         'output': 'extend',
@@ -109,7 +106,7 @@ Benchs.fetchCurrentEvent = function(done) {
           'clock',
           'ns',
         ],
-        'expandDescription': true
+        'expandDescription': true,
       }, done);
     }
   });
@@ -122,7 +119,7 @@ Benchs.getHostInterface = function(hostid, done) {
     }
     else {
       zapi.call('hostinterface.get', {
-        'hostids': hostid
+        'hostids': hostid,
       }, done);
     }
   });

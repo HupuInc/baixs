@@ -1,4 +1,5 @@
 var nock = require('nock');
+var should = require('should');
 var sinon = require('sinon');
 var _ = require('lodash');
 var bootstrap = require('../');
@@ -9,18 +10,18 @@ var Link = models.Link;
 
 var fixtures = {
   links: [
-  {
-    url: 'http://www.hupu.com',
-    proxy: '127.0.0.1:8080',
-    description: 'Homepage of hupu.com',
-    status: 200,
-  },
-  {
-    url: 'http://nba.hupu.com/test',
-    description: 'NBA portal of hupu.com',
-    status: 404,
-  },
-  ]
+    {
+      url: 'http://www.hupu.com',
+      proxy: '127.0.0.1:8080',
+      description: 'Homepage of hupu.com',
+      status: 200,
+    },
+    {
+      url: 'http://nba.hupu.com/test',
+      description: 'NBA portal of hupu.com',
+      status: 404,
+    },
+  ],
 };
 
 describe('Model - Link', function() {
@@ -82,7 +83,7 @@ describe('Model - Link', function() {
 
     var doc = {
       url: 'http://www.baidu.com',
-      proxy: ''
+      proxy: '',
     };
     var link = new Link(doc);
 

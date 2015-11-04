@@ -8,7 +8,7 @@ var leveldb = levelup(
   dbConfig.file,
   {
     db: require(dbConfig.backend),
-    valueEncoding: 'json'
+    valueEncoding: 'json',
   }
 );
 
@@ -16,7 +16,7 @@ var etcd = new Etcd(etcdConfig.host, etcdConfig.port);
 
 var instance = {
   leveldb: leveldb,
-  etcd: etcd
+  etcd: etcd,
 };
 
 module.exports = instance;

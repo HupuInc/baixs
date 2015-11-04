@@ -21,7 +21,7 @@ util.inherits(Link, EventEmitter);
 Link.uuid = function(doc) {
   var keyObj = {
     url: doc.url,
-    proxy: doc.proxy || null
+    proxy: doc.proxy || null,
   };
   return util.format(NS, shasum(keyObj));
 };
@@ -45,7 +45,7 @@ Link.fetch = function(key, done) {
 Link.fetchAll = function(done) {
   var stream = Link.leveldb.createReadStream({
     gte: 'link:0',
-    lte: 'link:z'
+    lte: 'link:z',
   });
 
   if ('function' === typeof done) {
@@ -66,7 +66,7 @@ Link.fetchAll = function(done) {
 Link.prototype.toJSON = function() {
   return {
     key: this.id,
-    value: this.doc
+    value: this.doc,
   };
 };
 

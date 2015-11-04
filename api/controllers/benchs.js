@@ -16,17 +16,15 @@ exports.create = function create(req, res) {
   var models = req.app.get('models');
   var perfix = models.Hostvars.perfix;
   var data = req.body;
-  console.log("put into bench:" + data);
+  console.log('put into bench:' + data);
 
   function errorRes(err) {
-    res.status(400).json({
-      message: err.toString()
-    });
+    res.status(400).json({ message: err.toString() });
   }
 
   function saveBenchs(bench) {
     bench.save(function() {
-      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'yes', function(error, body, resp) {
+      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'yes', function(error) {
         if (error) {
           return errorRes(error);
         }
@@ -37,7 +35,7 @@ exports.create = function create(req, res) {
     });
   }
 
-  models.Hostvars.get(util.format(perfix + '%s/hostname', data.ip), function(error, body, resp) {
+  models.Hostvars.get(util.format(perfix + '%s/hostname', data.ip), function(error, body) {
     if (error) {
       return errorRes(error);
     }
@@ -64,12 +62,10 @@ exports.del = function del(req, res) {
   var count = body.length;
 
   function errorRes(err) {
-    res.status(400).json({
-      message: err.toString()
-    });
+    res.status(400).json({ message: err.toString() });
   }
 
-  console.log("delete benches:" + body);
+  console.log('delete benches:' + body);
   _.forEach(body, function(data) {
     var bench = new models.Benchs(data);
     bench.get(function(err, value) {
@@ -78,7 +74,7 @@ exports.del = function del(req, res) {
       }
       models.Benchs.createHistory(value, function() {
         bench.del(function() {
-          models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'no', function(error, body, resp) {
+          models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'no', function(error) {
             if (error) {
               return errorRes(error);
             }

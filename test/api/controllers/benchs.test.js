@@ -7,7 +7,7 @@ var server;
 
 describe('controllers', function() {
   var newHost = {
-    ip: '192.168.20.84'
+    ip: '192.168.20.84',
   };
 
   before(function(done) {
@@ -28,33 +28,40 @@ describe('controllers', function() {
     });
   });
 
+  before(function() {
+    this.scope = nock('http://localhost:4001')
+    .get('/v2/keys/hostvars/' + newHost.ip + '/hostname')
+    .reply(200, {
+      node: {
+        'key': '/hostvars/' + newHost.ip + '/hostname',
+        'value': 'kq-fake-20-84-prd.vm',
+      },
+    })
+    .put('/v2/keys/hostvars/' + newHost.ip + '/has_problems', {
+      value: 'yes',
+    })
+    .reply(200, {
+      node: {
+        'key': '/hostvars/' + newHost.ip + '/has_problems',
+        'value': 'yes',
+      },
+    })
+    .put('/v2/keys/hostvars/' + newHost.ip + '/has_problems', {
+      value: 'no',
+    })
+    .reply(200, {
+      node: {
+        'key': '/hostvars/' + newHost.ip + '/has_problems',
+        'value': 'no',
+      },
+    });
+  });
+
+  after(function() {
+    this.scope.done();
+  });
+
   describe('Benchs API', function() {
-    var scope = nock('http://localhost:4001')
-      .get('/v2/keys/hostvars/' + newHost.ip + '/hostname')
-      .reply(200, {
-        node: {
-          "key": "/hostvars/" + newHost.ip + "/hostname",
-          "value": "kq-fake-20-84-prd.vm",
-        }
-      })
-      .put('/v2/keys/hostvars/' + newHost.ip + '/has_problems', {
-        value: 'yes'
-      })
-      .reply(200, {
-        node: {
-          "key": "/hostvars/" + newHost.ip + "/has_problems",
-          "value": "yes",
-        }
-      })
-      .put('/v2/keys/hostvars/' + newHost.ip + '/has_problems', {
-        value: 'no'
-      })
-      .reply(200, {
-        node: {
-          "key": "/hostvars/" + newHost.ip + "/has_problems",
-          "value": "no",
-        }
-      });
     describe('PUT a problem host', function() {
       it('should return all problem hosts with the new host', function(done) {
         request(server)

@@ -1,5 +1,4 @@
 var _ = require('lodash');
-var util = require('util');
 
 exports.mttr = function mttr(req, res) {
   var end = parseInt(new Date().valueOf() / 1000);

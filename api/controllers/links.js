@@ -13,7 +13,7 @@ exports.getLinks = function getLinks(req, res) {
         proxy: '',
         lastResTime: '',
         avgResTime: '',
-        count: 0
+        count: 0,
       };
 
       links.forEach(function(aLink) {
@@ -33,9 +33,7 @@ exports.create = function create(req, res) {
   var link = new Link(req.body);
   link.save(function(err) {
     if (err) {
-      res.status(400).json({
-        message: err.toString()
-      });
+      res.status(400).json({ message: err.toString() });
     }
     else {
       crawler.enqueue(link)
@@ -50,9 +48,7 @@ exports.del = function del(req, res) {
   var id = req.swagger.params.id.value;
 
   function handleError(err) {
-    res.status(400).json({
-      message: err.toString()
-    });
+    res.status(400).json({ message: err.toString() });
   }
 
   models.Link.fetch(id, function(err, link) {

@@ -22,9 +22,7 @@ app.get('/version', function(req, res) {
 app.set('models', require('./models'));
 
 module.exports = function(done) {
-  var config = {
-    appRoot: __dirname
-  };
+  var config = { appRoot: __dirname };
 
   SwaggerExpress.create(config, function(err, swaggerApp) {
     if (err) {

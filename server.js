@@ -26,7 +26,7 @@ function startWebsocket(httpServer, models) {
       connection.send(
         JSON.stringify({
           id: 'link-list',
-          list: links
+          list: links,
         })
       );
     });
@@ -39,7 +39,7 @@ function startWebsocket(httpServer, models) {
       // facilities built into the protocol and the browser.  You should
       // *always* verify the connection's origin and decide whether or not
       // to accept it.
-      autoAcceptConnections: false
+      autoAcceptConnections: false,
   });
 
   wsServer.on('request', onWebSocketConnected);
@@ -71,7 +71,7 @@ function setupCrawler(app, wsSocket) {
       wsSocket.broadcast(
         JSON.stringify({
           id: 'link-update',
-          update: link
+          update: link,
         })
       );
     }

@@ -26,7 +26,7 @@ LinkStore.prototype.toArray = function() {
     Object.keys(links).map(function(key) {
       return {
         key: key,
-        value: links[key]
+        value: links[key],
       };
     }),
     function(link) {

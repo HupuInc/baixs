@@ -1,4 +1,3 @@
-var nock = require('nock');
 var should = require('should');
 var bootstrap = require('../');
 var fixture = require('../fixture');
@@ -67,6 +66,7 @@ describe('Model - Benchs', function() {
       var bench = new Benchs(fixture.hostFour);
       var id = bench.id;
       bench.del(function(error) {
+        should.not.exist(error);
         Benchs.leveldb.get(id, function(err, value) {
           should.exist(err);
           should.not.exist(value);

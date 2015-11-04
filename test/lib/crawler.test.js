@@ -2,10 +2,9 @@ var nock = require('nock');
 var should = require('should');
 var sinon = require('sinon');
 var Crawler = require('../../lib/crawler');
-var bootstrap = require('../');
 var fixture = require('../fixture');
 
-var models = bootstrap.models;
+var models = require('../').models;
 var Link = models.Link;
 var linkOne = fixture.linkOne;
 var linkTwo = fixture.linkTwo;

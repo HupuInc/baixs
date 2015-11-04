@@ -19,24 +19,18 @@ app.get('/version', function(req, res) {
   });
 });
 
-var openDb = require('./db');
+app.set('models', require('./models'));
 
 module.exports = function(done) {
-  var db = openDb(function() {
-    var config = {
-      appRoot: __dirname // required config
-    };
+  var config = {
+    appRoot: __dirname
+  };
 
-    app.set('db', db);
-    app.set('models', db.models);
-    SwaggerExpress.create(config, function(err, swaggerApp) {
-      if (err) {
-        throw err;
-      }
-      // install middleware
-      swaggerApp.register(app);
-
-      done(app);
-    });
+  SwaggerExpress.create(config, function(err, swaggerApp) {
+    if (err) {
+      throw err;
+    }
+    swaggerApp.register(app);
+    done(app);
   });
 };

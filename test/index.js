@@ -1,5 +1,5 @@
-var openDb = require('../db');
-var db = openDb(function() {});
+var leveldb = require('../db').leveldb;
+var models = require('../models');
 
-exports.models = db.models;
-exports.leveldb = db.instance;
+exports.models = models;
+exports.leveldb = leveldb;

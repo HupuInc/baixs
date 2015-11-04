@@ -1,15 +1,13 @@
+var db = require('../db');
+
 var models = {};
 var modelsToLoad = ['Link', 'Hostvars', 'Benchs'];
+modelsToLoad.forEach(function(className) {
+  var TheClass = require(__dirname + '/' + className.toLowerCase());
+  TheClass.leveldb = db.leveldb;
+  TheClass.etcd = db.etcd;
 
-module.exports = function(leveldb, etcd) {
+  models[className] = TheClass;
+});
 
-  modelsToLoad.forEach(function(className) {
-    var TheClass = require(__dirname + '/' + className.toLowerCase());
-    TheClass.leveldb = leveldb;
-    TheClass.etcd = etcd;
-
-    models[className] = TheClass;
-  });
-
-  return models;
-};
+module.exports = models;

@@ -1,23 +1,22 @@
 var levelup = require('levelup');
-var dbConfig = require('./config').database;
-var etcdConfig = require('./config').etcd;
-var initModels = require('./models');
 var Etcd = require('node-etcd');
 
-module.exports = function open(done) {
-  var leveldb = levelup(
-    dbConfig.file,
-    {
-      db: require(dbConfig.backend),
-      valueEncoding: 'json'
-    },
-    done
-  );
+var dbConfig = require('./config').database;
+var etcdConfig = require('./config').etcd;
 
-  var etcd = new Etcd(etcdConfig.host, etcdConfig.port);
+var leveldb = levelup(
+  dbConfig.file,
+  {
+    db: require(dbConfig.backend),
+    valueEncoding: 'json'
+  }
+);
 
-  return {
-    models: initModels(leveldb, etcd),
-    instance: leveldb,
-  };
+var etcd = new Etcd(etcdConfig.host, etcdConfig.port);
+
+var instance = {
+  leveldb: leveldb,
+  etcd: etcd
 };
+
+module.exports = instance;

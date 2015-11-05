@@ -54,7 +54,7 @@ describe('Crawler', function() {
     });
 
     it('should dequeue the third link', function() {
-      crawler1.queue.unshift(thirdLink.id)
+      crawler1.queue.unshift(thirdLink.id);
       crawler1.dequeue(thirdLink).should.be.true;
       crawler1.queue.should.have.lengthOf(2);
     });

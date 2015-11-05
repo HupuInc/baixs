@@ -12,7 +12,7 @@ var INTERVAL = process.env.CHECK_INTERVAL * 1000 || 60 * 1000;
 function Link(doc) {
   EventEmitter.call(this);
 
-  this.doc = doc
+  this.doc = doc;
   this.id = Link.uuid(doc);
 }
 

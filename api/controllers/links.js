@@ -36,7 +36,7 @@ exports.create = function create(req, res) {
       res.status(400).json({ message: err.toString() });
     }
     else {
-      crawler.enqueue(link)
+      crawler.enqueue(link);
       res.status(201).json(link);
     }
   });

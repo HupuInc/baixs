@@ -54,7 +54,7 @@ describe('Model - Link', function() {
         doc.should.be.eql(linkDoc);
         done();
       }
-    })
+    });
   });
 
   describe('Update a link status', function() {

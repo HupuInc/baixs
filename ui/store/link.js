@@ -12,7 +12,7 @@ function LinkStore() {
 inherits(LinkStore, EventEmitter);
 
 LinkStore.prototype.update = function update(id, doc) {
-  links[id] = doc
+  links[id] = doc;
   this.emit(CHANGE_EVENT, this.toArray());
 };
 

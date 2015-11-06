@@ -35,6 +35,17 @@ Host.dummy = {
   has_problems: 'no',
 };
 
+Host.fetch = function(key, done) {
+  Host.leveldb.get(key, function(err, doc) {
+    if (err) {
+      done(err);
+    }
+    else {
+      done(null, new Host(doc));
+    }
+  });
+};
+
 Host.prototype.save = function(done) {
   Host.leveldb.put(this.id, this.doc, { valueEncoding: 'json' }, done);
 };

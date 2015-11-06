@@ -36,5 +36,15 @@ describe('Model - Link', function() {
         done(err);
       });
     });
+
+    describe('Method - Host.fetch', function() {
+      it('should return an instance of host', function(done) {
+        Host.fetch(host.id, function(err, host) {
+          host.should.be.an.instanceOf(Host);
+          done(err);
+        });
+      });
+    });
+
   });
 });

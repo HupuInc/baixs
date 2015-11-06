@@ -46,6 +46,22 @@ Host.fetch = function(key, done) {
   });
 };
 
+Host.fetchByIp = function(ip, done) {
+  Host.fetch(util.format(NS, ip), done);
+};
+
+
+Host.fetchByName = function(name, done) {
+  Host.leveldb.get(util.format(NS, name), function(err, ip) {
+    if (err) {
+      done(err);
+    }
+    else {
+      Host.fetch(util.format(NS, ip), done);
+    }
+  });
+};
+
 Host.prototype.save = function(done) {
   Host.leveldb
     .batch()

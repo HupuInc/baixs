@@ -45,9 +45,30 @@ describe('Model - Link', function() {
     });
 
     describe('Method - Host.fetch', function() {
-      it('should return an instance of host', function(done) {
+      it('should return an instance of Host', function(done) {
         Host.fetch(host.id, function(err, host) {
           host.should.be.an.instanceOf(Host);
+          host.doc.should.eql(doc);
+          done(err);
+        });
+      });
+    });
+
+    describe('Method - Host.fetchByName', function() {
+      it('should return an instance of Host', function(done) {
+          Host.fetchByName(host.hostname, function(err, host) {
+          host.should.be.an.instanceOf(Host);
+          host.doc.should.eql(doc);
+          done(err);
+        });
+      });
+    });
+
+    describe('Method - Host.fetchByIp', function() {
+      it('should return an instance of Host', function(done) {
+          Host.fetchByIp(host.ip, function(err, host) {
+          host.should.be.an.instanceOf(Host);
+          host.doc.should.eql(doc);
           done(err);
         });
       });

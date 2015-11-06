@@ -31,6 +31,10 @@ function Host(doc) {
   mountWithProperties(this);
 }
 
+Host.dummy = {
+  has_problems: 'no',
+};
+
 Host.prototype.save = function(done) {
   Host.leveldb.put(this.id, this.doc, { valueEncoding: 'json' }, done);
 };

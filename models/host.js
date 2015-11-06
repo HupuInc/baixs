@@ -47,7 +47,11 @@ Host.fetch = function(key, done) {
 };
 
 Host.prototype.save = function(done) {
-  Host.leveldb.put(this.id, this.doc, { valueEncoding: 'json' }, done);
+  Host.leveldb
+    .batch()
+    .put(this.id, this.doc, { valueEncoding: 'json' })
+    .put(util.format(NS, this.doc.hostname), this.doc.ip)
+    .write(done);
 };
 
 module.exports = Host;

@@ -21,7 +21,7 @@ describe('Model - Link', function() {
     });
   });
 
-  describe('When store a host into db', function() {
+  describe('Method - Host.save', function() {
     before(function(done) {
       host.save(done);
     });
@@ -33,6 +33,13 @@ describe('Model - Link', function() {
     it('can be read from db again', function(done) {
       Host.leveldb.get(host.id, function(err, obj) {
         obj.should.eql(doc);
+        done(err);
+      });
+    });
+
+    it('should generate a hostname to ip record', function(done) {
+      Host.leveldb.get('host:' + host.hostname, function(err, doc) {
+        doc.should.eql(host.ip);
         done(err);
       });
     });

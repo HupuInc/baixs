@@ -1,5 +1,7 @@
+var url = require('url');
 var WebSocketServer = require('websocket').server;
 var initApp = require('./app');
+var Alert = require('./lib/alert');
 var Crawler = require('./lib/crawler');
 var Porter = require('./lib/porter');
 
@@ -61,6 +63,24 @@ function setupCrawler(app, wsSocket) {
 
     list.forEach(function(link) {
       crawler.enqueue(link);
+    });
+  });
+
+  crawler.on('change', function(status, link) {
+    // send alert to Zabbix
+    var ip = url.parse(link.proxy).host;
+    models.Host.fetchByIp(ip, function(err, host) {
+      if (err) {
+        console.error(err.toString());
+      }
+      else {
+        var msg = ''; // no errors;
+        if (status === 0) {
+          // when error occurrs, send monitoring url
+          msg = url.parse(link.url).host;
+        }
+        Alert.send(host.hostname, msg);
+      }
     });
   });
 

@@ -68,7 +68,7 @@ function setupCrawler(app, wsSocket) {
 
   crawler.on('change', function(status, link) {
     // send alert to Zabbix
-    var ip = url.parse(link.proxy).host;
+    var ip = url.parse(link.doc.proxy).host;
     models.Host.fetchByIp(ip, function(err, host) {
       if (err) {
         console.error(err.toString());
@@ -77,7 +77,7 @@ function setupCrawler(app, wsSocket) {
         var msg = ''; // no errors;
         if (status === 0) {
           // when error occurrs, send monitoring url
-          msg = url.parse(link.url).host;
+          msg = url.parse(link.doc.url).host;
         }
         Alert.send(host.hostname, msg);
       }

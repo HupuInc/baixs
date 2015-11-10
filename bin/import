@@ -1,41 +1,50 @@
-#!/bin/env node
+#!/usr/bin/env node
 
 var readFile = require('fs').readFile;
+var _ = require('lodash');
 
 if (process.argv.length < 3) {
   console.log('Please specify the file to import');
   process.exit(1);
 }
 
+function addProtocolPrefix(addr) {
+  if (!_.startsWith(addr.toLowerCase(), 'http://')) {
+    console.log('Tansform:', addr);
+    return 'http://' + addr;
+  }
+
+  return addr;
+}
+
 readFile(process.argv[2], function(err, data) {
   if (err) throw err;
-  var openDb = require(__dirname + '/../db');
-  var db = openDb(function() {
-    var Link = db.models.Link;
-    var lines = data.toString().trim().split('\n');
 
-    var links = lines.map(function(oneLine) {
-      var properties = oneLine.split(',').map(function(item) {
-        return item.replace(/"/g, '');
-      });
-      var url = properties[0];
-      var proxy = properties[1];
-      var doc =  {
-        url: url,
-        proxy: proxy
-      };
-      var id = Link.uuid(doc);
+  var models = require(__dirname + '/../models');
+  var Link = models.Link;
+  var lines = data.toString().trim().split('\n');
 
-      return {
-        type: 'put',
-        key: id,
-        value: doc
-      };
+  var links = lines.map(function(oneLine) {
+    var properties = oneLine.split(',').map(function(item) {
+      return item.replace(/"/g, '');
     });
+    var url = properties[0];
+    var proxy = addProtocolPrefix(properties[1]);
+    var doc =  {
+      url: url,
+      proxy: proxy,
+    };
+    var id = Link.uuid(doc);
 
-    db.instance.batch(links, function(err) {
-      if (err) throw err;
-      console.log('Successfully imported !');
-    });
+    return {
+      type: 'put',
+      key: id,
+      value: doc,
+    };
+  });
+
+  Link.leveldb.batch(links, function(err) {
+    if (err) throw err;
+    console.log('Successfully imported !');
   });
 });

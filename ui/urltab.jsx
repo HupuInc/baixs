@@ -20,7 +20,7 @@ var BxsMonitor = React.createClass({
       <BxsLinkList {...this.props}/>
       </table>
     );
-  }
+  },
 });
 
 var BxsLinkList = React.createClass({
@@ -37,7 +37,7 @@ var BxsLinkList = React.createClass({
       {attrNodes}
       </tbody>
     );
-  }
+  },
 });
 
 var BxsLink = React.createClass({
@@ -63,7 +63,7 @@ var BxsLink = React.createClass({
     if (editable) {
       editingColumn = <button className="btn btn-xs btn-danger" type="button" onClick={this.handleClick}>
           <span className="glyphicon glyphicon-minus"></span>
-        </button>
+        </button>;
     }
     return (
       <tr className={statusClass}>
@@ -76,7 +76,7 @@ var BxsLink = React.createClass({
         <td>{link.count}</td>
       </tr>
     );
-  }
+  },
 });
 
 var BxsLinkForm = React.createClass({
@@ -90,10 +90,8 @@ var BxsLinkForm = React.createClass({
     }, {});
 
     console.log('Submit a new link:', {link: link});
-
     $form.find('input[type=text]').val('');
-
-    this.props.handleSubmit($form.attr('action'), link)
+    this.props.handleSubmit($form.attr('action'), link);
   },
   render: function() {
     return (
@@ -103,12 +101,12 @@ var BxsLinkForm = React.createClass({
         <input type="submit" />
       </form>
     );
-  }
+  },
 });
 
 var UrlTab = React.createClass({
   getInitialState: function() {
-    return {data: [], editable: false}
+    return {data: [], editable: false};
   },
   connect: function() {
     var url = 'ws://' + document.URL.substr(7).split('/')[0] + '/channel';
@@ -138,7 +136,7 @@ var UrlTab = React.createClass({
       dataType: 'json',
       success: function(data) {
         LinkStore.update(data.key, data.value);
-      }.bind(this)
+      }.bind(this),
     });
   },
   handleRemove: function(link) {
@@ -151,7 +149,7 @@ var UrlTab = React.createClass({
         dataType: 'json',
         success: function(data) {
           LinkStore.remove(link.key);
-        }.bind(this)
+        }.bind(this),
       });
     }
   },
@@ -191,7 +189,7 @@ var UrlTab = React.createClass({
       </div>
     </div>
     );
-  }
+  },
 });
 
 module.exports = UrlTab;

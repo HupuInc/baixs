@@ -162,7 +162,7 @@ var UrlTab = React.createClass({
     return (
     <div>
       <div id="bxs-monitor" className="container-fluid">
-          <div className="row center-block">
+          <div className="row center-block hidden">
               <div className="col-md-1 col-xs-1">
                   <button className="btn btn-primary" type="button" data-toggle="collapse" data-target="#link-form">
                       添加 <span className="glyphicon glyphicon-plus"></span>

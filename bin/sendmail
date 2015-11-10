@@ -15,12 +15,13 @@ function sendMail(data) {
   data.forEach(function(d) {
     hosts[d.data.hostname] = "";
   });
+  sortedHosts = Object.keys(hosts).sort();
 
   transporter.sendMail({
     from: 'monitor@hupu.com',
     to: 'group_xitong@hupu.com',
     subject: '过去24小时内,进入过维护状态的主机',
-    text: Object.keys(hosts).join('\n')
+    text: sortedHosts.join('\n')
   });
 }
 

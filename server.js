@@ -1,5 +1,7 @@
 var url = require('url');
 var WebSocketServer = require('websocket').server;
+var _ = require('lodash');
+
 var initApp = require('./app');
 var Alert = require('./lib/alert');
 var Crawler = require('./lib/crawler');
@@ -68,7 +70,12 @@ function setupCrawler(app, wsSocket) {
 
   crawler.on('change', function(status, link) {
     // send alert to Zabbix
-    var ip = url.parse(link.doc.proxy).host;
+    var urlObj = url.parse(link.doc.proxy);
+    var ip = urlObj.host;
+    if (urlObj.port) {
+      ip = _.first(ip.split(':'));
+    }
+
     models.Host.fetchByIp(ip, function(err, host) {
       if (err) {
         console.error(err.toString());

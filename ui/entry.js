@@ -1,1 +1,1 @@
-require('./index_vm.jsx');
+require('./index.jsx');

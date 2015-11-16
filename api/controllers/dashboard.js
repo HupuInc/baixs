@@ -32,7 +32,3 @@ exports.mttr = function mttr(req, res) {
     res.json(mttrArray);
   });
 };
-
-exports.vmmRate = function vmmRate(req, res) {
-
-};

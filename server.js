@@ -77,7 +77,7 @@ function setupCrawler(app, wsSocket) {
     });
   });
 
-  // crawler.enqueue(new models.Event());
+  crawler.enqueue(new models.Event());
 
   crawler.on('change', function(status, link) {
     // send alert to Zabbix

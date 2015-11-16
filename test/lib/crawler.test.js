@@ -130,14 +130,14 @@ describe('Crawler', function() {
       it('should stop the monitoring task', function(done) {
         var self = this;
 
-        crawler.once('end', function(link) {
+        crawler.once('end', function(id, link) {
           self.spy.calledOnce.should.be.true;
           should.exist(link);
 
           crawler.dequeue(link);
           crawler.queue.should.have.lengthOf(0);
 
-          crawler.once('end', function(link) {
+          crawler.once('end', function(id, link) {
             self.spy.calledOnce.should.be.true;
             should(link).be.empty;
             done();

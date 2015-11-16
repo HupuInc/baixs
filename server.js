@@ -36,6 +36,15 @@ function startWebsocket(httpServer, models) {
         })
       );
     });
+
+    models.Event.fetchCurrentEvent(function(err, events) {
+      connection.send(
+        JSON.stringify({
+          id: 'event-list',
+          list: events
+        })
+      );
+    });
   }
 
   var wsServer = new WebSocketServer({
@@ -68,6 +77,8 @@ function setupCrawler(app, wsSocket) {
     });
   });
 
+  // crawler.enqueue(new models.Event());
+
   crawler.on('change', function(status, link) {
     // send alert to Zabbix
     var urlObj = url.parse(link.doc.proxy);
@@ -91,15 +102,14 @@ function setupCrawler(app, wsSocket) {
     });
   });
 
-  crawler.on('end', function(link) {
-    if (link) {
-      wsSocket.broadcast(
-        JSON.stringify({
-          id: 'link-update',
-          update: link,
-        })
-      );
-    }
+  crawler.on('end', function(id, object) {
+    var socketId = id === 'events' ? 'event-update' : 'link-update';
+    wsSocket.broadcast(
+      JSON.stringify({
+        id: socketId,
+        update: object,
+      })
+    );
   });
 }
 

@@ -108,21 +108,12 @@ var UrlTab = React.createClass({
   getInitialState: function() {
     return {data: [], editable: false};
   },
-  connect: function() {
-    var url = 'ws://' + document.URL.substr(7).split('/')[0] + '/channel';
-    this.socket = new WebSocket(url, 'baixs-protocol');
-    this.socket.onmessage = LinkStore.parse.bind(LinkStore);
-  },
-  disconnect: function() {
-    this.socket.close();
-  },
   componentDidMount: function() {
     LinkStore.on('change', this.handleChange);
-    this.connect();
+    LinkStore.emit('change', LinkStore.toArray());
   },
   componentWillUnmount: function() {
     LinkStore.removeListener('change', this.handleChange);
-    this.disconnect();
   },
   handleChange: function(data) {
     this.setState({data: data});

@@ -1,11 +1,16 @@
 var $ = jQuery = require('jquery');
 var React = require('react');
-var BenchList = require('./benchs.jsx');
-var UrlTab = require('./urltab.jsx');
+var Postoffice = require('./postoffice');
 var Dashboard = require('./dashboard.jsx');
 var HostList = require('./vm.jsx');
+var UrlTab = require('./urltab.jsx');
+var BenchList = require('./benchs.jsx');
 
 require('bootstrap');
+
+var url = 'ws://' + document.URL.substr(7).split('/')[0] + '/channel';
+var socket = new WebSocket(url, 'baixs-protocol');
+socket.onmessage = Postoffice.collect.bind(Postoffice);
 
 var SearchForm = React.createClass({
   handleShowSearch: function(ev) {
@@ -50,9 +55,11 @@ $(document).ready(function() {
           $('.div-main-content')[0]
         );
         $('.span-header-title').html('Dashboard');
+        $('#divSearchForm').hide();
         break;
       case 'vmTab':
         mainContent = React.render(<HostList />, $('.div-main-content')[0]);
+        $('#divSearchForm').show();
         React.render(
           <SearchForm onSearchSubmit={mainContent.handleSearchSubmit} />,
           $('#divSearchForm')[0]
@@ -60,6 +67,7 @@ $(document).ready(function() {
         $('.span-header-title').html('VM');
         break;
       case 'urlTab':
+        $('#divSearchForm').show();
         mainContent = React.render(
           <UrlTab />,
           $('.div-main-content')[0]
@@ -67,6 +75,7 @@ $(document).ready(function() {
         $('.span-header-title').html('URL Monitor');
         break;
       case 'benchTab':
+        $('#divSearchForm').hide();
         mainContent = React.render(
           <BenchList />,
           $('.div-main-content')[0]

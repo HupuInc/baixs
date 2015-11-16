@@ -93,33 +93,13 @@ exports.del = function del(req, res) {
 
 exports.events = function events(req, res) {
   var models = req.app.get('models');
-  var result = [];
 
-  models.Benchs.fetchCurrentEvent(function(error, resp, body) {
+  models.Event.fetchCurrentEvent(function(error, data) {
     if (error) {
-      return res.status(400).json(error);
+      res.status(400).json(error);
     }
     else {
-      var count = body.length;
-      if (count === 0) {
-        return res.json(result);
-      }
-      _.forEach(body, function(data) {
-        var hostid = data.hosts[0].hostid;
-        models.Benchs.getHostInterface(hostid, function(error, resp, body) {
-          if (error) {
-            return res.status(400).json(error);
-          }
-          count--;
-          if (!error) {
-            data.hosts[0].ip = body[0].ip;
-          }
-          result.push(data);
-          if (count <= 0) {
-            return res.json(result);
-          }
-        });
-      });
+      res.json(data);
     }
   });
 };

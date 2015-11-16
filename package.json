@@ -39,7 +39,8 @@
     "node-etcd": "^4.1.0",
     "zabbix-node": "^0.2.0",
     "moment": "^2.10.6",
-    "nodemailer": "^1.8.0"
+    "nodemailer": "^1.8.0",
+    "react-highcharts": "^3.0.0"
   },
   "devDependencies": {
     "babel-eslint": "^4.1.3",

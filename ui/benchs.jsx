@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var React = require('react');
 var moment = require('moment');
+var EventStore = require('./store/event');
 
 var BenchMarkForm = React.createClass({
   handleSubmit: function(ev) {
@@ -66,7 +67,7 @@ var EventItem = React.createClass({
     }
   },
   render: function() {
-    var item = this.props.data;
+    var item = this.props.data.value;
     var markedIcon = '';
     var hasProblem = item.hosts[0].maintenance_status === '0' ? 'no' : 'yes';
     var priority = '';
@@ -120,26 +121,21 @@ var EventItem = React.createClass({
   }
 });
 
-var AlertList = React.createClass({
+var EventList = React.createClass({
   getInitialState: function() {
     return {
       data: [],
     };
   },
   componentDidMount: function() {
-    $.ajax({
-      url: '/api/events',
-      dataType: 'json',
-      method: 'get',
-      success: function(data) {
-        this.setState({
-          data: data
-        });
-      }.bind(this),
-      error: function(error, status) {
-        console.log('Please handle ajax error');
-      }.bind(this)
-    });
+    EventStore.on('change', this.handleChange);
+    EventStore.emit('change', EventStore.toArray());
+  },
+  componentWillUnmount: function() {
+    EventStore.removeListener('change', this.handleChange);
+  },
+  handleChange: function(data) {
+    this.setState({data: data});
   },
   render: function() {
     var item = this.state.data;
@@ -336,7 +332,7 @@ var BenchList = React.createClass({
         <div>
           <span className="span-injury">伤病名单</span>
         </div>
-        <AlertList handleSubmit={this.handleSubmit}/>
+        <EventList handleSubmit={this.handleSubmit}/>
         <div>
           <span className="span-benchs">板凳席</span>
         </div>

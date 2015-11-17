@@ -1,4 +1,5 @@
-require('should');
+var should = require('should');
+var _ = require('lodash');
 var bootstrap = require('../');
 var models = bootstrap.models;
 var Host = models.Host;
@@ -74,5 +75,57 @@ describe('Model - Link', function() {
       });
     });
 
+    describe('Method - Host.fetchAll', function() {
+      var doc1 = {
+        ip: '192.168.1.1',
+        hostname: 'baixs-web-1-1-prd',
+      };
+
+      var doc2 = {
+        ip: '192.168.1.2',
+        hostname: 'gitlab-store-1-2-tst',
+        vip: '192.168.1.22',
+      };
+
+      var hostOne = new Host(doc1);
+      var hostTwo = new Host(doc2);
+
+      before(function(done) {
+        hostOne.save(done);
+      });
+
+      before(function(done) {
+        hostTwo.save(done);
+      });
+
+      after(function(done) {
+        var ops = [];
+        Host.leveldb.createKeyStream()
+          .on('data', function(aKey) {
+            ops.push({ type: 'del', key: aKey });
+          })
+          .on('end', function() {
+            Host.leveldb.batch(ops, done);
+          });
+      });
+
+      it('should a list of hosts', function(done) {
+        Host.fetchAll(function(err, hosts) {
+          should.not.exist(err);
+          hosts.should.be.an.Array;
+          hosts.length.should.above(0);
+
+          _.some(hosts, function(aHost) {
+            return aHost.id == hostOne.id;
+          }).should.be.true;
+
+          _.some(hosts, function(aHost) {
+            return aHost.id == hostTwo.id;
+          }).should.be.true;
+
+          done();
+        });
+      });
+    });
   });
 });

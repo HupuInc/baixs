@@ -62,6 +62,22 @@ Host.fetchByName = function(name, done) {
   });
 };
 
+Host.fetchAll = function(done) {
+  var stream = Host.leveldb.createReadStream({
+    gte: 'host:1',
+    lte: 'host:9',
+  });
+
+  var hosts = [];
+  stream.on('data', function(aHost) {
+    hosts.push(new Host(aHost.value));
+  })
+  .on('err', done)
+  .on('close', function() {
+    done(null, hosts);
+  });
+};
+
 Host.prototype.save = function(done) {
   Host.leveldb
     .batch()

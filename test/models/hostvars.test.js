@@ -99,7 +99,7 @@ describe('Model - Hostvars', function() {
 
     it('should return a list of vmm hosts', function(done) {
       Hostvars.fetchVmmHost(function(list) {
-        list.should.be.an.Array;
+        list.should.be.instanceof(Array);
         var vmHost = list[0];
         vmHost.should.have.property('domain').with.lengthOf(3);
         done();

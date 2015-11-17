@@ -108,7 +108,7 @@ describe('Model - Hostvars', function() {
   });
 
   describe('Counter vm hosts', function() {
-    var yesterday = moment().subtract(1, 'days').format('YYYYMMDD');
+    var yesterday = moment(moment().subtract(1, 'days').toArray().slice(0, 3)).valueOf();
     var counterId = 'vmcounter:' + yesterday;
 
     before(function() {

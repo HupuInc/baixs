@@ -109,6 +109,11 @@ var MttrArea = new React.createClass({
     Object.keys(item).map(function(key) {
       series.push({name: key, y: parseFloat(item[key]['rate'])});
     });
+    Highcharts.Highcharts.setOptions({
+      global: {
+        useUTC: false
+      }
+    });
     var mttrConfig = {
       chart: {
         type: 'column'
@@ -130,8 +135,8 @@ var MttrArea = new React.createClass({
       },
       plotOptions: {
         column: {
-            pointPadding: 0.2,
-            borderWidth: 0
+          pointPadding: 0.2,
+          borderWidth: 0
         }
       },
       series: [{name: 'mttr', colorByPoint: true, data: series}]
@@ -147,12 +152,16 @@ var MttrArea = new React.createClass({
 var VmmArea = new React.createClass({
   getInitialState: function() {
     return {
-      data: []
+      data: {
+        total: 0,
+        current: 0,
+        stats: [],
+      }
     };
   },
   componentDidMount: function() {
     $.ajax({
-      url: '/api/vmhosts',
+      url: '/api/vm_counter',
       dataType: 'json',
       method: 'get',
       success: function(data) {
@@ -167,18 +176,21 @@ var VmmArea = new React.createClass({
   },
   render: function() {
     var item = this.state.data;
-    var total = item.length * 6;
-    var current = 0;
-    item.forEach(function(v) {
-      current += v.domain.length;
-    })
+    var vmData = item.stats.map(function(stat) {
+      return [parseInt(stat.day), stat.count];
+    });
+
     var vmmConfig = {
       title: {
-        text: "每日虚拟机增长"
+        text: "过去一周虚拟机开设曲线"
       },
       xAxis: {
         type: 'datetime',
-        gridLineWidth: 1
+        gridLineWidth: 1,
+        dateTimeLabelFormats: {
+          day: '%b. %e'
+        },
+        minRange: 12 * 3600000,
       },
       yAxis: {
         min: 0,
@@ -188,17 +200,16 @@ var VmmArea = new React.createClass({
       },
       series: [{
         name: 'vmm',
-        data: [1, 8, 5, 4, 7, 10, 2],
-        pointStart: Date.UTC(2015, 9, 26),
-        pointInterval: 24 * 3600 * 1000
+        data: vmData,
       }]
     };
+
     return (
       <div className="div-content div-col col-lg-6">
         <div>
           <div className="small-box bg-green">
             <div className="inner">
-              <h3>{current}/{total}</h3>
+              <h3>{item.current}/{item.total}</h3>
               <p>虚拟机统计</p>
             </div>
           </div>

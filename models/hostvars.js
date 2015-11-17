@@ -84,14 +84,53 @@ Hostvars.fetchHasProblems = function(done) {
 };
 
 Hostvars.vmCounter = function(done) {
-  var yesterday = moment().subtract(1, 'days').format('YYYYMMDD');
+  var yesterday = moment(moment().subtract(1, 'days').toArray().slice(0, 3)).valueOf();
   var counterId = 'vmcounter:' + yesterday;
+
   Hostvars.fetchVmmHost(function(data) {
     var current = 0;
     data.forEach(function(v) {
       current += v.domain.length;
     });
     Hostvars.leveldb.put(counterId, current, done);
+  });
+};
+
+Hostvars.stat = function(done) {
+  var today = moment(moment().toArray().slice(0, 3)).valueOf();
+  var lastWeek = moment(moment().toArray().slice(0, 3)).subtract(1, 'weeks').valueOf();
+  Hostvars.fetchVmmHost(function(vmms) {
+    var current = 0;
+    var total = vmms.length * 6;
+    vmms.forEach(function(v) {
+      current += v.domain.length;
+    });
+    var condition = {
+      gte: 'vmcounter:' + lastWeek,
+      lte: 'vmcounter:' + today,
+    };
+    var stream = Hostvars.leveldb.createReadStream(condition);
+    var stats = {
+      total: total,
+      current: current,
+      stats: [
+        {
+          day: today,
+          count: current,
+        }],
+    };
+    stream.on('data', function(data) {
+      var day = data.key.slice(data.key.indexOf(':') + 1);
+      stats.stats.push({
+        day: day,
+        count: data.value,
+      });
+    })
+    .on('error', done)
+    .on('close', function() {
+      stats.stats = _.sortBy(stats.stats, 'day');
+      done(null, stats);
+    });
   });
 };
 

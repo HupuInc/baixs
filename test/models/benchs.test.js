@@ -39,8 +39,7 @@ describe('Model - Benchs', function() {
       var start = now - 60; // a minute ago
       Benchs.fetchHistory(start, now, function(err, list) {
         should.not.exist(err);
-        list.should.be.an.Array;
-        list.should.have.lengthOf(1);
+        list.should.be.an.instanceof(Array).and.have.lengthOf(1);
         done();
       });
     });

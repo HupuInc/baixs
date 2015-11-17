@@ -78,6 +78,14 @@ paths:
             $ref: "#/definitions/VmHosts"
   /vm_counter:
     x-swagger-router-controller: vmhosts
+    get:
+      description: Return statistic of vm hosts last week
+      operationId: stat
+      responses:
+        default:
+          description: Return statistic of vm hosts last week
+          schema:
+            $ref: "#/definitions/VmStat"
     post:
       description: Counter vm hosts
       operationId: counter
@@ -254,3 +262,19 @@ definitions:
         type: integer
       rate:
         type: number
+  VmStat:
+    properties:
+      total:
+        type: integer
+      current:
+        type: integer
+      stats:
+        type: array
+        items:
+          $ref: "#/definitions/Stats"
+  Stats:
+    properties:
+      day:
+        type: string
+      count:
+        type: integer

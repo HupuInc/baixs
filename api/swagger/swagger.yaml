@@ -76,6 +76,16 @@ paths:
           description: Return all the vmm hosts and vm hosts
           schema:
             $ref: "#/definitions/VmHosts"
+  /vm_counter:
+    x-swagger-router-controller: vmhosts
+    post:
+      description: Counter vm hosts
+      operationId: counter
+      responses:
+        201:
+          description: Success
+          schema:
+            type: string
   /vm_search:
     x-swagger-router-controller: vmhosts
     get:

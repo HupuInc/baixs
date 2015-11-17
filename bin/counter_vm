@@ -1,0 +1,18 @@
+#!/bin/env node
+
+var request = require('request');
+var auth = require('../api.production.js').auth;
+
+var BAIXS = 'http://baixs.pub.hupu.com/api/';
+
+var options = {
+  url: BAIXS + 'vm_counter',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+};
+
+request.post(options, auth, function(err, res, body) {
+  console.log(err);
+  console.log(body);
+});

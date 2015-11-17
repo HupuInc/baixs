@@ -57,3 +57,10 @@ exports.search = function search(req, res) {
 
   fetchVmmHost(req, res, filter);
 };
+
+exports.counter = function counter(req, res) {
+  var Hostvars = req.app.get('models').Hostvars;
+  Hostvars.vmCounter(function(err) {
+    res.status(201).send('success');
+  });
+};

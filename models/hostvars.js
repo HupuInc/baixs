@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var moment = require('moment');
 
 var Hostvars = {
   perfix: '/hostvars/',
@@ -80,6 +81,18 @@ Hostvars.fetchHasProblems = function(done) {
     done(hosts);
   }
   self.get(self.perfix, { recursive: true }, findHasProblems);
+};
+
+Hostvars.vmCounter = function(done) {
+  var yesterday = moment().subtract(1, 'days').format('YYYYMMDD');
+  var counterId = 'vmcounter:' + yesterday;
+  Hostvars.fetchVmmHost(function(data) {
+    var current = 0;
+    data.forEach(function(v) {
+      current += v.domain.length;
+    });
+    Hostvars.leveldb.put(counterId, current, done);
+  });
 };
 
 module.exports = Hostvars;

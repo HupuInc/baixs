@@ -55,14 +55,15 @@ var BenchItem = React.createClass({
 var EventItem = React.createClass({
   handleCheck: function(ev) {
     ev.preventDefault();
-    var ip = this.props.data.hosts[0].ip;
+    var event = this.props.data.value;
+    var ip = event.hosts[0].ip;
     var bench = {
       ip: ip
     };
     var answer = window.confirm('确定要换下这台主机(' + ip + ')吗？');
     if (answer) {
-      $('#' + this.props.data.triggerid).html('');
-      $('#' + this.props.data.triggerid).prev().html('yes');
+      $('#' + event.triggerid).html('');
+      $('#' + event.triggerid).prev().html('yes');
       this.props.handleSubmit(bench);
     }
   },

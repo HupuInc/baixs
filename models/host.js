@@ -8,7 +8,7 @@ var util = require('util');
 var NS = 'host:%s';
 
 function mountWithProperties(obj) {
-  var properties = ['hostname', 'ip', 'has_problems'];
+  var properties = ['hostname', 'ip', 'has_problems', 'labels'];
 
   properties.forEach(function(prop) {
     Object.defineProperty(obj, prop, {
@@ -33,6 +33,7 @@ function Host(doc) {
 
 Host.dummy = {
   has_problems: 'no',
+  labels: [],
 };
 
 Host.fetch = function(key, done) {

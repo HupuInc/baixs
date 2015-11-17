@@ -19,6 +19,7 @@ describe('Model - Link', function() {
       host.should.have.property('ip', doc.ip);
       host.should.have.property('hostname', doc.hostname);
       host.should.have.property('has_problems', doc.has_problems);
+      host.should.have.property('labels');
     });
   });
 

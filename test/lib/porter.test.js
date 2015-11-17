@@ -55,8 +55,12 @@ describe('Porter', function() {
 
         var docs = _.pluck(hosts, 'doc');
         docs.forEach(function(doc) {
-          doc.should.have.properties('ip', 'hostname', 'has_problems');
+          doc.should.have.properties('ip', 'hostname', 'has_problems', 'labels');
         });
+
+        _.some(hosts, function(host) {
+          return host.labels.length > 0;
+        }).should.be.true;
 
         // hostOne: 192.168.1.1
         should.exist(_.find(hosts, function(host) {

@@ -189,6 +189,18 @@ var hostOne = {
       "value": "baixs-web-1-1-prd",
       "modifiedIndex": 28454
     },
+    {
+      "key": "/hostvars/192.168.1.1/labels",
+      "dir": true,
+      "nodes": [{
+        "key": "/hostvars/192.168.1.1/labels/nginx",
+        "value": "",
+        "modifiedIndex": 61497,
+        "createdIndex": 61497
+      }],
+      "modifiedIndex": 61497,
+      "createdIndex": 61497
+    }
   ],
   "modifiedIndex": 423,
   "dir": true
@@ -207,6 +219,11 @@ var hostTwo = {
     "value": "gitlab-store-1-2-tst",
     "modifiedIndex": 28385,
     "createdIndex": 28385
+  }, {
+    "key": "/hostvars/192.168.1.2/vip",
+    "value": "192.168.1.22",
+    "modifiedIndex": 37538,
+    "createdIndex": 37538
   }],
   "modifiedIndex": 390,
   "createdIndex": 390

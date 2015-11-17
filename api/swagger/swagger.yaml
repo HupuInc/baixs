@@ -17,6 +17,16 @@ produces:
   - text/plain
   - text/html
 paths:
+  /hosts:
+    x-swagger-router-controller: hosts
+    get:
+      description: "To return all the grouped hosts, intended to be used by ansible-playbook"
+      operationId: list
+      responses:
+        default:
+          description: Return a json representation of multiple groups of hosts
+          schema:
+            type: string
   /links:
     x-swagger-router-controller: links
     get:

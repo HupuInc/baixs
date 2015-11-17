@@ -25,7 +25,7 @@ Postoffice.prototype.sorter = function(address, data) {
 };
 
 Postoffice.prototype.ship = function(target, data) {
-  target.receive(data);
+  target.emit('receive', data);
 };
 
 module.exports = new Postoffice();

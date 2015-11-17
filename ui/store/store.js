@@ -5,6 +5,7 @@ var CHANGE_EVENT = 'change';
 function Store() {
   EventEmitter.call(this);
   this.objects = {};
+  this.on('receive', this.receive);
 }
 
 inherits(Store, EventEmitter);

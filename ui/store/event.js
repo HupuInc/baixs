@@ -38,13 +38,12 @@ EventStore.prototype.store = function(events) {
 };
 
 EventStore.prototype.receive = function(data) {
-  var self = this;
   var action = data.id.slice(data.id.indexOf('-') + 1);
   if (action === 'list') {
     this.store(data.list);
   }
   else if (action === 'update') {
-    self.update(null, data.update);
+    this.update(null, data.update);
   }
 };
 

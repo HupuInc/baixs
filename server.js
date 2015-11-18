@@ -41,7 +41,7 @@ function startWebsocket(httpServer, models) {
       connection.send(
         JSON.stringify({
           id: 'event-list',
-          list: events
+          list: events,
         })
       );
     });

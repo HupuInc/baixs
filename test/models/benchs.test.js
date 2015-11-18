@@ -34,13 +34,18 @@ describe('Model - Benchs', function() {
   });
 
   describe('Fetch all the historical benchs', function() {
-    it('should return a list of hosts which were in the benchs', function(done) {
-      var now = parseInt((new Date()).valueOf() / 1000);
-      var start = now - 60; // a minute ago
-      Benchs.fetchHistory(start, now, function(err, list) {
+    it('should return a list of hosts with hostThree', function(done) {
+      Benchs.createHistory(fixture.hostThree, function(err) {
         should.not.exist(err);
-        list.should.be.an.instanceof(Array).and.have.lengthOf(1);
-        done();
+        var now = parseInt((new Date()).valueOf() / 1000);
+        var start = now - 60; // a minute ago
+        Benchs.fetchHistory(start, now, function(err, list) {
+          should.not.exist(err);
+          list.should.be.an.instanceof(Array).and.have.lengthOf(1);
+          var first = list[0];
+          first.data.ip.should.equal(fixture.hostThree.ip);
+          done();
+        });
       });
     });
   });

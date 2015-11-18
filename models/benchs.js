@@ -52,7 +52,9 @@ Benchs.fetch = function(condition, done) {
   if ('function' === typeof done) {
     var problems = [];
     stream.on('data', function(bench) {
-      problems.push(new Benchs(bench.value));
+      var newBench = new Benchs(bench.value);
+      newBench.id = bench.key;
+      problems.push(newBench);
     })
       .on('error', done)
       .on('close', function() {

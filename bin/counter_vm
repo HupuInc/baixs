@@ -3,16 +3,16 @@
 var request = require('request');
 var auth = require('../api.production.js').auth;
 
-var BAIXS = 'http://baixs.pub.hupu.com/api/';
-
+var BAIXS = 'http://' + auth.auth.user + ':' + auth.auth.pass + '@baixs.pub.hupu.com/api/';
+var url = BAIXS + 'vm_counter';
 var options = {
-  url: BAIXS + 'vm_counter',
+  url: url,
   headers: {
     'Content-Type': 'application/json',
   },
 };
 
-request.post(options, auth, function(err, res, body) {
+request.post(options, function(err, res, body) {
   console.log(err);
   console.log(body);
 });

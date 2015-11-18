@@ -137,8 +137,8 @@ var MttrArea = new React.createClass({
         enabled: false
       },
       tooltip: {
-        headerFormat: '<b>{series.name}</b><br>',
-        pointFormat: '{point.y:.2f} 小时'
+        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f} 小时'
       },
       plotOptions: {
         column: {

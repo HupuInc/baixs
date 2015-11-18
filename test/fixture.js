@@ -122,6 +122,11 @@ var vmHostOne = {
     "value": "192.168.20.3",
     "modifiedIndex": 31543,
     "createdIndex": 31543
+  }, {
+    "key" : "/hostvars/192.168.20.84/labels",
+    "modifiedIndex" : 5152,
+    "createdIndex" : 5152,
+    "dir" : true
   }],
   "modifiedIndex": 25131,
   "createdIndex": 25131

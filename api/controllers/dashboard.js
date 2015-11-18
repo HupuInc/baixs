@@ -29,6 +29,16 @@ exports.mttr = function mttr(req, res) {
       mttrArray[project].mttr += during;
       mttrArray[project].rate = parseFloat(mttrArray[project].mttr / (7 * 86400) / mttrArray[project].hosts.length).toFixed(4);
     });
-    res.json(mttrArray);
+    var newMttrArray = _.sortByOrder(
+      Object.keys(mttrArray).map(function(mttr) {
+        return {
+          project: mttr,
+          mttr: mttrArray[mttr],
+        };
+      }),
+      function(mt){
+        return mt.mttr.mttr;
+      }, 'desc');
+    res.json(newMttrArray);
   });
 };

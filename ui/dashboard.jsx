@@ -85,7 +85,7 @@ var EventArea = new React.createClass({
 var MttrArea = new React.createClass({
   getInitialState: function() {
     return {
-      data: {}
+      data: []
     };
   },
   componentDidMount: function() {
@@ -104,11 +104,14 @@ var MttrArea = new React.createClass({
     });
   },
   render: function() {
-    var item = this.state.data;
-    var series = [];
-    Object.keys(item).map(function(key) {
-      series.push({name: key, y: parseFloat(item[key]['rate'])});
+    var mttrs = this.state.data;
+    var series = mttrs.slice(0, 5).map(function(mttr) {
+      return {
+        name: mttr.project,
+        y: parseFloat(mttr.mttr.mttr / 60 / 60),
+      }
     });
+
     Highcharts.Highcharts.setOptions({
       global: {
         useUTC: false
@@ -127,11 +130,15 @@ var MttrArea = new React.createClass({
       yAxis: {
         min: 0,
         title: {
-          text: 'Mttr(%)'
+          text: 'Mttr(小时)'
         }
       },
       legend: {
         enabled: false
+      },
+      tooltip: {
+        headerFormat: '<b>{series.name}</b><br>',
+        pointFormat: '{point.y:.2f} 小时'
       },
       plotOptions: {
         column: {

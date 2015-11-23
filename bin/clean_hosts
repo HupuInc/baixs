@@ -1,0 +1,22 @@
+#!/bin/env node
+
+var db = require('../db');
+var leveldb = db.leveldb;
+
+var batched = leveldb.batch();
+
+var stream = leveldb.createReadStream({
+  gte: 'host:0',
+  lte: 'host:z',
+});
+
+stream.on('data', function(doc) {
+  batched.del(doc.key);
+  console.log(doc.key);
+})
+.on('err', function(err) {
+  throw err;
+})
+.on('close', function() {
+  batched.write();
+});

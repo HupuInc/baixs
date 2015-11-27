@@ -163,7 +163,7 @@ ul {
 }
 
 .div-main-content {
-    padding: 80px 30px 60px 30px;
+    padding: 90px 30px 30px 30px;
     margin: 0 auto;
     overflow-y: auto;
     overflow-x: hidden;
@@ -382,8 +382,8 @@ hr {
 }
 
 .div-col {
-    padding-left: 15px;
-    padding-right: 15px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .small-box .inner {
@@ -511,6 +511,10 @@ hr {
 
 .div-header {
     width: 100%;
+}
+
+.div-main-content {
+    padding: 90px 2px 30px 2px;
 }
 
 }

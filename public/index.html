@@ -8,16 +8,16 @@
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css">
         <link rel="stylesheet" media="screen" type="text/css" href="/assets/css/font-awesome.css" />
-        <link rel="stylesheet" media="screen" type="text/css" href="/assets/css/index_vm.css" />
+        <link rel="stylesheet" media="screen" type="text/css" href="/assets/css/index.css" />
     </head>
     <body>
         <div class="container-fluid">
-            <div class="container-fluid row">
-                <div class="div-left-nav col-xs-12 col-md-1 row">
-                    <div class="div-nav-header col-md-12 col-xs-12">
+            <div class="div-left-nav">
+                <div class="container-fluid">
+                    <div class="div-navbar-header">
                         <span class="fa fa-hand-spock-o"></span>
                     </div>
-                    <div class="col-md-12 col-xs-12">
+                    <div class="div-navbar-collapse" id="navbarCollapse">
                         <ul>
                             <li id="dashTab" class="slice-selected">
                                 <span class="fa fa-desktop"></span>
@@ -34,21 +34,23 @@
                         </ul>
                     </div>
                 </div>
-                <div class="div-wrapper col-md-11 col-xs-12 row">
-                    <div class="div-header col-md-12 col-xs-12">
+            </div>
+            <div class="div-wrapper">
+                <div class="div-right-content">
+                    <div class="div-header">
                         <div class="div-header-content row">
-                            <span class="span-header-title col-md-2 col-xs-2">VM</span>
-                            <div class="col-md-9 col-xs-5"></div>
+                            <div class="btn-collapse col-md-1 col-xs-1">
+                                <i class="fa fa-bars"></i>
+                            </div>
+                            <span class="span-header-title col-md-2 col-xs-5">VM</span>
+                            <div class="col-md-7 col-xs-4"></div>
                             <div id="divSearchForm" class="div-search-form form-group">
 
                             </div>
                         </div>
                     </div>
+                    <div id="divMainContent" class="div-main-content">
 
-                    <div class="div-right-content col-md-12 col-xs-12">
-                        <div id="divMainContent" class="div-main-content">
-
-                        </div>
                     </div>
                 </div>
             </div>

@@ -43,7 +43,6 @@ var SearchForm = React.createClass({
 
 $(document).ready(function() {
   var mainContent;
-
   $('ul').click(function(ev) {
     $('ul').children('li').removeClass('slice-selected');
     var parent = $(ev.target).parent();
@@ -82,8 +81,26 @@ $(document).ready(function() {
         );
         $('.span-header-title').html('Benchs');
         break;
-     }
+    }
+    if ($(document.body).width() < 769) {
+      $('.div-left-nav').removeClass('show');
+    }
+  });
+
+  $('.btn-collapse').click(function(e) {
+    if ($('.div-left-nav').hasClass('show')) {
+      $('.div-left-nav').removeClass('show');
+    }
+    else {
+      $('.div-left-nav').addClass('show');
+    }
   });
 
   $('#dashTab > span').trigger('click');
+});
+
+$(window).resize(function() {
+  if ($(document.body).width() >= 769) {
+    $('.div-left-nav').removeClass('show');
+  }
 });

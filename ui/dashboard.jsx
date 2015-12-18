@@ -234,10 +234,10 @@ var UrlItem = new React.createClass({
     var link = this.props.data.value;
     var statusClass = '';
 
-    if (link.status == null) {
+    if (link.status == null || (link.status >= 300 && link.status < 400)) {
       statusClass = 'warning';
     }
-    else if (link.status >= 300) {
+    else if (link.status >= 400) {
       statusClass = 'danger';
     }
     return (

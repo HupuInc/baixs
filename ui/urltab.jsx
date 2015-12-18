@@ -52,7 +52,7 @@ var BxsLink = React.createClass({
     var editable = this.props.editable;
     var statusClass = '';
 
-    if (link.status == null) {
+    if (link.status == null || (link.status >= 300 && link.status < 400)) {
       statusClass = 'warning';
     }
     else if (link.status >= 400) {

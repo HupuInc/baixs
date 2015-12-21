@@ -44,8 +44,7 @@ Hostvars.fetchVmmHost = function(done) {
       var vmmHost = {};
       var domainKey = host.key + '/domain';
       var vmms = _.find(host.nodes, {'key': domainKey});
-      var result = host.key.match(self.reg);
-      if (vmms && result) {
+      if (vmms) {
         vmmHost.domain = domains(vmms);
         host.nodes.forEach(function(v) {
           var key = _.last(v.key.split('/'));

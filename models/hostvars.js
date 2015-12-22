@@ -10,6 +10,10 @@ var Hostvars = {
 
 Hostvars.get = function(key, options, callback) {
   var self = this;
+  if ('function' === typeof options) {
+    callback = options;
+    options = {};
+  }
   this.etcd.get(key, options, function(err, body) {
     if (err) {
       self.etcdAli.get(key, options, callback);

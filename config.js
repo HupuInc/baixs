@@ -9,6 +9,10 @@ var defaultConfig = {
     host: 'localhost',
     port: '4001',
   },
+  etcdAli: {
+    host: 'localhost',
+    port: '4001',
+  },
   zabbix: {
     url: '',
     user: '',

@@ -5,14 +5,28 @@ var Hostvars = {
   perfix: '/hostvars/',
   reg: /^\/hostvars\/(192.168.[2-9]\d.(\d+))/,
   regHost: /^\/hostvars\/(\d+.\d+.\d+.\d+)/,
+  regJH: /\w+\.jh$|\w+\.jhyd$|\w+\.(?=jh.hupu.com)/,
 };
 
 Hostvars.get = function(key, options, callback) {
-  this.etcd.get(key, options, callback);
+  var self = this;
+  this.etcd.get(key, options, function(err, body) {
+    if (err) {
+      self.etcdAli.get(key, options, callback);
+    }
+    else {
+      callback(err, body);
+    }
+  });
 };
 
-Hostvars.set = function(key, value, options, callback) {
-  this.etcd.set(key, value, options, callback);
+Hostvars.set = function(key, value, hostname, options, callback) {
+  if (hostname.match(this.regJH)) {
+    this.etcd.set(key, value, options, callback);
+  }
+  else {
+    this.etcdAli.set(key, value, options, callback);
+  }
 };
 
 Hostvars.fetchVmmHost = function(done) {

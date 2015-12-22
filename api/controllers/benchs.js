@@ -24,7 +24,7 @@ exports.create = function create(req, res) {
 
   function saveBenchs(bench) {
     bench.save(function() {
-      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'yes', function(error) {
+      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'yes', bench.data.hostname, function(error) {
         if (error) {
           return errorRes(error);
         }
@@ -72,9 +72,10 @@ exports.del = function del(req, res) {
       if (err) {
         return errorRes(err);
       }
+
       models.Benchs.createHistory(value, function() {
         bench.del(function() {
-          models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'no', function(error) {
+          models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'no', value.hostname, function(error) {
             if (error) {
               return errorRes(error);
             }

@@ -45,10 +45,10 @@ $(document).ready(function() {
   var mainContent;
   $('ul').click(function(ev) {
     $('ul').children('li').removeClass('slice-selected');
-    var parent = $(ev.target).parent();
+    var parent = $(ev.target).parent().parent();
     $(parent).addClass('slice-selected');
     switch($(parent).attr('id')) {
-      case 'dashTab':
+      case 'dash':
         mainContent = React.render(
           <Dashboard />,
           $('.div-main-content')[0]
@@ -56,7 +56,7 @@ $(document).ready(function() {
         $('.span-header-title').html('Dashboard');
         $('#divSearchForm').hide();
         break;
-      case 'vmTab':
+      case 'vm':
         mainContent = React.render(<HostList />, $('.div-main-content')[0]);
         $('#divSearchForm').show();
         React.render(
@@ -65,7 +65,7 @@ $(document).ready(function() {
         );
         $('.span-header-title').html('VM');
         break;
-      case 'urlTab':
+      case 'url':
         $('#divSearchForm').show();
         mainContent = React.render(
           <UrlTab />,
@@ -73,7 +73,7 @@ $(document).ready(function() {
         );
         $('.span-header-title').html('URL Monitor');
         break;
-      case 'benchTab':
+      case 'bench':
         $('#divSearchForm').hide();
         mainContent = React.render(
           <BenchList />,
@@ -96,8 +96,16 @@ $(document).ready(function() {
     }
   });
 
-  $('#dashTab > span').trigger('click');
+  var hash = window.location.hash;
+  if (hash) {
+    var identified = hash.toString() + ' > a > span';
+    $(identified).trigger('click');
+  }
+  else {
+    $('#dash > a > span').trigger('click');
+  }
 });
+
 
 $(window).resize(function() {
   if ($(document.body).width() >= 769) {

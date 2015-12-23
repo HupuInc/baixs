@@ -40,7 +40,7 @@ var EventArea = new React.createClass({
     this.setState({data: data});
   },
   handleClick: function() {
-    $('#benchTab > span').trigger('click');
+    $('#bench > a > span').trigger('click');
   },
   render: function() {
     var events = this.state.data;
@@ -265,7 +265,7 @@ var UrlArea = new React.createClass({
     this.setState({data: data});
   },
   handleClick: function() {
-    $('#urlTab > span').trigger('click');
+    $('#url > a > span').trigger('click');
   },
   render: function() {
     var items = this.state.data;

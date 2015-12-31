@@ -17,7 +17,7 @@ var vmmOne = {
     "createdIndex": 28839
   }, {
     "key": "/hostvars/192.168.20.3/hostname",
-    "value": "vmm-20-3-prd",
+    "value": "vmm-20-3-prd.jh.hupu.com",
     "modifiedIndex": 39296,
     "createdIndex": 39296
   }, {
@@ -276,10 +276,160 @@ var hostFour = {
   "markedAt": 14461829965674
 };
 
+var vmmTwo = {
+  "key": "/hostvars/10.31.216.40",
+  "dir": true,
+  "nodes": [
+    {
+      "key": "/hostvars/10.31.216.40/domain",
+      "dir": true,
+      "nodes": [
+        {
+          "key": "/hostvars/10.31.216.40/domain/ab7u38dt",
+          "dir": true,
+          "nodes": [
+            {
+              "key": "/hostvars/10.31.216.40/domain/ab7u38dt/ip",
+              "value": "10.31.129.58",
+              "modifiedIndex": 85517,
+              "createdIndex": 85517
+            }
+          ],
+          "modifiedIndex": 85517,
+          "createdIndex": 85517
+        },
+        {
+          "key": "/hostvars/10.31.216.40/domain/spf840i3",
+          "dir": true,
+          "nodes": [
+            {
+              "key": "/hostvars/10.31.216.40/domain/spf840i3/ip",
+              "value": "10.31.129.77",
+              "modifiedIndex": 85467,
+              "createdIndex": 85467
+            }
+          ],
+          "modifiedIndex": 85467,
+          "createdIndex": 85467
+        }
+      ],
+      "modifiedIndex": 85467,
+      "createdIndex": 85467
+    },
+    {
+      "key": "/hostvars/10.31.216.40/hostname",
+      "value": "kvm-vmm-216-40-prd.jhyd",
+      "modifiedIndex": 84890,
+      "createdIndex": 84890
+    },
+    {
+      "key": "/hostvars/10.31.216.40/labels",
+      "dir": true,
+      "nodes": [
+        {
+          "key": "/hostvars/10.31.216.40/labels/zabbix",
+          "value": "",
+          "modifiedIndex": 86245,
+          "createdIndex": 86245
+        }
+      ],
+      "modifiedIndex": 86245,
+      "createdIndex": 86245
+    }
+  ],
+  "modifiedIndex": 83587,
+  "createdIndex": 83587
+};
+
+var vmHostFour = {
+  "key": "/hostvars/10.31.129.77",
+  "dir": true,
+  "nodes": [
+    {
+      "key": "/hostvars/10.31.129.77/hostname",
+      "value": "rediscluster-g3-129-77-tst.vm.jhyd",
+      "modifiedIndex": 85552,
+      "createdIndex": 85552
+    },
+    {
+      "key": "/hostvars/10.31.129.77/labels",
+      "dir": true,
+      "nodes": [
+        {
+          "key": "/hostvars/10.31.129.77/labels/redis-cluster",
+          "value": "",
+          "modifiedIndex": 86190,
+          "createdIndex": 86190
+        },
+        {
+          "key": "/hostvars/10.31.129.77/labels/zabbix",
+          "value": "",
+          "modifiedIndex": 86220,
+          "createdIndex": 86220
+        }
+      ],
+      "modifiedIndex": 86190,
+      "createdIndex": 86190
+    },
+    {
+      "key": "/hostvars/10.31.129.77/parent",
+      "value": "10.31.216.40",
+      "modifiedIndex": 85476,
+      "createdIndex": 85476
+    }
+  ],
+  "modifiedIndex": 85476,
+  "createdIndex": 85476
+};
+
+var vmHostFive = {
+  "key": "/hostvars/10.31.129.58",
+  "dir": true,
+  "nodes": [
+    {
+      "key": "/hostvars/10.31.129.58/hostname",
+      "value": "rediscluster-g10-129-58-tst.vm.jhyd",
+      "modifiedIndex": 85566,
+      "createdIndex": 85566
+    },
+    {
+      "key": "/hostvars/10.31.129.58/labels",
+      "dir": true,
+      "nodes": [
+        {
+          "key": "/hostvars/10.31.129.58/labels/zabbix",
+          "value": "",
+          "modifiedIndex": 86231,
+          "createdIndex": 86231
+        },
+        {
+          "key": "/hostvars/10.31.129.58/labels/redis-cluster",
+          "value": "",
+          "modifiedIndex": 86198,
+          "createdIndex": 86198
+        }
+      ],
+      "modifiedIndex": 86198,
+      "createdIndex": 86198
+    },
+    {
+      "key": "/hostvars/10.31.129.58/parent",
+      "value": "10.31.216.40",
+      "modifiedIndex": 85526,
+      "createdIndex": 85526
+    }
+  ],
+  "modifiedIndex": 85526,
+  "createdIndex": 85526
+};
+
 exports.vmmOne = vmmOne;
+exports.vmmTwo = vmmTwo;
 exports.vmHostOne = vmHostOne;
 exports.vmHostTwo = vmHostTwo;
 exports.vmHostThree = vmHostThree;
+exports.vmHostFour = vmHostFour;
+exports.vmHostFive = vmHostFive;
 exports.hostOne = hostOne;
 exports.hostTwo = hostTwo;
 exports.hostThree = hostThree;

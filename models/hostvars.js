@@ -33,10 +33,33 @@ Hostvars.set = function(key, value, hostname, options, callback) {
   }
 };
 
-Hostvars.fetchVmmHost = function(done) {
+Hostvars.fetchVmmHost = function(location, done) {
   var vmmHosts = [];
   var self = this;
   var nodes = null;
+
+  if ('function' === typeof location) {
+    done = location;
+    location = null;
+  }
+
+  function judgeLocation(hostname) {
+    if (!hostname) {
+      return false;
+    }
+    var regex = /./;
+    switch (location) {
+      case 'jh':
+        regex = /\.(jh$|jh\.hupu)/;
+        break;
+      case 'jhyd':
+        regex = /\.jhyd/;
+        break;
+      default:
+        return true;
+    }
+    return hostname.match(regex) ? true : false;
+  }
 
   function domains(vmm) {
     var guests = [];
@@ -61,8 +84,11 @@ Hostvars.fetchVmmHost = function(done) {
     _.forEach(nodes, function(host) {
       var vmmHost = {};
       var domainKey = host.key + '/domain';
+      var hostnameKey = host.key + '/hostname';
+      var hostname = _.result(_.find(host.nodes, {'key': hostnameKey}), 'value');
+      var loc = judgeLocation(hostname);
       var vmms = _.find(host.nodes, {'key': domainKey});
-      if (vmms) {
+      if (vmms && loc) {
         vmmHost.domain = domains(vmms);
         host.nodes.forEach(function(v) {
           var key = _.last(v.key.split('/'));
@@ -71,6 +97,7 @@ Hostvars.fetchVmmHost = function(done) {
           }
         });
         vmmHost.ip = _.last(host.key.split('/'));
+        vmmHost.count = vmmHost.domain ? vmmHost.domain.length : 0;
         vmmHosts.push(vmmHost);
       }
     });

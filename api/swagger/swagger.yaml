@@ -16,6 +16,7 @@ produces:
   - application/json
   - text/plain
   - text/html
+
 paths:
   /hosts:
     x-swagger-router-controller: hosts
@@ -84,6 +85,21 @@ paths:
       responses:
         200:
           description: Return all the vmm hosts and vm hosts
+          schema:
+            $ref: "#/definitions/VmHosts"
+  /vmhosts/{location}:
+    x-swagger-router-controller: vmhosts
+    get:
+      description: To Return all the vmm hosts and vm hosts belongs to the location
+      operationId: getVmHosts
+      parameters:
+        - name: location
+          required: true
+          type: string
+          in: path
+      responses:
+        200:
+          description: Return all the vmm hosts and vm hosts belongs to the location
           schema:
             $ref: "#/definitions/VmHosts"
   /vm_counter:

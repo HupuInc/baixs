@@ -450,6 +450,10 @@ hr {
     display: block;
 }
 
+.div-radio {
+    padding-bottom: 20px;
+}
+
 @media (min-width: 769px) {
 
 .div-left-nav {

@@ -12,9 +12,12 @@ describe('Model - Hostvars', function() {
   var hostOne = fixture.hostOne;
   var hostTwo = fixture.hostTwo;
   var vmmOne = fixture.vmmOne;
+  var vmmTwo = fixture.vmmTwo;
   var vmHostOne = fixture.vmHostOne;
   var vmHostTwo = fixture.vmHostTwo;
   var vmHostThree = fixture.vmHostThree;
+  var vmHostFour = fixture.vmHostFour;
+  var vmHostFive = fixture.vmHostFive;
 
   var mockedHostvars= {
     'node': {
@@ -31,7 +34,7 @@ describe('Model - Hostvars', function() {
     'node': {
       'key': '/hostvars',
       'dir': true,
-      'nodes': [ vmmOne, vmHostOne, vmHostTwo, vmHostThree ],
+      'nodes': [ vmmOne, vmmTwo, vmHostOne, vmHostTwo, vmHostThree, vmHostFour, vmHostFive ],
     },
     'modifiedIndex': 3,
     'createdIndex': 3,
@@ -97,11 +100,59 @@ describe('Model - Hostvars', function() {
       this.scope.done();
     });
 
-    it('should return a list of vmm hosts', function(done) {
+    it('should return a list of all vmm hosts', function(done) {
       Hostvars.fetchVmmHost(function(list) {
-        list.should.be.instanceof(Array);
+        list.should.be.instanceof(Array).and.have.lengthOf(2);
+        var vmHost = list[0];
+        var vmHost2 = list[1];
+        vmHost.should.have.property('domain').with.lengthOf(3);
+        vmHost2.should.have.property('domain').with.lengthOf(2);
+        done();
+      });
+    });
+  });
+
+  describe('Fetch all the jh vmm hosts', function() {
+    before(function() {
+      nock.disableNetConnect();
+      this.scope = nock('http://localhost:4001/')
+        .get('/v2/keys/hostvars/')
+        .query({ recursive: true })
+        .reply(200, mockedResponse);
+    });
+
+    after(function() {
+      this.scope.done();
+    });
+
+    it('should return a list of jh vmm hosts', function(done) {
+      Hostvars.fetchVmmHost('jh', function(list) {
+        list.should.be.instanceof(Array).and.have.lengthOf(1);
         var vmHost = list[0];
         vmHost.should.have.property('domain').with.lengthOf(3);
+        done();
+      });
+    });
+  });
+
+  describe('Fetch all the jhyd vmm hosts', function() {
+    before(function() {
+      nock.disableNetConnect();
+      this.scope = nock('http://localhost:4001/')
+        .get('/v2/keys/hostvars/')
+        .query({ recursive: true })
+        .reply(200, mockedResponse);
+    });
+
+    after(function() {
+      this.scope.done();
+    });
+
+    it('should return a list of jhyd vmm hosts', function(done) {
+      Hostvars.fetchVmmHost('jhyd', function(list) {
+        list.should.be.instanceof(Array).and.have.lengthOf(1);
+        var vmHost = list[0];
+        vmHost.should.have.property('domain').with.lengthOf(2);
         done();
       });
     });
@@ -128,7 +179,7 @@ describe('Model - Hostvars', function() {
         should.not.exist(err);
         Hostvars.leveldb.get(counterId, function(err, value) {
           should.not.exist(err);
-          value.should.equal(3);
+          value.should.equal(5);
           done();
         });
       });

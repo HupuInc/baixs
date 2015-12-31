@@ -1,31 +1,41 @@
 var $ = require('jquery');
 var React = require('react');
 
+var LocationRadio = React.createClass({
+  render: function() {
+    return (
+      <div className="div-radio">
+        <div className="radio-inline">
+          <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios1" defaultValue="all" defaultChecked onClick={this.props.onRadioEvent} />
+            全部
+          </label>
+        </div>
+        <div className="radio-inline">
+          <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios2" defaultValue="jh" onClick={this.props.onRadioEvent} />
+            一期
+          </label>
+        </div>
+        <div className="radio-inline">
+          <label>
+            <input type="radio" name="optionsRadios" id="optionsRadios3" defaultValue="jhyd" onClick={this.props.onRadioEvent} />
+            二期
+          </label>
+        </div>
+      </div>
+    );
+  }
+});
+
 var HostList = React.createClass({
-  handleSearchSubmit: function(searchForm) {
+  request: function(location) {
+    var url = '/api/vmhosts';
+    if (location) {
+      url = url + '/' + location;
+    }
     $.ajax({
-      url: $(searchForm).attr('action'),
-      data: $(searchForm).serialize(),
-      method: $(searchForm).attr('method') || 'get',
-      success: function(data, status) {
-        this.setState({data: data});
-        $('.div-guests-content').hide();
-        $('.div-vm-host-d').trigger('click');
-        $('#divSearchIcon').trigger('click');
-      }.bind(this),
-      error: function(error, status) {
-        console.log('Please handle ajax error');
-      }.bind(this)
-    });
-  },
-  getInitialState: function() {
-    return {
-      data: []
-    };
-  },
-  componentDidMount: function() {
-    $.ajax({
-      url: '/api/vmhosts',
+      url: url,
       dataType: 'json',
       method: 'get',
       success: function(data) {
@@ -38,6 +48,35 @@ var HostList = React.createClass({
       }.bind(this),
     });
   },
+  handleSearchSubmit: function(searchForm) {
+    $.ajax({
+      url: $(searchForm).attr('action'),
+      data: $(searchForm).serialize(),
+      method: $(searchForm).attr('method') || 'get',
+      success: function(data, status) {
+        this.setState({data: data});
+        $('.div-guests-content').hide();
+        $('.div-radio').hide();
+        $('.div-vm-host-d').trigger('click');
+        $('#divSearchIcon').trigger('click');
+      }.bind(this),
+      error: function(error, status) {
+        console.log('Please handle ajax error');
+      }.bind(this)
+    });
+  },
+  handleRadioEvent: function(event) {
+    var loc = $(event.target).val();
+    this.request(loc);
+  },
+  getInitialState: function() {
+    return {
+      data: []
+    };
+  },
+  componentDidMount: function() {
+    this.request();
+  },
   render: function() {
     var hostList = this.state.data.map(function(item){
       return (
@@ -45,8 +84,11 @@ var HostList = React.createClass({
       )
     });
     return (
-      <div id="HostList">
-        {hostList}
+      <div>
+        <LocationRadio onRadioEvent={this.handleRadioEvent} />
+        <div id="HostList">
+          {hostList}
+        </div>
       </div>
     );
   }

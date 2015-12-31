@@ -100,7 +100,6 @@ var HostItem = React.createClass({
               <th>主机名</th>
               <th>IP地址</th>
               <th>KVM域</th>
-              <th>MAC地址</th>
             </tr>
           </thead>
           <tbody>
@@ -123,7 +122,6 @@ var VmList = React.createClass({
         <td>{vm.hostname}</td>
         <td>{vm.ip}</td>
         <td>{vm.domain}</td>
-        <td>{vm.mac}</td>
       </tr>
     );
   }

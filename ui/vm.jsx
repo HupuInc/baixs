@@ -55,8 +55,13 @@ var HostList = React.createClass({
       method: $(searchForm).attr('method') || 'get',
       success: function(data, status) {
         this.setState({data: data});
+        var count = data.reduce(function(p, c, i) {
+          return p + c.domain.length;
+        }, 0);
+        $('#SpanSearch').html('搜索结果：命中' + count + '条');
         $('.div-guests-content').hide();
         $('.div-radio').hide();
+        $('#SearchResult').show();
         $('.div-vm-host-d').trigger('click');
         $('#divSearchIcon').trigger('click');
       }.bind(this),
@@ -67,6 +72,13 @@ var HostList = React.createClass({
   },
   handleRadioEvent: function(event) {
     var loc = $(event.target).val();
+    this.request(loc);
+  },
+  handleBack: function() {
+    $('.div-guests-content').hide();
+    $('.div-radio').show();
+    $('#SearchResult').hide();
+    var loc = $('.div-radio input:radio:checked').val();
     this.request(loc);
   },
   getInitialState: function() {
@@ -86,6 +98,11 @@ var HostList = React.createClass({
     return (
       <div>
         <LocationRadio onRadioEvent={this.handleRadioEvent} />
+        <div id="SearchResult" className="search-result">
+          <span id="SpanSearch"></span>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <a href="javascript:void(0)" onClick={this.handleBack}>返回</a>
+        </div>
         <div id="HostList">
           {hostList}
         </div>

@@ -454,6 +454,11 @@ hr {
     padding-bottom: 20px;
 }
 
+.search-result {
+    display: none;
+    margin-bottom: 20px;
+}
+
 @media (min-width: 769px) {
 
 .div-left-nav {

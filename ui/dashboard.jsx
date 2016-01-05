@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var _ = require('lodash');
 var React = require('react');
 var Highcharts = require('react-highcharts/dist/bundle/highcharts');
 var EventStore = require('./store/event');
@@ -212,7 +213,7 @@ var VmmArea = new React.createClass({
     };
 
     return (
-      <div className="div-content div-col col-lg-6">
+      <div className="div-content">
         <div>
           <div className="small-box bg-green">
             <div className="inner">
@@ -232,6 +233,7 @@ var VmmArea = new React.createClass({
 var UrlItem = new React.createClass({
   render: function() {
     var link = this.props.data.value;
+    var css = this.props.css;
     var statusClass = '';
 
     if (link.status == null || (link.status >= 300 && link.status < 400)) {
@@ -245,7 +247,47 @@ var UrlItem = new React.createClass({
         <td>{link.url}</td>
         <td>{link.proxy}</td>
         <td>{link.status}</td>
+        <td className={css}>{link.lastResTime}</td>
       </tr>
+    );
+  }
+});
+
+var UrlComponent = new React.createClass({
+  render: function() {
+    var data = this.props.data;
+    var css = this.props.css;
+    var title = this.props.title;
+    var links = data.map(function(link) {
+      return (
+        <UrlItem data={link} css={css}/>
+      );
+    });
+
+    return (
+      <div className="div-data-table div-content">
+        <div className="div-url-title">
+          <span>{title}</span>
+        </div>
+        <div className="div-url-content table-responsive">
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th>URL</th>
+                <th>Proxy</th>
+                <th>状态码</th>
+                <th className={css}>响应时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              {links}
+            </tbody>
+          </table>
+        </div>
+        <div className="div-url-action">
+          <a href="javascript:void(0)" onClick={this.handleClick}>所有URL监控</a>
+        </div>
+      </div>
     );
   }
 });
@@ -269,36 +311,27 @@ var UrlArea = new React.createClass({
   },
   render: function() {
     var items = this.state.data;
-    var links = items.map(function(link) {
-      if (link.value.status >= 300) {
-        return (
-          <UrlItem data={link} />
-        );
+    var grouped = {};
+    var links = [];
+    items.forEach(function(link) {
+      var value = link.value;
+      if (!_.has(grouped, value.url) ||
+        value.lastResTime > grouped[value.url].value.lastResTime) {
+        grouped[value.url] = link;
+      }
+      if (value.status >= 300) {
+        links.push(link);
       }
     });
 
+    grouped = _.sortBy(grouped, function(n) {
+      return -n.value.lastResTime;
+    }).slice(0,5);
+
     return (
-      <div className="div-data-table div-content">
-        <div className="div-url-title">
-          <span>URL监控</span>
-        </div>
-        <div className="div-url-content table-responsive">
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>URL</th>
-                <th>Proxy</th>
-                <th>状态码</th>
-              </tr>
-            </thead>
-            <tbody>
-              {links}
-            </tbody>
-          </table>
-        </div>
-        <div className="div-url-action">
-          <a href="javascript:void(0)" onClick={this.handleClick}>所有URL监控</a>
-        </div>
+      <div>
+        <UrlComponent data={links} css="hidden" title="URL监控"/>
+        <UrlComponent data={grouped} css="show" title="响应时间TOP5"/>
       </div>
     );
   }
@@ -310,10 +343,12 @@ var Dashboard = new React.createClass({
       <div>
         <EventArea />
         <div className="row">
-          <VmmArea />
+          <div className="div-col col-lg-6">
+            <VmmArea />
+            <MttrArea />
+          </div>
           <div className="div-col col-lg-6">
             <UrlArea />
-            <MttrArea />
           </div>
         </div>
       </div>

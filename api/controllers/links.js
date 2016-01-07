@@ -18,7 +18,7 @@ exports.getLinks = function getLinks(req, res) {
 
       links.forEach(function(aLink) {
         results.push(
-          tmpl(_.defaults(aLink.value, defaultLink))
+          tmpl(_.defaults(aLink.doc, defaultLink))
         );
       });
       res.type('.txt').send(results.join('\n') + '\n');

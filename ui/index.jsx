@@ -5,12 +5,13 @@ var Dashboard = require('./dashboard.jsx');
 var HostList = require('./vm.jsx');
 var UrlTab = require('./urltab.jsx');
 var BenchList = require('./benchs.jsx');
+var ReconnectWebsocket = require('./lib/reconnectWebsocket');
 
 require('bootstrap');
 
 var url = 'ws://' + document.URL.substr(7).split('/')[0] + '/channel';
-var socket = new WebSocket(url, 'baixs-protocol');
-socket.onmessage = Postoffice.collect.bind(Postoffice);
+var socket = new ReconnectWebsocket(url, 'baixs-protocol');
+socket.on('onmessage', Postoffice.collect.bind(Postoffice));
 
 var SearchForm = React.createClass({
   handleShowSearch: function(ev) {

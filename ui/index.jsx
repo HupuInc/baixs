@@ -49,14 +49,6 @@ $(document).ready(function() {
     var parent = $(ev.target).parent().parent();
     $(parent).addClass('slice-selected');
     switch($(parent).attr('id')) {
-      case 'dash':
-        mainContent = React.render(
-          <Dashboard />,
-          $('.div-main-content')[0]
-        );
-        $('.span-header-title').html('Dashboard');
-        $('#divSearchForm').hide();
-        break;
       case 'vm':
         mainContent = React.render(<HostList />, $('.div-main-content')[0]);
         $('#divSearchForm').show();
@@ -65,22 +57,6 @@ $(document).ready(function() {
           $('#divSearchForm')[0]
         );
         $('.span-header-title').html('VM');
-        break;
-      case 'url':
-        $('#divSearchForm').show();
-        mainContent = React.render(
-          <UrlTab />,
-          $('.div-main-content')[0]
-        );
-        $('.span-header-title').html('URL Monitor');
-        break;
-      case 'bench':
-        $('#divSearchForm').hide();
-        mainContent = React.render(
-          <BenchList />,
-          $('.div-main-content')[0]
-        );
-        $('.span-header-title').html('Benchs');
         break;
     }
     if ($(document.body).width() < 769) {
@@ -103,7 +79,7 @@ $(document).ready(function() {
     $(identified).trigger('click');
   }
   else {
-    $('#dash > a > span').trigger('click');
+    $('#vm > a > span').trigger('click');
   }
 });
 

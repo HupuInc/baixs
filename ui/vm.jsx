@@ -11,18 +11,6 @@ var LocationRadio = React.createClass({
             全部
           </label>
         </div>
-        <div className="radio-inline">
-          <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios2" defaultValue="jh" onClick={this.props.onRadioEvent} />
-            一期
-          </label>
-        </div>
-        <div className="radio-inline">
-          <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios3" defaultValue="jhyd" onClick={this.props.onRadioEvent} />
-            二期
-          </label>
-        </div>
       </div>
     );
   }

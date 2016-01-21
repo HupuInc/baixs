@@ -5,7 +5,7 @@ var Hostvars = {
   perfix: '/hostvars/',
   reg: /^\/hostvars\/(192.168.[2-9]\d.(\d+))/,
   regHost: /^\/hostvars\/(\d+.\d+.\d+.\d+)/,
-  regJH: /\w+\.jh$|\w+\.jhyd$|\w+\.(?=jh.hupu.com)/,
+  regJH: /\w+\.jh$|\w+\.jhyd$|\w+\.(?=jh.hupu.com)|^jh-|^jhyd-/,
 };
 
 Hostvars.get = function(key, options, callback) {

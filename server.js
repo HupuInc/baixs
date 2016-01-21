@@ -126,8 +126,6 @@ initApp(function(app) {
   console.log('Starting in env', app.get('env'));
   var httpServer = app.listen(port, hostname);
   var wsSocket = startWebsocket(httpServer, app.get('models'));
-  setupCrawler(app, wsSocket);
-  setupPorter();
 });
 
 console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');

@@ -6,6 +6,7 @@ var Hostvars = {
   reg: /^\/hostvars\/(192.168.[2-9]\d.(\d+))/,
   regHost: /^\/hostvars\/(\d+.\d+.\d+.\d+)/,
   regJH: /\w+\.jh$|\w+\.jhyd$|\w+\.(?=jh.hupu.com)|^jh-|^jhyd-/,
+  regKvm: /^kvm-vmm-/,
 };
 
 Hostvars.get = function(key, options, callback) {
@@ -87,9 +88,12 @@ Hostvars.fetchVmmHost = function(location, done) {
       var hostnameKey = host.key + '/hostname';
       var hostname = _.result(_.find(host.nodes, {'key': hostnameKey}), 'value');
       var loc = judgeLocation(hostname);
-      var vmms = _.find(host.nodes, {'key': domainKey});
-      if (vmms && loc) {
-        vmmHost.domain = domains(vmms);
+      if (hostname && hostname.match(self.regKvm) && loc) {
+        var vmms = _.find(host.nodes, {'key': domainKey});
+        vmmHost.domain = [];
+        if (vmms) {
+          vmmHost.domain = domains(vmms);
+        }
         host.nodes.forEach(function(v) {
           var key = _.last(v.key.split('/'));
           if (key !== 'domain') {

@@ -17,7 +17,7 @@ var vmmOne = {
     "createdIndex": 28839
   }, {
     "key": "/hostvars/192.168.20.3/hostname",
-    "value": "vmm-20-3-prd.jh.hupu.com",
+    "value": "kvm-vmm-20-3-prd.jh.hupu.com",
     "modifiedIndex": 39296,
     "createdIndex": 39296
   }, {

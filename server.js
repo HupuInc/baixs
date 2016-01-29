@@ -37,7 +37,7 @@ function startWebsocket(httpServer, models) {
       );
     });
 
-    models.Event.fetchCurrentEvent(function(err, events) {
+    models.Monitor.fetchCurrentEvent(function(err, events) {
       connection.send(
         JSON.stringify({
           id: 'event-list',
@@ -77,7 +77,7 @@ function setupCrawler(app, wsSocket) {
     });
   });
 
-  crawler.enqueue(new models.Event());
+  crawler.enqueue(new models.Monitor());
 
   crawler.on('change', function(status, link) {
     // send alert to Zabbix

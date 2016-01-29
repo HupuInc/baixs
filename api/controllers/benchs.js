@@ -24,8 +24,10 @@ exports.create = function create(req, res) {
 
   function saveBenchs(bench) {
     bench.save(function() {
-      fetchCurrent(models.Benchs, function(err, data) {
-        return res.status(201).json(data);
+      models.Monitor.addMaintenance(bench.data.hostname, function() {
+        fetchCurrent(models.Benchs, function(err, data) {
+          return res.status(201).json(data);
+        });
       });
     });
   }
@@ -69,12 +71,14 @@ exports.del = function del(req, res) {
 
       models.Benchs.createHistory(value, function() {
         bench.del(function() {
-          count--;
-          if (count === 0) {
-            fetchCurrent(models.Benchs, function(err, data) {
-              return res.json(data);
-            });
-          }
+          models.Monitor.removeMaintenance(value.hostname, function() {
+            count--;
+            if (count === 0) {
+              fetchCurrent(models.Benchs, function(err, data) {
+                return res.json(data);
+              });
+            }
+          });
         });
       });
     });
@@ -84,7 +88,7 @@ exports.del = function del(req, res) {
 exports.events = function events(req, res) {
   var models = req.app.get('models');
 
-  models.Event.fetchCurrentEvent(function(error, data) {
+  models.Monitor.fetchCurrentEvent(function(error, data) {
     if (error) {
       res.status(400).json(error);
     }

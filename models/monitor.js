@@ -6,26 +6,26 @@ var zapi = new zabbix(zabbixConfig.url, zabbixConfig.user, zabbixConfig.password
 
 var INTERVAL = process.env.CHECK_INTERVAL * 1000 || 60 * 1000;
 
-function Event() {
+function Monitor() {
   EventEmitter.call(this);
   this.id = 'events';
   this.events = [];
 }
 
-util.inherits(Event, EventEmitter);
+util.inherits(Monitor, EventEmitter);
 
-Event.prototype.start = function() {
+Monitor.prototype.start = function() {
   setTimeout(this._execute.bind(this), INTERVAL);
 };
 
-Event.prototype._execute = function() {
+Monitor.prototype._execute = function() {
   var self = this;
-  Event.fetchCurrentEvent(function(error, data) {
+  Monitor.fetchCurrentEvent(function(error, data) {
     self.emit('end', data);
   });
 };
 
-Event.fetchCurrentEvent = function(done) {
+Monitor.fetchCurrentEvent = function(done) {
   var result = [];
   zapi.login(function(err) {
     if (err) {
@@ -64,7 +64,7 @@ Event.fetchCurrentEvent = function(done) {
           else {
             body.forEach(function(data) {
               var hostid = data.hosts[0].hostid;
-              Event.getHostInterface(hostid, function(error, resp, body) {
+              Monitor.getHostInterface(hostid, function(error, resp, body) {
                 if (error) {
                   done(error);
                 }
@@ -85,7 +85,7 @@ Event.fetchCurrentEvent = function(done) {
   });
 };
 
-Event.getHostInterface = function(hostid, done) {
+Monitor.getHostInterface = function(hostid, done) {
   zapi.login(function(err) {
     if (err) {
       done(err);
@@ -98,4 +98,56 @@ Event.getHostInterface = function(hostid, done) {
   });
 };
 
-module.exports = Event;
+Monitor.callMaintence = function(method, hostid, done) {
+  zapi.call('hostgroup.get', {
+    filter: {
+      name: 'Maintenance servers'
+    }
+  }, function(err, resp, body) {
+    var maintenanceGroupId = body[0].groupid;
+    var params = {};
+    if (method === 'hostgroup.massadd') {
+      params = {
+        groups: {
+          groupid: maintenanceGroupId
+        },
+        hosts: {
+          hostid: hostid
+        }
+      };
+    }
+    else {
+      params = {
+        groupids: maintenanceGroupId,
+        hostids: hostid
+      };
+    }
+    zapi.call(method, params, done);
+  });
+};
+
+Monitor.addMaintenance = function(hostname, done) {
+  zapi.login(function() {
+    zapi.call('host.get', {
+      filter: {
+        name: hostname
+      }
+    }, function(err, resp, body) {
+      Monitor.callMaintence('hostgroup.massadd', body[0].hostid, done);
+    });
+  });
+};
+
+Monitor.removeMaintenance = function(hostname, done) {
+  zapi.login(function() {
+    zapi.call('host.get', {
+      filter: {
+        name: hostname
+      }
+    }, function(err, resp, body) {
+      Monitor.callMaintence('hostgroup.massremove', body[0].hostid, done);
+    });
+  });
+};
+
+module.exports = Monitor;

@@ -28,6 +28,40 @@ paths:
           description: Return a json representation of multiple groups of hosts
           schema:
             type: string
+    delete:
+      description: "To notify monitor system to delete the host"
+      operationId: deleteHost
+      parameters:
+        - name: host
+          in: body
+          required: true
+          schema:
+            properties:
+              hostname:
+                type: string
+      responses:
+        default:
+          description: Return a message
+          schema:
+            type: string
+    post:
+      description: "To notify monitor system to modify hostname of the host"
+      operationId: modifyHostname
+      parameters:
+        - name: host
+          in: body
+          required: true
+          schema:
+            properties:
+              oldHostname:
+                type: string
+              newHostname:
+                type: string
+      responses:
+        default:
+          description: Return a message
+          schema:
+            type: string
   /links:
     x-swagger-router-controller: links
     get:
@@ -243,13 +277,10 @@ definitions:
       - ip
       - hostname
       - domain
-      - has_problems
     properties:
       ip:
         type: string
       hostname:
-        type: string
-      has_problems:
         type: string
       domain:
         type: array

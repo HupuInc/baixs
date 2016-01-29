@@ -78,3 +78,28 @@ exports.list = function(req, res) {
     res.json(groupedHosts);
   });
 };
+
+exports.deleteHost = function(req, res) {
+  var data = req.body;
+  var models = req.app.get('models');
+  console.log(data);
+  models.Monitor.deleteHost(data.hostname, function(err) {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ message: err.toString() });
+    }
+    return res.json({message: 'success'});
+  });
+};
+
+exports.modifyHostname = function(req, res) {
+  var data = req.body;
+  var models = req.app.get('models');
+  models.Monitor.modifyHostname(data.oldHostname, data.newHostname, function(err) {
+    if (err) {
+      console.log(err);
+      return res.status(400).json({ message: err.toString() });
+    }
+    return res.json({message: 'success'});
+  });
+};

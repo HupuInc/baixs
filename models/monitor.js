@@ -126,27 +126,51 @@ Monitor.callMaintence = function(method, hostid, done) {
   });
 };
 
-Monitor.addMaintenance = function(hostname, done) {
+Monitor.getHostByHostname = function(hostname, done) {
   zapi.login(function() {
     zapi.call('host.get', {
       filter: {
         name: hostname
       }
-    }, function(err, resp, body) {
-      Monitor.callMaintence('hostgroup.massadd', body[0].hostid, done);
-    });
+    }, done);
+  });
+};
+
+Monitor.addMaintenance = function(hostname, done) {
+  Monitor.getHostByHostname(hostname, function(err, resp, body) {
+    Monitor.callMaintence('hostgroup.massadd', body[0].hostid, done);
   });
 };
 
 Monitor.removeMaintenance = function(hostname, done) {
-  zapi.login(function() {
-    zapi.call('host.get', {
-      filter: {
-        name: hostname
-      }
-    }, function(err, resp, body) {
-      Monitor.callMaintence('hostgroup.massremove', body[0].hostid, done);
-    });
+  Monitor.getHostByHostname(hostname, function(err, resp, body) {
+    Monitor.callMaintence('hostgroup.massremove', body[0].hostid, done);
+  });
+};
+
+Monitor.deleteHost = function(hostname, done) {
+  Monitor.getHostByHostname(hostname, function(err, resp, body) {
+    if (body && body.length !== 0) {
+      zapi.call('host.delete', [body[0].hostid], done);
+    }
+    else {
+      done(err);
+    }
+  });
+};
+
+Monitor.modifyHostname = function(oldHostname, newHostname, done) {
+  Monitor.getHostByHostname(oldHostname, function(err, resp, body) {
+    if (body && body.length !== 0) {
+      zapi.call('host.update', {
+        hostid: body[0].hostid,
+        host: newHostname,
+        name: newHostname
+      }, done);
+    }
+    else {
+      done(err);
+    }
   });
 };
 

@@ -36,24 +36,6 @@ describe('controllers', function() {
         'key': '/hostvars/' + newHost.ip + '/hostname',
         'value': 'kq-fake-20-84-prd.vm',
       },
-    })
-    .put('/v2/keys/hostvars/' + newHost.ip + '/has_problems', {
-      value: 'yes',
-    })
-    .reply(200, {
-      node: {
-        'key': '/hostvars/' + newHost.ip + '/has_problems',
-        'value': 'yes',
-      },
-    })
-    .put('/v2/keys/hostvars/' + newHost.ip + '/has_problems', {
-      value: 'no',
-    })
-    .reply(200, {
-      node: {
-        'key': '/hostvars/' + newHost.ip + '/has_problems',
-        'value': 'no',
-      },
     });
   });
 

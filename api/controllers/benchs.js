@@ -24,13 +24,8 @@ exports.create = function create(req, res) {
 
   function saveBenchs(bench) {
     bench.save(function() {
-      models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'yes', bench.data.hostname, function(error) {
-        if (error) {
-          return errorRes(error);
-        }
-        fetchCurrent(models.Benchs, function(err, data) {
-          return res.status(201).json(data);
-        });
+      fetchCurrent(models.Benchs, function(err, data) {
+        return res.status(201).json(data);
       });
     });
   }
@@ -57,7 +52,6 @@ exports.create = function create(req, res) {
 
 exports.del = function del(req, res) {
   var models = req.app.get('models');
-  var perfix = models.Hostvars.perfix;
   var body = req.body;
   var count = body.length;
 
@@ -75,17 +69,12 @@ exports.del = function del(req, res) {
 
       models.Benchs.createHistory(value, function() {
         bench.del(function() {
-          models.Hostvars.set(util.format(perfix + '%s/has_problems', bench.data.ip), 'no', value.hostname, function(error) {
-            if (error) {
-              return errorRes(error);
-            }
-            count--;
-            if (count === 0) {
-              fetchCurrent(models.Benchs, function(err, data) {
-                return res.json(data);
-              });
-            }
-          });
+          count--;
+          if (count === 0) {
+            fetchCurrent(models.Benchs, function(err, data) {
+              return res.json(data);
+            });
+          }
         });
       });
     });

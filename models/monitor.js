@@ -138,13 +138,23 @@ Monitor.getHostByHostname = function(hostname, done) {
 
 Monitor.addMaintenance = function(hostname, done) {
   Monitor.getHostByHostname(hostname, function(err, resp, body) {
-    Monitor.callMaintence('hostgroup.massadd', body[0].hostid, done);
+    if (body && body.length !== 0) {
+      Monitor.callMaintence('hostgroup.massadd', body[0].hostid, done);
+    }
+    else {
+      done(err);
+    }
   });
 };
 
 Monitor.removeMaintenance = function(hostname, done) {
   Monitor.getHostByHostname(hostname, function(err, resp, body) {
-    Monitor.callMaintence('hostgroup.massremove', body[0].hostid, done);
+    if (body && body.length !== 0) {
+      Monitor.callMaintence('hostgroup.massremove', body[0].hostid, done);
+    }
+    else {
+      done(err);
+    }
   });
 };
 

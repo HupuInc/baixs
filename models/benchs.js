@@ -42,7 +42,8 @@ Benchs.createHistory = function(data, done) {
   var bench = new Benchs(data);
   bench.id = Benchs.hisUuid(bench.data);
   bench.data.releaseAt = new Date().valueOf();
-  console.log('history value:' + bench.data);
+  console.log('history value:');
+  console.log(bench.data);
   bench.save(done);
 };
 

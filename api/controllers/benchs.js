@@ -16,7 +16,8 @@ exports.create = function create(req, res) {
   var models = req.app.get('models');
   var perfix = models.Hostvars.perfix;
   var data = req.body;
-  console.log('put into bench:' + data);
+  console.log('put into bench:');
+  console.log(data);
 
   function errorRes(err) {
     res.status(400).json({ message: err.toString() });
@@ -61,7 +62,8 @@ exports.del = function del(req, res) {
     res.status(400).json({ message: err.toString() });
   }
 
-  console.log('delete benches:' + body);
+  console.log('delete benches:');
+  console.log(body);
   _.forEach(body, function(data) {
     var bench = new models.Benchs(data);
     bench.get(function(err, value) {

@@ -127,7 +127,7 @@ initApp(function(app) {
   var httpServer = app.listen(port, hostname);
   var wsSocket = startWebsocket(httpServer, app.get('models'));
   setupCrawler(app, wsSocket);
-  setupPorter();
+  // setupPorter();
 });
 
 console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');

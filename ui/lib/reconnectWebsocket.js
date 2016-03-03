@@ -49,7 +49,6 @@ ReconnectWebsocket.prototype.open = function open() {
 
   this.ws.onmessage = function(event) {
     clearTimeout(self.timeout);
-    console.log('onmessage');
     self.emit('onmessage', event);
   };
 };

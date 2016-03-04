@@ -8,6 +8,8 @@ function Store() {
   this.on('receive', this.receive);
 }
 
+Store.CHANGE_EVENT = CHANGE_EVENT;
+
 inherits(Store, EventEmitter);
 
 Store.prototype.update = function update(id, doc) {

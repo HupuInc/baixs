@@ -1,0 +1,30 @@
+#!/bin/env node
+
+var db = require('../db');
+var leveldb = db.leveldb;
+
+var batched = leveldb.batch();
+var stream = leveldb.createReadStream({
+  gte: 'link:0',
+  lte: 'link:z',
+});
+
+stream.on('data', function(doc) {
+  var link = doc.value;
+
+  if (link.proxy) {
+    var proxy = link.proxy;
+    var host = proxy.split('://')[1];
+    if (host.indexOf(':') == -1) {
+      link.proxy = link.proxy + ':80';
+      batched.put(doc.key, link);
+      console.log('Updated with:', link);
+    }
+  }
+})
+.on('err', function(err) {
+  throw err;
+})
+.on('close', function() {
+  batched.write();
+});

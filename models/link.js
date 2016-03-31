@@ -110,6 +110,9 @@ Link.prototype._execute = function() {
     proxy: this.doc.proxy,
     followRedirect: false,
     timeout: TIMEOUT,
+    headers: {
+      'Accept-Encoding': 'gzip, deflate',
+    },
   }, function(err, resp) {
     var endAt = (new Date()).valueOf();
     var timeSpent = endAt - createdAt;

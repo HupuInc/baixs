@@ -3,6 +3,7 @@ Description=Bai Xiao Sheng server daemon
 
 [Service]
 Environment=NODE_ENV=production
+Environment=PORT=80
 Environment=HOST=0.0.0.0
 WorkingDirectory=/data/www-data/baixs
 ExecStart=/usr/bin/node server.js

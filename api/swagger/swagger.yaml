@@ -255,7 +255,7 @@ definitions:
     properties:
       url:
         type: string
-        pattern: "https?:\/\/.+"
+        pattern: "(https?|tcp):\/\/.+"
       proxy:
         type: string
       satus:

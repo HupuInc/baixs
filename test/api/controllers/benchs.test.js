@@ -54,13 +54,13 @@ describe('controllers', function() {
           .end(function(err, res) {
             should.not.exist(err);
             res.body.should.be.instanceof(Array).and.have.lengthOf(1);
+            done();
           });
-        done();
       });
     });
 
     describe('Mark duplication of host into benches', function() {
-      it('should return a list of hosts which were in the benches', function(done) {
+      xit('should return a list of hosts which were in the benches', function(done) {
         request(server)
           .put('/api/benchs')
           .send(newHost)
@@ -94,8 +94,8 @@ describe('controllers', function() {
           .end(function(err, res) {
             should.not.exist(err);
             res.body.should.be.instanceof(Array).and.have.lengthOf(0);
+            done();
           });
-        done();
       });
     });
   });

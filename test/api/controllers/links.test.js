@@ -10,10 +10,6 @@ var crawler = {
 };
 
 describe('controllers', function() {
-  var newLink = {
-    url: 'http://localhost',
-  };
-
   before(function(done) {
     init(function(instance) {
       server = instance;
@@ -22,44 +18,77 @@ describe('controllers', function() {
     });
   });
 
-  after(function(done) {
-    var Link = server.get('models').Link;
-    new Link(newLink).del(done);
-  });
-
   describe('Links API', function() {
     describe('POST /links', function() {
-      it('should create a new Link', function(done) {
-        request(server)
-          .post('/api/links')
-          .send(newLink)
-          .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
-          .expect(201)
-          .end(function(err, res) {
-            should.not.exist(err);
-            var result = res.body;
-            result.should.have.properties('key', 'value');
-            result.value.should.eql(newLink);
-            done();
-          });
+      describe('http link', function() {
+        var newLink = {
+          url: 'http://localhost',
+        };
+
+        after(function(done) {
+          var Link = server.get('models').Link;
+          new Link(newLink).del(done);
+        });
+
+        it('should create a new Link', function(done) {
+          request(server)
+            .post('/api/links')
+            .send(newLink)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(201)
+            .end(function(err, res) {
+              should.not.exist(err);
+              var result = res.body;
+              result.should.have.properties('key', 'value');
+              result.value.should.eql(newLink);
+              done();
+            });
+        });
+
+        it('should fail if a link does not have property url', function(done) {
+          var newLink = {
+            proxy: 'random proxy',
+            description: 'a link only for testing',
+          };
+          request(server)
+            .post('/api/links')
+            .send(newLink)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(400)
+            .end(function(err) {
+              should.not.exist(err);
+              done();
+            });
+        });
       });
 
-      it('should fail if a link does not have property url', function(done) {
+      describe('tcp link', function() {
         var newLink = {
-          proxy: 'random proxy',
-          description: 'a link only for testing',
+          url: 'tcp://localhost',
         };
-        request(server)
-          .post('/api/links')
-          .send(newLink)
-          .set('Accept', 'application/json')
-          .expect('Content-Type', /json/)
-          .expect(400)
-          .end(function(err) {
-            should.not.exist(err);
-            done();
-          });
+
+        after(function(done) {
+          var Link = server.get('models').Link;
+          new Link(newLink).del(done);
+        });
+
+        it('should create a new Link', function(done) {
+          request(server)
+            .post('/api/links')
+            .send(newLink)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /json/)
+            .expect(201)
+            .end(function(err, res) {
+              should.not.exist(err);
+              var result = res.body;
+              result.should.have.properties('key', 'value');
+              result.value.should.eql(newLink);
+              done();
+            });
+        });
       });
     });
   });

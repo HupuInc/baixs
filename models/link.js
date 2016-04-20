@@ -84,8 +84,7 @@ Link.prototype.start = function() {
   setTimeout(this._execute.bind(this), INTERVAL);
 };
 
-Link.prototype._updateStats = function(timeSpent, statusCode) {
-  this.doc.status = statusCode;
+Link.prototype._updateStats = function(timeSpent) {
   this.doc.lastResTime = timeSpent;
   this.doc.count = this.doc.count || 0;
 
@@ -110,18 +109,33 @@ function tcpRequest(urlObj, done) {
     port: urlObj.port,
   };
 
-  var socket = net.connection(options, function() {
+  var socket = net.createConnection(options, function() {
     socket.destroy();
   });
 
-  scoket.on('close', function(hadError) {
-    var code = 200;
-    if (hadError) {
-      code = 600;
-    }
+  socket.setTimeout(2000);
 
-    done(hadError, code);
+  socket.on('timeout', function() {
+    var code = 600;
+    done(true, code);
   });
+
+  socket.on('close', function(hadError) {
+    var code = 200;
+    if (!hadError) {
+      done(hadError, code);
+    }
+  });
+
+  socket.on('timeout', function() {
+    var code = 599;
+    done(true, code);
+  });
+
+  socket.on('error', function(err) {
+    var code = 600;
+    done(err, code);
+  })
 }
 
 function httpRequest(urlObj, proxy, done) {
@@ -151,23 +165,22 @@ function httpRequest(urlObj, proxy, done) {
 
 Link.prototype._execute = function() {
   var self = this;
-  var createdAt = (new Date()).valueOf();
+  var createdAt = Date.now();
   var urlObj = url.parse(this.doc.url);
 
   function requestEnd(err, code) {
-    if (err) {
-      self.doc.status = code;
-    }
-    else {
+    self.doc.status = code;
+
+    if (!err) {
       var endAt = Date.now();
       var timeSpent = endAt - createdAt;
-      self._updateStats(timeSpent, code);
+      self._updateStats(timeSpent);
     }
 
     self.emit('end', self);
   }
 
-  if (urlObj.protocol === 'tcp') {
+  if (urlObj.protocol === 'tcp:') {
     tcpRequest(urlObj, requestEnd);
   }
   else {

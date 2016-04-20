@@ -1,3 +1,4 @@
+var net = require('net');
 var nock = require('nock');
 var should = require('should');
 var sinon = require('sinon');
@@ -79,7 +80,7 @@ describe('Model - Link', function() {
     });
   });
 
-  describe('Monitor a link', function() {
+  describe('Monitor a http link', function() {
 
     var doc = {
       url: 'http://www.baidu.com',
@@ -99,7 +100,7 @@ describe('Model - Link', function() {
       this.clock.restore();
     });
 
-    describe('When respond with success',function() {
+    describe('When respond with success', function() {
       before(function() {
         nock.disableNetConnect();
         this.scope = nock('http://www.baidu.com/')
@@ -112,18 +113,20 @@ describe('Model - Link', function() {
 
       it('should update stats of the link', function(done) {
         link.once('end', function() {
-          Link.fetch(link.id, function(err, theLink) {
-            should.not.exist(err);
-            theLink.status.should.eql(201);
-            theLink.count.should.eql(1);
-            theLink.lastResTime.should.above(0);
-            theLink.avgResTime.should.above(0);
-          });
-
+          var theLink = link.doc;
+          theLink.status.should.eql(201);
+          theLink.count.should.eql(1);
+          theLink.lastResTime.should.above(0);
+          theLink.avgResTime.should.above(0);
           done();
         });
+
         link.start();
-        this.clock.tick(60 * 1000);
+        var clock = this.clock;
+        setTimeout(function() {
+          clock.tick(60 * 1000);
+        }, 1)
+        clock.tick(1);
       });
     });
 
@@ -147,8 +150,75 @@ describe('Model - Link', function() {
           doc.status.should.eql(600);
           done();
         });
+
         link.start();
         this.clock.tick(60 * 1000);
+      });
+    });
+  });
+
+  describe('Monitor a tcp link', function() {
+    var port = 4231;
+    var host = 'localhost'
+    var doc = {
+      url: 'tcp://' + host + ':' + port,
+      proxy: '',
+    };
+    var link = new Link(doc);
+
+    before(function(done) {
+      link.save(done);
+    });
+
+    before(function() {
+      this.clock = sinon.useFakeTimers();
+    });
+
+    after(function() {
+      this.clock.restore();
+    });
+
+    describe('When respond successfully', function() {
+      before(function(done) {
+        var server = net.createServer(function(socket) {
+          socket.end('Bye\n');
+        }).listen(port, host, done);
+        this.server = server;
+      });
+
+      after(function(done) {
+        this.server.close(done);
+      });
+
+      it('should update stats of the link', function(done) {
+        link.once('end', function(theLink) {
+          var doc = link.doc;
+          doc.status.should.eql(200);
+          doc.count.should.eql(1);
+          doc.lastResTime.should.above(0);
+          doc.avgResTime.should.above(0);
+          done();
+        });
+
+        link.start();
+        var clock = this.clock;
+        setTimeout(function() {
+          clock.tick(60 * 1000);
+        }, 1);
+        clock.tick(1);
+      });
+    });
+
+    describe('When respond with failure', function() {
+      it('should set failed status of link', function(done) {
+          link.once('end', function(theLink) {
+            var doc = theLink.doc;
+            doc.status.should.eql(600);
+            done();
+          });
+
+          link.start();
+          this.clock.tick(60 * 1000);
       });
     });
   });

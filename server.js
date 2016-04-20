@@ -1,6 +1,5 @@
 var url = require('url');
 var WebSocketServer = require('websocket').server;
-var _ = require('lodash');
 
 var initApp = require('./app');
 var Alert = require('./lib/alert');
@@ -81,11 +80,8 @@ function setupCrawler(app, wsSocket) {
 
   crawler.on('change', function(status, link) {
     // send alert to Zabbix
-    var urlObj = url.parse(link.doc.proxy);
-    var ip = urlObj.host;
-    if (urlObj.port) {
-      ip = _.first(ip.split(':'));
-    }
+    var urlObj = url.parse(link.doc.proxy || link.doc.url);
+    var ip = urlObj.hostname;
 
     models.Host.fetchByIp(ip, function(err, host) {
       if (err) {
@@ -95,7 +91,7 @@ function setupCrawler(app, wsSocket) {
         var msg = ''; // no errors;
         if (status === 0) {
           // when error occurrs, send monitoring url
-          msg = url.parse(link.doc.url).host;
+          msg = link.doc.url
         }
         Alert.send(host.hostname, msg);
       }

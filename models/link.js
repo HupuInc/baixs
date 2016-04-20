@@ -1,6 +1,8 @@
 var EventEmitter = require('events').EventEmitter;
+var net = require('net');
 var request = require('request');
 var shasum = require('shasum');
+var url = require('url');
 var util = require('util');
 
 var NS = 'link:%s';
@@ -102,33 +104,75 @@ Link.prototype._updateStats = function(timeSpent, statusCode) {
   this.doc.count ++;
 };
 
-Link.prototype._execute = function() {
-  var self = this;
-  var createdAt = (new Date()).valueOf();
+function tcpRequest(urlObj, done) {
+  var options = {
+    host: urlObj.hostname,
+    port: urlObj.port,
+  };
+
+  var socket = net.connection(options, function() {
+    socket.destroy();
+  });
+
+  scoket.on('close', function(hadError) {
+    var code = 200;
+    if (hadError) {
+      code = 600;
+    }
+
+    done(hadError, code);
+  });
+}
+
+function httpRequest(urlObj, proxy, done) {
   request.get({
-    url: this.doc.url,
-    proxy: this.doc.proxy,
+    url: urlObj.href,
+    proxy: proxy,
     followRedirect: false,
     timeout: TIMEOUT,
     headers: {
       'Accept-Encoding': 'gzip, deflate',
     },
   }, function(err, resp) {
-    var endAt = (new Date()).valueOf();
-    var timeSpent = endAt - createdAt;
+    var code = 600;
 
     if (err) {
-      self.doc.status = 600;
       if (err.code === 'ETIMEDOUT') {
-        self.doc.status = 599;
+        code = 599;
       }
     }
     else {
-      self._updateStats(timeSpent, resp && resp.statusCode);
+      code = resp.statusCode;
+    }
+
+    done(err, code);
+  });
+}
+
+Link.prototype._execute = function() {
+  var self = this;
+  var createdAt = (new Date()).valueOf();
+  var urlObj = url.parse(this.doc.url);
+
+  function requestEnd(err, code) {
+    if (err) {
+      self.doc.status = code;
+    }
+    else {
+      var endAt = Date.now();
+      var timeSpent = endAt - createdAt;
+      self._updateStats(timeSpent, code);
     }
 
     self.emit('end', self);
-  });
+  }
+
+  if (urlObj.protocol === 'tcp') {
+    tcpRequest(urlObj, requestEnd);
+  }
+  else {
+    httpRequest(urlObj, this.doc.proxy, requestEnd);
+  }
 };
 
 module.exports = Link;

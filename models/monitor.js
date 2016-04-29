@@ -159,6 +159,10 @@ Monitor.removeMaintenance = function(hostname, done) {
 };
 
 Monitor.deleteHost = function(hostname, done) {
+  if (!hostname || '' === hostname) {
+    done();
+    return;
+  }
   Monitor.getHostByHostname(hostname, function(err, resp, body) {
     if (body && body.length !== 0) {
       zapi.call('host.delete', [body[0].hostid], done);

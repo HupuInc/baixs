@@ -173,6 +173,24 @@ Monitor.deleteHost = function(hostname, done) {
   });
 };
 
+Monitor.disableHost = function(hostname, done) {
+  if (!hostname || '' === hostname) {
+    done();
+    return;
+  }
+  Monitor.getHostByHostname(hostname, function(err, resp, body) {
+    if (body && body.length !== 0) {
+      zapi.call('host.update', {
+        hostid: body[0].hostid,
+        status: 1
+      }, done);
+    }
+    else {
+      done(err);
+    }
+  });
+};
+
 Monitor.modifyHostname = function(oldHostname, newHostname, done) {
   Monitor.getHostByHostname(oldHostname, function(err, resp, body) {
     if (body && body.length !== 0) {

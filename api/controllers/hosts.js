@@ -83,7 +83,7 @@ exports.deleteHost = function(req, res) {
   var data = req.body;
   var models = req.app.get('models');
   console.log(data);
-  models.Monitor.deleteHost(data.hostname, function(err) {
+  models.Monitor.disableHost(data.hostname, function(err) {
     if (err) {
       console.log(err);
       return res.status(400).json({ message: err.toString() });

@@ -188,13 +188,6 @@ ul {
     cursor: pointer;
 }
 
-.span-collapse-expand i {
-    font-size: 20px;
-    line-height: 65px;
-    cursor: pointer;
-    float: right;
-}
-
 .span-vm-icon i {
     font-size: 14px;
     line-height: 65px;
@@ -459,6 +452,122 @@ hr {
     margin-bottom: 20px;
 }
 
+.div-vm-host-out {
+    padding: 5px;
+}
+
+.div-vm-host-item {
+    min-height: 200px;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.2),0 1px 5px 0 rgba(0,0,0,.12);
+    background-color: #fff;
+    margin-bottom: 10px;
+    border-top: 3px solid #00a65a;
+}
+
+.div-vmm-title {
+    width: 100%;
+    height: 50px;
+    line-height: 25px;
+    clear: both;
+    padding: 15px;
+}
+
+
+.span-vmm-hostname {
+    display: block;
+    font-size: 2rem;
+}
+
+.span-vmm-ip {
+    display: block;
+    font-size: 1.4rem;
+}
+
+.div-vmm-status {
+    padding: 15px;
+    margin-top: 5px;
+}
+
+.progress.sm, .progress-sm, .progress.sm .progress-bar, .progress-sm .progress-bar {
+    border-radius: 1px;
+}
+
+.progress.sm, .progress-sm {
+    height: 10px;
+    margin-bottom: 7px;
+    overflow: none;
+}
+
+.progress-text {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.progress-number {
+    float: right;
+    font-size: 1.3rem;
+}
+
+.progress-group {
+    width: 100%;
+}
+
+.span-vmm-c-m {
+    line-height: 30px;
+    font-size: 1.6rem;
+}
+
+.div-vmm-title-left {
+    float: left;
+}
+
+.div-vmm-title-center {
+    float: left;
+    margin-left: 10px;
+    line-height: 25px;
+}
+
+.div-vmm-title-right {
+    float: right;
+}
+
+.div-vm-hosts {
+    border-top: 1px solid #E6E6E6;
+}
+
+.div-vm-hosts-top {
+    clear: both;
+    height: 40px;
+    cursor: pointer;
+}
+
+.span-collapse-expand {
+    float: right;
+    line-height: 40px;
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.div-vm-host {
+    clear: both;
+    padding: 15px;
+    border-bottom: 1px solid #E4E4E4;
+}
+
+.div-vm-hosts-list {
+    background-color: #f4f4f4;
+    display: none;
+}
+
+.span-vm-hostname {
+    display: block;
+    font-size: 1.7rem;
+}
+
+.div-vm-secondary span {
+    font-size: 1.3rem;
+}
+
 @media (min-width: 769px) {
 
 .div-left-nav {
@@ -527,3 +636,10 @@ hr {
 }
 
 }
+
+@media screen and (max-width: 375px) {
+    html {
+        font-size: 55%;
+    }
+}
+

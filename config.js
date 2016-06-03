@@ -18,6 +18,9 @@ var defaultConfig = {
     user: '',
     password: '',
   },
+  elastic: {
+    host: 'es2.hupu.io'
+  }
 };
 
 var config = {

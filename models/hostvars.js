@@ -82,6 +82,7 @@ Hostvars.fetchVmmHost = function(location, done) {
       return done(vmmHosts);
     }
     nodes = body.node.nodes;
+    var length = nodes.length;
     _.forEach(nodes, function(host) {
       var vmmHost = {};
       var domainKey = host.key + '/domain';
@@ -102,10 +103,19 @@ Hostvars.fetchVmmHost = function(location, done) {
         });
         vmmHost.ip = _.last(host.key.split('/'));
         vmmHost.count = vmmHost.domain ? vmmHost.domain.length : 0;
-        vmmHosts.push(vmmHost);
+        Hostvars.leveldb.get(vmmHost.hostname, function(err, res) {
+          vmmHost.metrics = res;
+          vmmHosts.push(vmmHost);
+          length --;
+          if (length <= 0) {
+            done(vmmHosts);
+          }
+        });
+      }
+      else {
+        length --;
       }
     });
-    done(vmmHosts);
   }
 
   self.get(self.perfix, { recursive: true }, findVmmHost);

@@ -1,20 +1,16 @@
 var _ = require('lodash');
 
-function fetchVmmHost(req, res, location, done) {
+function fetchVmmHost(req, res, done) {
   var Hostvars = req.app.get('models').Hostvars;
-  Hostvars.fetchVmmHost(location, done);
+  Hostvars.fetchVmmHost(done);
 }
 
 exports.getVmHosts = function getVmHosts(req, res) {
   function sender(data) {
     res.type('json').send(JSON.stringify(data));
   }
-  var location = 'all';
-  if (req.swagger.params.location) {
-    location = req.swagger.params.location.value;
-  }
 
-  fetchVmmHost(req, res, location, function(data) {
+  fetchVmmHost(req, res, function(data) {
     sender(_.sortBy(data, 'count'));
   });
 };
@@ -59,7 +55,7 @@ exports.search = function search(req, res) {
     sender(searchResult);
   }
 
-  fetchVmmHost(req, res, 'all', filter);
+  fetchVmmHost(req, res, filter);
 };
 
 exports.counter = function counter(req, res) {

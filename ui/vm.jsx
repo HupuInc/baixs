@@ -1,39 +1,9 @@
 var $ = require('jquery');
 var React = require('react');
 
-var LocationRadio = React.createClass({
-  render: function() {
-    return (
-      <div className="div-radio">
-        <div className="radio-inline">
-          <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios1" defaultValue="all" defaultChecked onClick={this.props.onRadioEvent} />
-            全部
-          </label>
-        </div>
-        <div className="radio-inline">
-          <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios2" defaultValue="jh" onClick={this.props.onRadioEvent} />
-            一期
-          </label>
-        </div>
-        <div className="radio-inline">
-          <label>
-            <input type="radio" name="optionsRadios" id="optionsRadios3" defaultValue="jhyd" onClick={this.props.onRadioEvent} />
-            二期
-          </label>
-        </div>
-      </div>
-    );
-  }
-});
-
 var HostList = React.createClass({
   request: function(location) {
     var url = '/api/vmhosts';
-    if (location) {
-      url = url + '/' + location;
-    }
     $.ajax({
       url: url,
       dataType: 'json',
@@ -70,16 +40,10 @@ var HostList = React.createClass({
       }.bind(this)
     });
   },
-  handleRadioEvent: function(event) {
-    var loc = $(event.target).val();
-    this.request(loc);
-  },
   handleBack: function() {
     $('.div-vm-hosts-list').hide();
-    $('.div-radio').show();
     $('#SearchResult').hide();
-    var loc = $('.div-radio input:radio:checked').val();
-    this.request(loc);
+    this.request();
   },
   getInitialState: function() {
     return {

@@ -144,6 +144,14 @@ var HostItem = React.createClass({
     // vm.memory.size[total]
     // system.cpu.num
 
+    var vmListStyle = {};
+    var vmmItemStyle = {}
+
+    if (0 === length) {
+      vmListStyle.display = 'none';
+      vmmItemStyle['border-top-color'] = '#7d7d7d';
+    }
+
     var cpuLoad = item.metrics['system.cpu.load[percpu,avg1]'];
     var cpuProgressLength = cpuLoad * 100;
     var trafficIn = item.metrics['net.if.in[eth0]'] / 1000 / 1000;
@@ -152,7 +160,7 @@ var HostItem = React.createClass({
 
     return (
       <div className="div-vm-host-out col-md-6 col-xs-12">
-        <div className="div-vm-host-item">
+        <div className="div-vm-host-item" style={vmmItemStyle}>
           <div className="div-vmm-title">
             <div className="div-vmm-title-left">
               <span className="span-vmm-hostname">{item.hostname}</span>
@@ -185,7 +193,7 @@ var HostItem = React.createClass({
                 </div>
               </div>
           </div>
-          <div className="div-vm-hosts">
+          <div className="div-vm-hosts" style={vmListStyle}>
             <div className="div-vm-hosts-top" onClick={this.handleToggle}>
               <span className="span-collapse-expand">
                 <i className="fa fa-caret-down"> </i>

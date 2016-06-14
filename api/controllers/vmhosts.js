@@ -44,7 +44,6 @@ exports.search = function search(req, res) {
         return matchesValue(guest);
       });
       if (0 === _.size(domains) && matchesValue(host)) {
-        host.domain = [];
         searchResult.push(host);
       }
       else if (0 !== _.size(domains)) {

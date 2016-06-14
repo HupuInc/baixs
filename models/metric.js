@@ -4,7 +4,7 @@ var elastic = require('elasticsearch');
 var elasticConfig = require('../config').elastic;
 var client = new elastic.Client(elasticConfig);
 
-var INTERVAL = 28800 * 1000;
+var INTERVAL = 86400 * 1000;
 
 function buildQueryBody(from, to, host) {
   return {
@@ -13,7 +13,7 @@ function buildQueryBody(from, to, host) {
       "filtered": {
         "query": {
           "query_string": {
-            "query": "host:\"" + host + "\" AND (\"system.cpu.load\\[percpu,avg1\\]\" OR \"net.if.in\\[eth0\\]\" OR \"net.if.out\\[eth0\\]\" OR \"vfs.dev.read\\[sdb, ops,\\]\" OR \"vfs.dev.write\\[sdb, ops,\\]\" OR \"vm.memory.size\\[total\\]\" OR \"system.cpu.num\")",
+            "query": "host:\"" + host + "\" AND (\"system.cpu.load\\[percpu,avg1\\]\" OR \"vmm.disk.check\" OR \"vm.memory.size\\[total\\]\" OR \"system.cpu.num\")",
             "analyze_wildcard": true
           }
         },
@@ -76,7 +76,7 @@ Metric.get = function(host, done) {
 
 function requestMetrics(host, done) {
   var to = new Date().valueOf();
-  var from = to - 86400000;
+  var from = to - INTERVAL;
   client.search({
     index: 'zabbixmetrics-*',
     body: buildQueryBody(from, to, host),

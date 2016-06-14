@@ -2,7 +2,9 @@ var $ = require('jquery');
 var React = require('react');
 var vmmFilter = {
   mem: 'mem-all',
-  vmNum: 'vmNum-all'
+  vmNum: 'vmNum-all',
+  disk: 'disk-all',
+  cpu: 'cpu-all'
 };
 var sortType = "sortNumAsc";
 
@@ -61,6 +63,12 @@ function filter() {
   if (vmmFilter.vmNum !== 'vmNum-all') {
     filterClass += "." + vmmFilter.vmNum;
   }
+  if (vmmFilter.disk !== 'disk-all') {
+    filterClass += "." + vmmFilter.disk;
+  }
+  if (vmmFilter.cpu !== 'cpu-all') {
+    filterClass += "." + vmmFilter.cpu;
+  }
 
   if ("" !== filterClass) {
     $('.div-vm-host-out').hide();
@@ -93,12 +101,27 @@ var VmmFilter = React.createClass({
   handleSelect: function(e, item) {
     var id = item.id;
     vmmFilter[id.split('-')[0]] = id;
-    var startText = id.split('-')[0] === 'mem' ? '内存检索' : '虚拟机数量检索';
+    var startText = "";
+    switch(id.split('-')[0]) {
+      case 'mem':
+        startText = '内存检索';
+        break;
+      case 'vmNum':
+        startText = '虚拟机数量检索';
+        break;
+      case 'disk':
+        startText = '磁盘类型检索';
+        break;
+      case 'cpu':
+        startText = 'CPU 核数检索';
+        break;
+    }
     $('#' + item.parentId).html(startText + ': ' + item.desc);
     filter();
     sort();
   },
   render: function() {
+    var self = this;
     var sortItem = [{
       parentId: 'dropdownSortText',
       id: 'sortNumAsc',
@@ -167,6 +190,39 @@ var VmmFilter = React.createClass({
       })
     }
 
+    var diskTypeItem = [{
+      parentId: 'dropdownDiskTypeText',
+      id: 'disk-all',
+      desc: '全部',
+      handleClick: this.handleSelect
+    },{
+      parentId: 'dropdownDiskTypeText',
+      id: 'disk-ssd',
+      desc: 'SSD',
+      handleClick: this.handleSelect
+    },
+    ,{
+      parentId: 'dropdownDiskTypeText',
+      id: 'disk-hdd',
+      desc: 'HDD',
+      handleClick: this.handleSelect
+    }];
+
+    var cpuItem = [{
+      parentId: 'dropdownCpuText',
+      id: 'cpu-all',
+      desc: '全部',
+      handleClick: this.handleSelect
+    }];
+    Object.keys(this.props.data).forEach(function(cores) {
+      cpuItem.push({
+        parentId: 'dropdownCpuText',
+        id: 'cpu-' + cores,
+        desc: cores + ' 核',
+        handleClick: self.handleSelect
+      })
+    });
+
     var sortItemList = sortItem.map(function(item){
       return (
         <DropdownItem item={item} handleClick={item.handleClick}/>
@@ -185,6 +241,18 @@ var VmmFilter = React.createClass({
       )
     });
 
+    var diskTypeItemList = diskTypeItem.map(function(item){
+      return (
+        <DropdownItem item={item} handleClick={item.handleClick}/>
+      )
+    });
+
+    var cpuItemList = cpuItem.map(function(item){
+      return (
+        <DropdownItem item={item} handleClick={item.handleClick}/>
+      )
+    });
+
     return (
       <div className="div-filter btn-toolbar" role="toolbar">
         <div className="btn-group" role="group">
@@ -198,6 +266,15 @@ var VmmFilter = React.createClass({
             </ul>
           </div>
 
+          <div className="btn-group div-dropdown" role="group">
+            <button className="btn btn-default dropdown-toggle" type="button" id="dropdownCpu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span id="dropdownCpuText">CPU 核数检索</span>
+              <span className="caret" style={{'margin-left': '7px'}}></span>
+            </button>
+            <ul className="dropdown-menu" aria-labelledby="dropdownCpu">
+              {cpuItemList}
+            </ul>
+          </div>
 
           <div className="btn-group div-dropdown" role="group">
             <button className="btn btn-default dropdown-toggle" type="button" id="dropdownMem" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -217,6 +294,16 @@ var VmmFilter = React.createClass({
             </button>
             <ul className="dropdown-menu" aria-labelledby="dropdownVmNum">
               {vmNumItemList}
+            </ul>
+          </div>
+
+          <div className="btn-group div-dropdown" role="group">
+            <button className="btn btn-default dropdown-toggle" type="button" id="dropdownDiskType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              <span id="dropdownDiskTypeText">磁盘类型检索</span>
+              <span className="caret" style={{'margin-left': '7px'}}></span>
+            </button>
+            <ul className="dropdown-menu" aria-labelledby="dropdownDiskType">
+              {diskTypeItemList}
             </ul>
           </div>
         </div>
@@ -250,7 +337,7 @@ var HostList = React.createClass({
       success: function(data, status) {
         this.setState({data: data});
         var count = data.reduce(function(p, c, i) {
-          return p + c.domain.length;
+          return p + c.domain.length + 1;
         }, 0);
         $('#SpanSearch').html('搜索结果：命中' + count + '条');
         $('.div-vm-hosts-list').hide();
@@ -284,9 +371,14 @@ var HostList = React.createClass({
         <HostItem data={item} />
       )
     });
+    var coresObject = this.state.data.reduce(function(coresObject, item) {
+      var cores = item.metrics['system.cpu.num'];
+      coresObject[cores] = 1;
+      return coresObject;
+    }, {});
     return (
       <div>
-        <VmmFilter />
+        <VmmFilter data={coresObject}/>
         <div id="SearchResult" className="search-result">
           <span id="SpanSearch"></span>
           &nbsp;&nbsp;&nbsp;&nbsp;
@@ -325,14 +417,6 @@ var HostItem = React.createClass({
       length = item.domain.length;
     }
 
-    // system.cpu.load[percpu,avg1]
-    // net.if.in[eth0]
-    // net.if.out[eth0]
-    // vfs.dev.read[sdb, ops,]
-    // vfs.dev.write[sdb, ops,]
-    // vm.memory.size[total]
-    // system.cpu.num
-
     var vmListStyle = {};
     var vmmItemStyle = {}
 
@@ -341,14 +425,18 @@ var HostItem = React.createClass({
       vmmItemStyle['border-top-color'] = '#7d7d7d';
     }
 
+    var coresNum = item.metrics['system.cpu.num'];
     var cpuLoad = item.metrics['system.cpu.load[percpu,avg1]'];
     var cpuProgressLength = cpuLoad * 100;
-    var trafficIn = item.metrics['net.if.in[eth0]'] / 1000 / 1000;
-    var trafficOut = item.metrics['net.if.out[eth0]'] / 1000 / 1000;
-    var trafficProgressLength = trafficIn / (trafficIn + trafficOut) * 100
-    var hostMem = item.metrics['vm.memory.size[total]'] / 1024 / 1024 / 1024;
-    var divHostItemClass = "div-vm-host-out col-md-6 col-xs-12";
-    if (hostMem <= 32) {
+    var hostMem = Math.floor(item.metrics['vm.memory.size[total]'] / 1000 / 1024 / 1024);
+    var diskTag = item.metrics['vmm.disk.check'] === 0 ? 'SSD' : 'HDD'; // 0:ssd 1:hdd
+    var diskClass = item.metrics['vmm.disk.check'] === 0 ? "label label-info" : "label label-danger";
+    var divHostItemClass = "div-vm-host-out col-md-6 col-xs-12 disk-" + diskTag.toLowerCase() + " cpu-" + coresNum;
+    if (hostMem <= 16) {
+      divHostItemClass += " mem-16 ";
+      hostMem = '16';
+    }
+    else if (hostMem > 16 && hostMem <= 32) {
       divHostItemClass += " mem-32 ";
       hostMem = '32';
     }
@@ -360,11 +448,14 @@ var HostItem = React.createClass({
       divHostItemClass += " mem-128 ";
       hostMem = '128';
     }
+    else {
+      divHostItemClass += " mem-" + hostMem + " ";
+    }
 
     divHostItemClass += "vmNum-" + length;
 
     return (
-      <div className={divHostItemClass} data-mem={hostMem} data-length={length}>
+      <div className={divHostItemClass} data-mem={hostMem} data-length={length} data-diskType={diskTag}>
         <div className="div-vm-host-item" style={vmmItemStyle}>
           <div className="div-vmm-title">
             <div className="div-vmm-title-left">
@@ -375,28 +466,21 @@ var HostItem = React.createClass({
               <span className="span-badge badge">{length}</span>
             </div>
             <div className="div-vmm-title-right">
-              <span className="span-vmm-c-m">{item.metrics['system.cpu.num']} C / {parseFloat(hostMem).toFixed(2)} G</span>
+              <span className="span-vmm-c-m">{coresNum} C / {hostMem} G</span>
             </div>
           </div>
           <div className="div-vmm-status">
-              <div className="progress-group">
-                <span className="progress-text">CPU Load</span>
-                <span className="progress-number">{cpuLoad} / 1</span>
-                <div className="progress sm">
-                  <div className="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style={{width: cpuProgressLength + '%'}}>
-                  </div>
+            <div className="div-vmm-labels">
+              <span className={diskClass}>{diskTag}</span>
+            </div>
+            <div className="progress-group">
+              <span className="progress-text">CPU Load</span>
+              <span className="progress-number">{cpuLoad} / 1</span>
+              <div className="progress sm">
+                <div className="progress-bar progress-bar-success progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style={{width: cpuProgressLength + '%'}}>
                 </div>
               </div>
-              <div className="progress-group">
-                <span className="progress-text">eth0 Traffic</span>
-                <span className="progress-number">IN: {trafficIn.toFixed(2)} Mb / OUT: {trafficOut.toFixed(2)} Mb</span>
-                <div className="progress sm">
-                  <div className="progress-bar progress-bar-warning progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style={{width: trafficProgressLength + '%'}}>
-                  </div>
-                  <div className="progress-bar progress-bar-danger progress-bar-striped" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style={{width: 100 - trafficProgressLength + '%'}}>
-                  </div>
-                </div>
-              </div>
+            </div>
           </div>
           <div className="div-vm-hosts" style={vmListStyle}>
             <div className="div-vm-hosts-top" onClick={this.handleToggle}>

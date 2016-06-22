@@ -372,8 +372,10 @@ var HostList = React.createClass({
       )
     });
     var coresObject = this.state.data.reduce(function(coresObject, item) {
-      var cores = item.metrics['system.cpu.num'];
-      coresObject[cores] = 1;
+      if (item.metrics && 'system.cpu.num' in item.metrics) {
+        var cores = item.metrics['system.cpu.num'];
+        coresObject[cores] = 1;
+      }
       return coresObject;
     }, {});
     return (
@@ -425,6 +427,7 @@ var HostItem = React.createClass({
       vmmItemStyle['border-top-color'] = '#7d7d7d';
     }
 
+    item.metrics = item.metrics || {}
     var coresNum = item.metrics['system.cpu.num'];
     var cpuLoad = item.metrics['system.cpu.load[percpu,avg1]'];
     var cpuProgressLength = cpuLoad * 100;

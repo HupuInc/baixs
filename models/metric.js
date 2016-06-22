@@ -4,7 +4,7 @@ var elastic = require('elasticsearch');
 var elasticConfig = require('../config').elastic;
 var client = new elastic.Client(elasticConfig);
 
-var INTERVAL = 86400 * 1000;
+var INTERVAL = 3600 * 2 * 1000;
 
 function buildQueryBody(from, to, host) {
   return {

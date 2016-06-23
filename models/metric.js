@@ -5,6 +5,7 @@ var elasticConfig = require('../config').elastic;
 var client = new elastic.Client(elasticConfig);
 
 var INTERVAL = 3600 * 2 * 1000;
+var QUERY_INTERVAL = 3600 * 8 * 1000;
 
 function buildQueryBody(from, to, host) {
   return {
@@ -76,7 +77,7 @@ Metric.get = function(host, done) {
 
 function requestMetrics(host, done) {
   var to = new Date().valueOf();
-  var from = to - INTERVAL;
+  var from = to - QUERY_INTERVAL;
   client.search({
     index: 'zabbixmetrics-*',
     body: buildQueryBody(from, to, host),

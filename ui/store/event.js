@@ -31,10 +31,12 @@ EventStore.prototype.toArray = function() {
 
 EventStore.prototype.store = function(events) {
   var self = this;
-  events.forEach(function(event) {
-    self.objects[event.lastEvent.eventid] = event;
-  });
-  this.emit('change', this.toArray());
+  if (events) {
+    events.forEach(function(event) {
+      self.objects[event.lastEvent.eventid] = event;
+    });
+    this.emit('change', this.toArray());
+  }
 };
 
 EventStore.prototype.receive = function(data) {

@@ -46,10 +46,12 @@ Store.prototype.receive = function(data) {
 
 Store.prototype.store = function(data) {
   var self = this;
-  data.list.forEach(function(item) {
-    self.objects[item.key] = item.value;
-  });
-  this.emit(CHANGE_EVENT, this.toArray());
+  if (data && data.list) {
+    data.list.forEach(function(item) {
+      self.objects[item.key] = item.value;
+    });
+    this.emit(CHANGE_EVENT, this.toArray());
+  }
 };
 
 module.exports = Store;

@@ -97,26 +97,6 @@ Hostvars.fetchVmmHost = function(done) {
   self.get(self.perfix, { recursive: true }, findVmmHost);
 };
 
-Hostvars.fetchHasProblems = function(done) {
-  var self = this;
-  function findHasProblems(error, body) {
-    var nodes = body.node.nodes,
-      hosts = [];
-    _.forEach(nodes, function(host) {
-      var props = host.nodes;
-      var key = host.key;
-      if (_.find(props, {'key': key + '/has_problems', 'value': 'yes' })) {
-        hosts.push({
-          hostname: _.result(_.find(props, { 'key': key + '/hostname' }), 'value'),
-          ip: key.match(self.regHost)[1],
-        });
-      }
-    });
-    done(hosts);
-  }
-  self.get(self.perfix, { recursive: true }, findHasProblems);
-};
-
 Hostvars.vmCounter = function(done) {
   var yesterday = moment(moment().subtract(1, 'days').toArray().slice(0, 3)).valueOf();
   var counterId = 'vmcounter:' + yesterday;

@@ -13,35 +13,6 @@ var url = 'ws://' + document.URL.substr(7).split('/')[0] + '/channel';
 var socket = new ReconnectWebsocket(url, 'baixs-protocol');
 socket.on('onmessage', Postoffice.collect.bind(Postoffice));
 
-var SearchForm = React.createClass({
-  handleShowSearch: function(ev) {
-    $(".search-form-input-t").val('');
-    if($(".search-form-input-t").css('display') == 'none') {
-      $(".search-form-input-t").show();
-      $(".search-form-input-t").animate({"width": "+=120px"}, 200);
-      $(".search-form-input-t").focus();
-    }
-    else {
-      $(".search-form-input-t").animate({"width": "-=120px"}, 200, function() {
-        $('.search-form-input-t').hide();
-      });
-    }
-  },
-  handleSubmit: function(ev) {
-    ev.preventDefault();
-    var searchForm = $(this.getDOMNode());
-    this.props.onSearchSubmit(searchForm);
-  },
-  render: function() {
-    return (
-      <form action="/api/vm_search" method="get" acceptCharset="utf-8" className="search-form form-remote" onSubmit={this.handleSubmit}>
-        <div id="divSearchIcon" className="search-icon fa fa-search" onClick={this.handleShowSearch}> </div>
-          <input className="search-form-input-t search-form-input" type="text" name="q" placeholder="搜索" />
-      </form>
-    );
-  }
-});
-
 $(document).ready(function() {
   var mainContent;
   $('ul').click(function(ev) {
@@ -55,19 +26,8 @@ $(document).ready(function() {
           $('.div-main-content')[0]
         );
         $('.span-header-title').html('Dashboard');
-        $('#divSearchForm').hide();
-        break;
-      case 'vm':
-        mainContent = React.render(<HostList />, $('.div-main-content')[0]);
-        $('#divSearchForm').show();
-        React.render(
-          <SearchForm onSearchSubmit={mainContent.handleSearchSubmit} />,
-          $('#divSearchForm')[0]
-        );
-        $('.span-header-title').html('VM');
         break;
       case 'url':
-        $('#divSearchForm').show();
         mainContent = React.render(
           <UrlTab />,
           $('.div-main-content')[0]
@@ -75,7 +35,6 @@ $(document).ready(function() {
         $('.span-header-title').html('URL Monitor');
         break;
       case 'bench':
-        $('#divSearchForm').hide();
         mainContent = React.render(
           <BenchList />,
           $('.div-main-content')[0]

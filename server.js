@@ -5,7 +5,6 @@ var initApp = require('./app');
 var Alert = require('./lib/alert');
 var Crawler = require('./lib/crawler');
 var Porter = require('./lib/porter');
-var Sentinel = require('./lib/sentinel');
 
 function originIsAllowed(origin) {
   // put logic here to detect whether the specified origin is allowed.
@@ -116,12 +115,6 @@ function setupPorter() {
   return porter;
 }
 
-function setupSentinel() {
-  var sentinel = new Sentinel();
-  sentinel.start();
-  return sentinel;
-}
-
 var port = process.env.PORT || 10010;
 var hostname = process.env.HOST || '127.0.0.1';
 
@@ -131,7 +124,6 @@ initApp(function(app) {
   var wsSocket = startWebsocket(httpServer, app.get('models'));
   setupCrawler(app, wsSocket);
   // setupPorter();
-  setupSentinel();
 });
 
 console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');

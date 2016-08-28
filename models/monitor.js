@@ -104,25 +104,30 @@ Monitor.callMaintence = function(method, hostid, done) {
       name: 'Maintenance servers'
     }
   }, function(err, resp, body) {
-    var maintenanceGroupId = body[0].groupid;
-    var params = {};
-    if (method === 'hostgroup.massadd') {
-      params = {
-        groups: {
-          groupid: maintenanceGroupId
-        },
-        hosts: {
-          hostid: hostid
-        }
-      };
+    if (body && body.length !== 0) {
+      var maintenanceGroupId = body[0].groupid;
+      var params = {};
+      if (method === 'hostgroup.massadd') {
+        params = {
+          groups: {
+            groupid: maintenanceGroupId
+          },
+          hosts: {
+            hostid: hostid
+          }
+        };
+      }
+      else {
+        params = {
+          groupids: maintenanceGroupId,
+          hostids: hostid
+        };
+      }
+      zapi.call(method, params, done);
     }
     else {
-      params = {
-        groupids: maintenanceGroupId,
-        hostids: hostid
-      };
+      done(err);
     }
-    zapi.call(method, params, done);
   });
 };
 

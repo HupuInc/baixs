@@ -54,10 +54,7 @@ ReconnectWebsocket.prototype.open = function open() {
 };
 
 ReconnectWebsocket.prototype.close = function close(code) {
-  code = code || 1000;
-  if (this.ws) {
-    ws.close(code);
-  }
+  this.ws.close(code || 1000);
 };
 
 module.exports = ReconnectWebsocket;

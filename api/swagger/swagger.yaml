@@ -72,45 +72,6 @@ paths:
           description: Return all the links
           schema:
             type: string
-    post:
-      description: Create a new Link to be monitored
-      operationId: create
-      parameters:
-        - name: link
-          in: body
-          schema:
-            $ref: "#/definitions/Link"
-      responses:
-        201:
-          description: Success
-          schema:
-            required:
-              - key
-              - value
-            properties:
-              key:
-                type: string
-              value:
-                $ref: "#/definitions/Link"
-
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-  /links/{id}:
-    x-swagger-router-controller: links
-    delete:
-      operationId: del
-      parameters:
-        - name: id
-          required: true
-          type: string
-          in: path
-      responses:
-        default:
-          description: Array of links left
-          schema:
-            type: string
   /vm_counter:
     x-swagger-router-controller: vmhosts
     get:

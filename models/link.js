@@ -4,12 +4,24 @@ var request = require('request');
 var shasum = require('shasum');
 var url = require('url');
 var util = require('util');
+var _ = require('lodash');
+
+/**
+Link.doc
+  - url
+  - proxy
+  - lastResTime
+  - avgResTime
+  - count
+**/
 
 var NS = 'link:%s';
 // default to 20 seconds
 var TIMEOUT = 20 * 1000;
 // default to run task every 1 minute
 var INTERVAL = process.env.CHECK_INTERVAL * 1000 || 60 * 1000;
+
+var LinksUnderMonitor = {};
 
 function Link(doc) {
   EventEmitter.call(this);
@@ -28,41 +40,27 @@ Link.uuid = function(doc) {
   return util.format(NS, shasum(keyObj));
 };
 
-Link.create = function(doc, done) {
-  var link = new Link(doc);
-  link.save(done);
-};
-
-Link.fetch = function(key, done) {
-  Link.leveldb.get(key, function(err, doc) {
-    if (err) {
-      done(err);
-    }
-    else {
-      done(null, new Link(doc));
-    }
-  });
-};
-
-Link.fetchAll = function(done) {
-  var stream = Link.leveldb.createReadStream({
-    gte: 'link:0',
-    lte: 'link:z',
-  });
-
-  if ('function' === typeof done) {
-    var links = [];
-    stream.on('data', function(aLink) {
-      links.push(new Link(aLink.value));
-    })
-    .on('err', done)
-    .on('close', function() {
-      done(null, links);
+Link.update = function(host) {
+  host.monitor.forEach(function(url) {
+    var link = new Link({
+      proxy: host.ip,
+      url: url,
     });
-  }
-  else {
-    return stream;
-  }
+
+    LinksUnderMonitor[link.id] = link;
+  });
+};
+
+Link.fetch = function(key) {
+  return LinksUnderMonitor[key];
+};
+
+Link.fetchAll = function() {
+  return _.values(LinksUnderMonitor);
+};
+
+Link.clearAll = function() {
+  LinksUnderMonitor = {};
 };
 
 Link.prototype.toJSON = function() {
@@ -72,12 +70,12 @@ Link.prototype.toJSON = function() {
   };
 };
 
-Link.prototype.save = function(done) {
-  Link.leveldb.put(this.id, this.doc, { valueEncoding: 'json' }, done);
+Link.prototype.save = function() {
+  LinksUnderMonitor[this.id] = this;
 };
 
-Link.prototype.del = function(done) {
-  Link.leveldb.del(this.id, done);
+Link.prototype.del = function() {
+  delete LinksUnderMonitor[this.id];
 };
 
 Link.prototype.start = function() {
@@ -135,7 +133,7 @@ function tcpRequest(urlObj, done) {
   socket.on('error', function(err) {
     var code = 600;
     done(err, code);
-  })
+  });
 }
 
 function httpRequest(urlObj, proxy, done) {

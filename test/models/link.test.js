@@ -1,6 +1,6 @@
 var net = require('net');
 var nock = require('nock');
-var should = require('should');
+require('should');
 var sinon = require('sinon');
 var _ = require('lodash');
 var bootstrap = require('../');
@@ -37,13 +37,8 @@ describe('Model - Link', function() {
     batch.write(done);
   });
 
-  after(function(done) {
-    var batch = leveldb.batch();
-    fixtures.links.forEach(function(link) {
-      batch.del(Link.uuid(link));
-    });
-
-    batch.write(done);
+  after(function() {
+    Link.clearAll();
   });
 
   it('should contain the record', function(done) {
@@ -63,20 +58,14 @@ describe('Model - Link', function() {
     doc.status = 404;
     var link = new models.Link(doc);
 
-    before(function(done) {
-      link.save(done);
+    before(function() {
+      link.save();
     });
 
-    it('should update successfully', function(done) {
+    it('should update successfully', function() {
       var id = models.Link.uuid(linkDoc);
-      leveldb.get(id, function(err, doc) {
-        if (err) {
-          done(err);
-        } else {
-          doc.status.should.eql(404);
-          done();
-        }
-      });
+      var linkUnderTest = Link.fetch(id);
+      linkUnderTest.doc.status.should.eql(404);
     });
   });
 
@@ -88,8 +77,8 @@ describe('Model - Link', function() {
     };
     var link = new Link(doc);
 
-    before(function(done) {
-      link.save(done);
+    before(function() {
+      link.save();
     });
 
     before(function() {
@@ -125,7 +114,7 @@ describe('Model - Link', function() {
         var clock = this.clock;
         setTimeout(function() {
           clock.tick(60 * 1000);
-        }, 1)
+        }, 1);
         clock.tick(1);
       });
     });
@@ -159,15 +148,15 @@ describe('Model - Link', function() {
 
   describe('Monitor a tcp link', function() {
     var port = 4231;
-    var host = 'localhost'
+    var host = 'localhost';
     var doc = {
       url: 'tcp://' + host + ':' + port,
       proxy: '',
     };
     var link = new Link(doc);
 
-    before(function(done) {
-      link.save(done);
+    before(function() {
+      link.save();
     });
 
     before(function() {
@@ -191,7 +180,7 @@ describe('Model - Link', function() {
       });
 
       it('should update stats of the link', function(done) {
-        link.once('end', function(theLink) {
+        link.once('end', function() {
           var doc = link.doc;
           doc.status.should.eql(200);
           doc.count.should.eql(1);

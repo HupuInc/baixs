@@ -10,12 +10,13 @@ var Porter = require('../../lib/porter');
 
 var fixture = require('../fixture');
 var hostOne = fixture.hostOne;
+var hostTwo = fixture.hostTwo;
 var vmmOne = fixture.vmmOne;
 var vmHostOne = fixture.vmHostOne;
 var vmHostTwo = fixture.vmHostTwo;
 var vmHostThree = fixture.vmHostThree;
 
-var mockedNodes = [ hostOne, vmmOne, vmHostOne, vmHostTwo, vmHostThree ];
+var mockedNodes = [ hostOne, vmmOne, vmHostOne, vmHostTwo, vmHostThree, hostTwo ];
 var mockedResponse = {
   'node': {
     'key': '/hostvars',
@@ -112,8 +113,7 @@ describe('Porter', function() {
           clock.tick(Porter.INTERVAL);
         });
 
-        porter.start();
-        clock.tick(Porter.INTERVAL);
+        porter.run();
       });
     });
   });

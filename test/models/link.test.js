@@ -6,7 +6,7 @@ var _ = require('lodash');
 var bootstrap = require('../');
 
 var models = bootstrap.models;
-var leveldb = bootstrap.leveldb;
+var Host = models.Host;
 var Link = models.Link;
 
 var fixtures = {
@@ -28,28 +28,58 @@ var fixtures = {
 describe('Model - Link', function() {
   var linkDoc = fixtures.links[0];
 
-  before(function(done) {
-    var batch = leveldb.batch();
-    fixtures.links.forEach(function(link) {
-      batch.put(Link.uuid(link), link, { valueEncoding: 'json' });
-    });
-
-    batch.write(done);
-  });
-
   after(function() {
     Link.clearAll();
   });
 
-  it('should contain the record', function(done) {
-    var id = models.Link.uuid(linkDoc);
-    leveldb.get(id, function(err, doc) {
-      if (err) {
-        done(err);
-      } else {
-        doc.should.be.eql(linkDoc);
-        done();
-      }
+  describe('Construct a link with http port from a Host', function() {
+    var host = new Host({
+      hostname: 'web-tst-8-1.sh',
+      ip: '172.17.8.1',
+      monitor: {
+        '8080': [
+          'http://www.hupu.com',
+        ],
+      },
+    });
+
+    before(function() {
+      Link.update(host);
+    });
+
+    after(function() {
+      console.log('clear by http');
+      Link.clearAll();
+    });
+
+    it('should construct a link to monitor', function() {
+      var link = Link.fetchAll()[0];
+      link.doc.url.should.eql('http://www.hupu.com');
+      link.doc.proxy.should.eql('http://172.17.8.1:8080');
+    });
+  });
+
+  describe('Construct a link with tcp port from a Host', function() {
+    var host = new Host({
+      hostname: 'web-tst-8-1.sh',
+      ip: '172.17.8.1',
+      monitor: {
+        '8119': ['tcp://172.17.8.1:8119'],
+      },
+    });
+
+    before(function() {
+      Link.update(host);
+    });
+
+    after(function() {
+      Link.clearAll();
+    });
+
+    it('should construct a link to monitor', function() {
+      var link = Link.fetchAll()[0];
+      link.doc.url.should.eql('tcp://172.17.8.1:8119');
+      link.doc.should.not.have.property('proxy');
     });
   });
 

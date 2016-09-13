@@ -8,7 +8,7 @@ var util = require('util');
 var NS = 'host:%s';
 
 function mountWithProperties(obj) {
-  var properties = ['hostname', 'ip', 'has_problems', 'labels'];
+  var properties = ['hostname', 'ip', 'has_problems', 'labels', 'monitor'];
 
   properties.forEach(function(prop) {
     Object.defineProperty(obj, prop, {
@@ -50,7 +50,6 @@ Host.fetch = function(key, done) {
 Host.fetchByIp = function(ip, done) {
   Host.fetch(util.format(NS, ip), done);
 };
-
 
 Host.fetchByName = function(name, done) {
   Host.leveldb.get(util.format(NS, name), function(err, ip) {

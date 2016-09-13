@@ -41,13 +41,24 @@ Link.uuid = function(doc) {
 };
 
 Link.update = function(host) {
-  host.monitor.forEach(function(url) {
-    var link = new Link({
-      proxy: host.ip,
-      url: url,
+  Object.keys(host.monitor).forEach(function(port) {
+    var monitorUrls = host.monitor[port];
+    _.each(monitorUrls, function(href) {
+      var urlObj = url.parse(href);
+      var link;
+      if (urlObj.protocol === 'tcp:') {
+        link = new Link({
+          url: href,
+        });
+      }
+      else {
+        link = new Link({
+          proxy: urlObj.protocol + '//' + host.ip + ':' + port,
+          url: href,
+        });
+      }
+      LinksUnderMonitor[link.id] = link;
     });
-
-    LinksUnderMonitor[link.id] = link;
   });
 };
 

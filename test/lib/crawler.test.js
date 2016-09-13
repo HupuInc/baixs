@@ -5,18 +5,18 @@ var Crawler = require('../../lib/crawler');
 var fixture = require('../fixture');
 
 var models = require('../').models;
+var Host = models.Host;
 var Link = models.Link;
 var linkOne = fixture.linkOne;
 var linkTwo = fixture.linkTwo;
 
 describe('Crawler', function() {
-
-  before(function(done) {
-    Link.create(linkOne, done);
+  before(function() {
+    Link.update(new Host(linkOne));
   });
 
-  after(function(done) {
-    new Link(linkOne).del(done);
+  after(function() {
+    Link.clearAll();
   });
 
   describe('Enqueue or Dequeue a link', function() {
@@ -25,12 +25,8 @@ describe('Crawler', function() {
       url: 'http://www.baidu.com',
     });
 
-    before(function(done) {
-      Link.create(linkTwo, done);
-    });
-
-    after(function(done) {
-      new Link(linkTwo).del(done);
+    before(function() {
+      Link.update(new Host(linkTwo));
     });
 
     before(function() {
@@ -41,20 +37,18 @@ describe('Crawler', function() {
       this.mock.restore();
     });
 
-    it('should start to monitor the link once', function(done) {
+    it('should start to monitor the link once', function() {
       this.mock.expects('_startOnce').twice();
 
-      Link.fetchAll(function(err, list) {
-        list.forEach(function(link) {
-          crawler1.enqueue(link);
-        });
-
-        done();
+      var list = Link.fetchAll();
+      list.forEach(function(link) {
+        crawler1.enqueue(link);
       });
     });
 
     it('should dequeue the third link', function() {
       crawler1.queue.unshift(thirdLink.id);
+      crawler1.queue.should.have.lengthOf(3);
       crawler1.dequeue(thirdLink).should.be.true;
       crawler1.queue.should.have.lengthOf(2);
     });
@@ -79,29 +73,29 @@ describe('Crawler', function() {
       this.clock.restore();
     });
 
-    describe('When it keeps running', function() {
-      before(function() {
-        nock.disableNetConnect();
-        this.scope = nock(linkOne.url)
-          .get('/').times(2).reply(200, 'OK');
+    before(function() {
+      nock.disableNetConnect();
+      this.linkOne = new Link({
+        url: 'http://www.baidu.com',
       });
+      this.scope = nock(this.linkOne.doc.url)
+        .get('/').times(2).reply(200, 'OK');
+    });
 
-      after(function() {
-        this.scope.done();
-      });
+    after(function() {
+      this.scope.done();
+    });
+
+    describe('When it keeps running', function() {
 
       it('should monitor the link continuously', function(done) {
         var self = this;
-
-        Link.fetchAll(function(err, list) {
-          crawler.enqueue(list[0]);
-          self.spy.calledOnce.should.be.true;
-          self.clock.tick(60 * 1000);
-        });
+        crawler.enqueue(this.linkOne);
+        self.spy.calledOnce.should.be.true;
+        self.clock.tick(60 * 1000);
 
         crawler.once('end', function() {
           self.spy.calledTwice.should.be.true;
-
           crawler.once('end', function() {
             self.spy.calledThrice.should.be.true;
             done();
@@ -115,16 +109,6 @@ describe('Crawler', function() {
     describe('Dequeue a link', function() {
       before(function() {
         this.spy.reset();
-      });
-
-      before(function() {
-        nock.disableNetConnect();
-        this.scope = nock(linkOne.url)
-          .get('/').once().reply(200, 'OK');
-      });
-
-      after(function() {
-        this.scope.done();
       });
 
       it('should stop the monitoring task', function(done) {

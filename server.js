@@ -66,14 +66,9 @@ function setupCrawler(app, wsSocket) {
   var crawler = new Crawler();
   app.set('crawler', crawler);
 
-  models.Link.fetchAll(function(err, list) {
-    if (err) {
-      throw err;
-    }
-
-    list.forEach(function(link) {
-      crawler.enqueue(link);
-    });
+  var list = models.Link.fetchAll();
+  list.forEach(function(link) {
+    crawler.enqueue(link);
   });
 
   crawler.enqueue(new models.Monitor());
@@ -111,7 +106,7 @@ function setupCrawler(app, wsSocket) {
 
 function setupPorter() {
   var porter = new Porter();
-  porter.start();
+  porter.run();
   return porter;
 }
 

@@ -1,10 +1,21 @@
 var linkOne = {
-  url: "http://www.gov.cn",
-  proxy: null
+  hostname: 'web-tst-9-25.sh',
+  ip: '172.17.9.25',
+  monitor: {
+    '8080': [
+      'http://www.gov.cn',
+    ],
+  },
 };
 
 var linkTwo = {
-  url: "http://www.cntv.cn",
+  hostname: 'web-tst-8-11.sh',
+  ip: '172.17.8.11',
+  monitor: {
+    '8080': [
+      'http://www.cntv.cn',
+    ],
+  },
 };
 
 var vmmOne = {
@@ -183,28 +194,20 @@ var hostOne = {
   "createdIndex": 423,
   "nodes": [
     {
-      "createdIndex": 28455,
       "key": "/hostvars/192.168.1.1/has_problems",
-      "value": "no",
-      "modifiedIndex": 28455
+      "value": "no"
     },
     {
       "key": "/hostvars/192.168.1.1/hostname",
-      "createdIndex": 28454,
       "value": "baixs-web-1-1-prd",
-      "modifiedIndex": 28454
     },
     {
       "key": "/hostvars/192.168.1.1/labels",
       "dir": true,
       "nodes": [{
         "key": "/hostvars/192.168.1.1/labels/nginx",
-        "value": "",
-        "modifiedIndex": 61497,
-        "createdIndex": 61497
+        "value": ""
       }],
-      "modifiedIndex": 61497,
-      "createdIndex": 61497
     }
   ],
   "modifiedIndex": 423,
@@ -224,14 +227,18 @@ var hostTwo = {
     "value": "gitlab-store-1-2-tst",
     "modifiedIndex": 28385,
     "createdIndex": 28385
+  },
+  {
+    "key": "/hostvars/192.168.22.153/monitor",
+    "dir": true,
+    "nodes": [{
+        "key": "/hostvars/192.168.1.2/monitor/8080",
+        "value": "[\"http://m.hupu.com\",\"http://m.hupu.com/my/1\"]"
+      }]
   }, {
     "key": "/hostvars/192.168.1.2/vip",
-    "value": "192.168.1.22",
-    "modifiedIndex": 37538,
-    "createdIndex": 37538
-  }],
-  "modifiedIndex": 390,
-  "createdIndex": 390
+    "value": "192.168.1.22"
+  }]
 };
 
 var benches = [{

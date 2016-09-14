@@ -42,17 +42,13 @@ describe('Model - Link', function() {
     });
 
     before(function() {
-      Link.update(host);
-    });
-
-    after(function() {
-      Link.clearAll();
+      this.link = Link.parseFrom(host)[0];
     });
 
     it('should construct a link to monitor', function() {
-      var link = Link.fetchAll()[0];
-      link.doc.url.should.eql('http://www.hupu.com');
-      link.doc.proxy.should.eql('http://172.17.8.1:8080');
+      var doc = this.link.doc;
+      doc.url.should.eql('http://www.hupu.com');
+      doc.proxy.should.eql('http://172.17.8.1:8080');
     });
   });
 
@@ -66,7 +62,7 @@ describe('Model - Link', function() {
     });
 
     before(function() {
-      Link.update(host);
+      this.link = Link.parseFrom(host)[0];
     });
 
     after(function() {
@@ -74,9 +70,9 @@ describe('Model - Link', function() {
     });
 
     it('should construct a link to monitor', function() {
-      var link = Link.fetchAll()[0];
-      link.doc.url.should.eql('tcp://172.17.8.1:8119');
-      link.doc.should.not.have.property('proxy');
+      var doc = this.link.doc;
+      doc.url.should.eql('tcp://172.17.8.1:8119');
+      doc.should.not.have.property('proxy');
     });
   });
 

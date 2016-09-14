@@ -40,10 +40,19 @@ Link.uuid = function(doc) {
   return util.format(NS, shasum(keyObj));
 };
 
-Link.update = function(host) {
-  Object.keys(host.monitor).forEach(function(port) {
+Link.update = function(link) {
+  var updated = false;
+  if (!LinksUnderMonitor[link.id]) {
+    LinksUnderMonitor[link.id] = link;
+    updated = true;
+  }
+  return updated;
+};
+
+Link.parseFrom = function(host) {
+  return Object.keys(host.monitor).reduce(function(result, port) {
     var monitorUrls = host.monitor[port];
-    _.each(monitorUrls, function(href) {
+    monitorUrls.forEach(function(href) {
       var urlObj = url.parse(href);
       var link;
       if (urlObj.protocol === 'tcp:') {
@@ -57,9 +66,10 @@ Link.update = function(host) {
           url: href,
         });
       }
-      LinksUnderMonitor[link.id] = link;
+      result.push(link);
     });
-  });
+    return result;
+  }, []);
 };
 
 Link.fetch = function(key) {

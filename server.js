@@ -1,5 +1,6 @@
 var url = require('url');
 var WebSocketServer = require('websocket').server;
+var _ = require('lodash');
 
 var initApp = require('./app');
 var Alert = require('./lib/alert');
@@ -62,14 +63,8 @@ function startWebsocket(httpServer, models) {
 }
 
 function setupCrawler(app, wsSocket) {
+  var crawler = app.get('crawler');
   var models = app.get('models');
-  var crawler = new Crawler();
-  app.set('crawler', crawler);
-
-  var list = models.Link.fetchAll();
-  list.forEach(function(link) {
-    crawler.enqueue(link);
-  });
 
   crawler.enqueue(new models.Monitor());
 
@@ -104,10 +99,30 @@ function setupCrawler(app, wsSocket) {
   });
 }
 
-function setupPorter() {
-  var porter = new Porter();
+function setupPorter(app) {
+  var crawler = app.get('crawler');
+  var porter = app.get('porter');
+  var models = app.get('models');
+  var Link = models.Link;
+  porter.on('change', function(changes) {
+    // get rid of removed links
+    var ids = _.pluck(changes, 'id');
+    var removed = _.filter(Link.fetchAll(), function(link) {
+      return ids.indexOf(link.id) == -1;
+    });
+    var added = _.filter(changes, Link.update);
+
+    removed.forEach(function(link) {
+      crawler.dequeue(link);
+      link.del();
+    });
+
+    added.forEach(function(link) {
+      crawler.enqueue(link);
+    });
+
+  });
   porter.run();
-  return porter;
 }
 
 var port = process.env.PORT || 10010;
@@ -117,8 +132,12 @@ initApp(function(app) {
   console.log('Starting in env', app.get('env'));
   var httpServer = app.listen(port, hostname);
   var wsSocket = startWebsocket(httpServer, app.get('models'));
+  var crawler = new Crawler();
+  var porter = new Porter();
+  app.set('crawler', crawler);
+  app.set('porter', porter);
+  setupPorter(app);
   setupCrawler(app, wsSocket);
-  setupPorter();
 });
 
 console.log('try this:\ncurl http://' + hostname + ':' + port + '/hello?name=Scott');

@@ -229,7 +229,7 @@ var hostTwo = {
     "createdIndex": 28385
   },
   {
-    "key": "/hostvars/192.168.22.153/monitor",
+    "key": "/hostvars/192.168.1.2/monitor",
     "dir": true,
     "nodes": [{
         "key": "/hostvars/192.168.1.2/monitor/8080",

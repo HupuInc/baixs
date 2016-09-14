@@ -29,6 +29,11 @@ var mockedResponse = {
 };
 
 describe('Porter', function() {
+  var porter = new Porter();
+
+  after(function() {
+    models.Link.clearAll();
+  });
 
   describe('When hosts are fetched from etcd', function() {
     before(function() {
@@ -36,7 +41,6 @@ describe('Porter', function() {
       this.scope = nock('http://localhost:4001/')
         .get('/v2/keys/hostvars/')
         .query({ recursive: true })
-        .twice()
         .reply(200, mockedResponse);
     });
 
@@ -45,7 +49,6 @@ describe('Porter', function() {
     });
 
     it('will tranform response into a list of Host', function(done) {
-      var porter = new Porter();
       porter.fetchFromSource(function(err, hosts) {
         hosts.should.be.an.Array;
         hosts.should.have.lengthOf(mockedNodes.length);
@@ -71,50 +74,60 @@ describe('Porter', function() {
         done(err);
       });
     });
+  });
 
-    describe('Fetch from source every 30 seconds', function() {
-      var porter = new Porter();
 
-      before(function() {
-        this.clock = sinon.useFakeTimers();
-      });
+  describe('Fetch from source every 30 seconds', function() {
+    before(function() {
+      this.clock = sinon.useFakeTimers();
+    });
 
-      after(function() {
-        this.clock.restore();
-      });
+    after(function() {
+      this.clock.restore();
+    });
 
-      before(function() {
-        this.stub = sinon.stub(porter, 'fetchFromSource');
-        this.stub.yields(null, []);
-      });
+    before(function() {
+      this.stub = sinon.stub(porter, 'fetchFromSource');
+      this.stub.yields(null, []);
+    });
 
-      after(function() {
-        this.stub.restore();
-      });
+    after(function() {
+      this.stub.restore();
+    });
 
-      it('will save the results into db', function(done) {
-        var theStub = this.stub;
-        var clock = this.clock;
+    before(function() {
+      nock.disableNetConnect();
+      this.scope = nock('http://localhost:4001/')
+        .get('/v2/keys/hostvars/')
+        .query({ recursive: true })
+        .reply(200, mockedResponse);
+    });
 
-        porter.on('error', done);
+    after(function() {
+      this.scope.done();
+    });
+
+    it('will save the results into db', function(done) {
+      var theStub = this.stub;
+      var clock = this.clock;
+
+      porter.on('error', done);
+      porter.once('change', function() {
+        theStub.calledOnce.should.be.true;
+        theStub.restore();
 
         porter.once('change', function() {
-          theStub.calledOnce.should.be.true;
-          theStub.restore();
-
-          porter.once('change', function() {
-            // hostOne: 192.168.1.1
-            Host.fetch('host:192.168.1.1', function(err, host) {
-              host.should.be.an.instanceOf(Host);
-              done(err);
-            });
+          // hostOne: 192.168.1.1
+          Host.fetch('host:192.168.1.1', function(err, host) {
+            host.should.be.an.instanceOf(Host);
+            done(err);
           });
-
-          clock.tick(Porter.INTERVAL);
         });
 
-        porter.run();
+        clock.tick(Porter.INTERVAL);
       });
+
+      porter.run();
     });
   });
 

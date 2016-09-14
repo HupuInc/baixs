@@ -13,7 +13,7 @@ var fixtures = {
   links: [
     {
       url: 'http://www.hupu.com',
-      proxy: '127.0.0.1:8080',
+      proxy: 'http://127.0.0.1:8080',
       description: 'Homepage of hupu.com',
       status: 200,
     },
@@ -26,8 +26,6 @@ var fixtures = {
 };
 
 describe('Model - Link', function() {
-  var linkDoc = fixtures.links[0];
-
   after(function() {
     Link.clearAll();
   });
@@ -48,7 +46,6 @@ describe('Model - Link', function() {
     });
 
     after(function() {
-      console.log('clear by http');
       Link.clearAll();
     });
 
@@ -84,6 +81,7 @@ describe('Model - Link', function() {
   });
 
   describe('Update a link status', function() {
+    var linkDoc = fixtures.links[0];
     var doc = _.clone(linkDoc);
     doc.status = 404;
     var link = new models.Link(doc);

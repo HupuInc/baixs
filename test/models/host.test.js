@@ -12,7 +12,7 @@ var doc = {
 
 var host = new Host(doc);
 
-describe('Model - Link', function() {
+describe('Model - Host', function() {
   describe('Attributes', function() {
     it('should have some properties', function() {
       host.should.have.property('doc', doc);

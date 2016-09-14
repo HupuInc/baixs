@@ -2,7 +2,6 @@ var $ = jQuery = require('jquery');
 var React = require('react');
 var Postoffice = require('./postoffice');
 var Dashboard = require('./dashboard.jsx');
-var HostList = require('./vm.jsx');
 var UrlTab = require('./urltab.jsx');
 var BenchList = require('./benchs.jsx');
 var ReconnectWebsocket = require('./lib/reconnectWebsocket');

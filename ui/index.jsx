@@ -3,7 +3,6 @@ var React = require('react');
 var Postoffice = require('./postoffice');
 var Dashboard = require('./dashboard.jsx');
 var UrlTab = require('./urltab.jsx');
-var BenchList = require('./benchs.jsx');
 var ReconnectWebsocket = require('./lib/reconnectWebsocket');
 
 require('bootstrap');
@@ -32,13 +31,6 @@ $(document).ready(function() {
           $('.div-main-content')[0]
         );
         $('.span-header-title').html('URL Monitor');
-        break;
-      case 'bench':
-        mainContent = React.render(
-          <BenchList />,
-          $('.div-main-content')[0]
-        );
-        $('.span-header-title').html('Benchs');
         break;
     }
     if ($(document.body).width() < 769) {

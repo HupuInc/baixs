@@ -28,40 +28,6 @@ paths:
           description: Return a json representation of multiple groups of hosts
           schema:
             type: string
-    delete:
-      description: "To notify monitor system to delete the host"
-      operationId: deleteHost
-      parameters:
-        - name: host
-          in: body
-          required: true
-          schema:
-            properties:
-              hostname:
-                type: string
-      responses:
-        default:
-          description: Return a message
-          schema:
-            type: string
-    post:
-      description: "To notify monitor system to modify hostname of the host"
-      operationId: modifyHostname
-      parameters:
-        - name: host
-          in: body
-          required: true
-          schema:
-            properties:
-              oldHostname:
-                type: string
-              newHostname:
-                type: string
-      responses:
-        default:
-          description: Return a message
-          schema:
-            type: string
   /links:
     x-swagger-router-controller: links
     get:
@@ -90,82 +56,6 @@ paths:
           description: Success
           schema:
             type: string
-  /benchs:
-    x-swagger-router-controller: benchs
-    get:
-      description: Return all the benchs
-      operationId: benchs
-      responses:
-        200:
-          description: Return all the benchs
-          schema:
-            $ref: "#/definitions/Benchs"
-    put:
-      description: Mark host has problem
-      operationId: create
-      parameters:
-        - name: bench
-          in: body
-          schema:
-            $ref: "#/definitions/Benchs"
-      responses:
-        201:
-          description: Success
-          schema:
-            $ref: "#/definitions/Benchs"
-        default:
-          description: Error
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-    delete:
-      description: Release host who has been marked
-      operationId: del
-      parameters:
-        - name: bench
-          in: body
-          schema:
-            $ref: "#/definitions/Benchs"
-      responses:
-        default:
-          description: Array of benchs left
-          schema:
-            $ref: "#/definitions/Benchs"
-  /events:
-    x-swagger-router-controller: benchs
-    get:
-      operationId: events
-      responses:
-        default:
-          description: Array of current events in Zabbix
-          schema:
-            type: string
-  /history:
-    x-swagger-router-controller: benchs
-    get:
-      description: Return all history of benchs during several days
-      operationId: history
-      parameters:
-        - name: start
-          in: query
-          type: string
-        - name: end
-          in: query
-          type: string
-      responses:
-        default:
-          description: Array of history
-          schema:
-            $ref: "#/definitions/Benchs"
-  /dashboard/mttr:
-    x-swagger-router-controller: dashboard
-    get:
-      description: Return all mttr during seven days
-      operationId: mttr
-      responses:
-        default:
-          description: Object of mttr
-          schema:
-            $ref: "#/definitions/Mttr"
 
 # complex objects have schema definitions
 definitions:
@@ -192,27 +82,6 @@ definitions:
     properties:
       message:
         type: string
-  Benchs:
-    properties:
-      ip:
-        type: string
-      hostname:
-        type: string
-      markedAt:
-        type: string
-      releaseAt:
-        type: string
-  Mttr:
-    properties:
-      project:
-        type: string
-      hosts:
-        description: total number of hosts
-        type: integer
-      mttr:
-        type: integer
-      rate:
-        type: number
   VmStat:
     properties:
       total:

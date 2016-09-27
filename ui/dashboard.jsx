@@ -83,80 +83,6 @@ var EventArea = new React.createClass({
   }
 });
 
-var MttrArea = new React.createClass({
-  getInitialState: function() {
-    return {
-      data: []
-    };
-  },
-  componentDidMount: function() {
-    $.ajax({
-      url: '/api/dashboard/mttr',
-      dataType: 'json',
-      method: 'get',
-      success: function(data) {
-        this.setState({
-          data: data
-        });
-      }.bind(this),
-      error: function(error, status) {
-        console.log('Please handle ajax error');
-      }.bind(this)
-    });
-  },
-  render: function() {
-    var mttrs = this.state.data;
-    var series = mttrs.slice(0, 5).map(function(mttr) {
-      return {
-        name: mttr.project,
-        y: parseFloat(mttr.mttr.mttr / 60 / 60),
-      }
-    });
-
-    Highcharts.Highcharts.setOptions({
-      global: {
-        useUTC: false
-      }
-    });
-    var mttrConfig = {
-      chart: {
-        type: 'column'
-      },
-      title: {
-        "text": "最近一周平均维护时间Top5"
-      },
-      xAxis: {
-        type: 'category'
-      },
-      yAxis: {
-        min: 0,
-        title: {
-          text: 'Mttr(小时)'
-        }
-      },
-      legend: {
-        enabled: false
-      },
-      tooltip: {
-        headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-        pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f} 小时'
-      },
-      plotOptions: {
-        column: {
-          pointPadding: 0.2,
-          borderWidth: 0
-        }
-      },
-      series: [{name: 'mttr', colorByPoint: true, data: series}]
-    };
-    return (
-      <div className="div-data-table div-content">
-        <Highcharts config={mttrConfig} ref="chart" />
-      </div>
-    );
-  }
-});
-
 var VmmArea = new React.createClass({
   getInitialState: function() {
     return {
@@ -345,7 +271,6 @@ var Dashboard = new React.createClass({
         <div className="row">
           <div className="div-col col-lg-6">
             <VmmArea />
-            <MttrArea />
           </div>
           <div className="div-col col-lg-6">
             <UrlArea />
